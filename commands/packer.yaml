@@ -1,0 +1,41 @@
+command: packer
+platform: all
+description: "HashiCorp Packer — build identical machine images for multiple platforms"
+
+syntax:
+  usage: "packer <subcommand> [flags] <template>"
+  key_flags:
+    - flag: "init <template>"
+      description: "Install required plugins for a template"
+    - flag: "validate <template>"
+      description: "Validate a template file (HCL or JSON)"
+    - flag: "build <template>"
+      description: "Build image(s) from a template"
+    - flag: "build -var 'key=value' <template>"
+      description: "Build with variable override"
+    - flag: "build -var-file <file> <template>"
+      description: "Build with variables from file"
+    - flag: "build -only=<builder> <template>"
+      description: "Build only a specific builder target"
+    - flag: "build -except=<builder> <template>"
+      description: "Build all except specified builder"
+    - flag: "inspect <template>"
+      description: "Show template components and variables"
+    - flag: "fmt <template>"
+      description: "Format HCL template files"
+
+  preferred_invocations:
+    - invocation: "packer validate <template.pkr.hcl>"
+      use_when: "Validate template before building"
+    - invocation: "packer build <template.pkr.hcl>"
+      use_when: "Build the machine image"
+    - invocation: "packer build -var-file=vars.pkrvars.hcl <template.pkr.hcl>"
+      use_when: "Build with external variable file"
+
+output_schema:
+  enable_filter: true
+  noise_patterns:
+    - pattern: "^==> "
+      reason: "Packer builder step prefix (verbose but repetitive)"
+  max_lines: 60
+  truncation_message: "... {remaining} more Packer lines. Check for 'Build finished' or errors."

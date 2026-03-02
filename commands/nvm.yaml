@@ -1,0 +1,36 @@
+command: nvm
+platform: all
+description: "Node Version Manager — install and switch between Node.js versions"
+
+syntax:
+  usage: "nvm <subcommand> [version]"
+  key_flags:
+    - flag: "install <version>"
+      description: "Install a Node.js version (e.g. 20, lts/iron, --lts)"
+    - flag: "install --lts"
+      description: "Install the latest LTS release"
+    - flag: "use <version>"
+      description: "Switch to an installed Node version in current shell"
+    - flag: "use --lts"
+      description: "Switch to the latest LTS"
+    - flag: "ls"
+      description: "List locally installed versions"
+    - flag: "ls-remote"
+      description: "List all available Node.js versions"
+    - flag: "current"
+      description: "Show currently active Node version"
+    - flag: "alias default <version>"
+      description: "Set the default Node version for new shells"
+    - flag: "uninstall <version>"
+      description: "Remove an installed version"
+
+  preferred_invocations:
+    - invocation: "nvm install --lts && nvm use --lts"
+      use_when: "Install and switch to latest LTS"
+    - invocation: "nvm use <version>"
+      use_when: "Switch to an installed version"
+    - invocation: "nvm alias default <version>"
+      use_when: "Set default Node version for all new terminals"
+
+output_schema:
+  enable_filter: false

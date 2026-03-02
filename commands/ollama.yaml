@@ -1,0 +1,36 @@
+command: ollama
+platform: all
+description: "Run large language models locally — pull, serve, and interact with LLMs"
+
+syntax:
+  usage: "ollama <subcommand> [model]"
+  key_flags:
+    - flag: "run <model>"
+      description: "Start interactive chat with a model (pulls if not present)"
+    - flag: "pull <model>"
+      description: "Download a model from the registry"
+    - flag: "list"
+      description: "List locally downloaded models"
+    - flag: "show <model>"
+      description: "Show model details (parameters, template, license)"
+    - flag: "rm <model>"
+      description: "Remove a downloaded model"
+    - flag: "ps"
+      description: "List currently running models"
+    - flag: "serve"
+      description: "Start the Ollama API server (default port 11434)"
+    - flag: "create <name> -f <Modelfile>"
+      description: "Create a custom model from a Modelfile"
+    - flag: "cp <src> <dst>"
+      description: "Copy a model to a new name"
+
+  preferred_invocations:
+    - invocation: "ollama pull <model>"
+      use_when: "Download a model before running"
+    - invocation: "ollama list"
+      use_when: "Check what models are available locally"
+    - invocation: "ollama run <model> '<prompt>'"
+      use_when: "One-shot prompt without interactive mode"
+
+output_schema:
+  enable_filter: false

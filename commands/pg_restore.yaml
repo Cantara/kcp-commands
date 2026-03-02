@@ -1,0 +1,42 @@
+command: pg_restore
+platform: all
+description: "PostgreSQL backup restore — load a pg_dump custom/directory format backup"
+
+syntax:
+  usage: "pg_restore [options] <file>"
+  key_flags:
+    - flag: "-h <host>"
+      description: "Database host"
+    - flag: "-U <user>"
+      description: "Database user"
+    - flag: "-d <dbname>"
+      description: "Target database to restore into"
+    - flag: "-F c"
+      description: "Custom format (matches pg_dump -F c)"
+    - flag: "-j <N>"
+      description: "Parallel restore with N jobs"
+    - flag: "-s / --schema-only"
+      description: "Restore schema only"
+    - flag: "-a / --data-only"
+      description: "Restore data only"
+    - flag: "-t <table>"
+      description: "Restore specific table only"
+    - flag: "--no-owner"
+      description: "Skip ownership commands"
+    - flag: "-c / --clean"
+      description: "Drop objects before recreating them"
+    - flag: "--if-exists"
+      description: "Use IF EXISTS when dropping objects"
+    - flag: "-l"
+      description: "List contents of backup archive"
+
+  preferred_invocations:
+    - invocation: "pg_restore -U <user> -h <host> -d <dbname> -F c backup.dump"
+      use_when: "Restore a full custom-format backup"
+    - invocation: "pg_restore -U <user> -d <dbname> -j 4 backup.dump"
+      use_when: "Parallel restore (faster for large databases)"
+    - invocation: "pg_restore -l backup.dump"
+      use_when: "Inspect backup contents before restoring"
+
+output_schema:
+  enable_filter: false

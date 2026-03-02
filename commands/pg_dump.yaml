@@ -1,0 +1,44 @@
+command: pg_dump
+platform: all
+description: "PostgreSQL database backup — dump schema and/or data to file"
+
+syntax:
+  usage: "pg_dump [options] <dbname>"
+  key_flags:
+    - flag: "-h <host>"
+      description: "Database host"
+    - flag: "-p <port>"
+      description: "Database port (default 5432)"
+    - flag: "-U <user>"
+      description: "Database user"
+    - flag: "-d <dbname>"
+      description: "Database name"
+    - flag: "-F c"
+      description: "Custom format (compressed, recommended for pg_restore)"
+    - flag: "-F p"
+      description: "Plain SQL format (human-readable)"
+    - flag: "-F d"
+      description: "Directory format (parallel restore support)"
+    - flag: "-f <file>"
+      description: "Output file (default: stdout)"
+    - flag: "-s / --schema-only"
+      description: "Dump schema only (no data)"
+    - flag: "-a / --data-only"
+      description: "Dump data only (no schema)"
+    - flag: "-t <table>"
+      description: "Dump specific table only"
+    - flag: "-j <N>"
+      description: "Parallel dump jobs (directory format only)"
+    - flag: "--no-owner"
+      description: "Do not output commands to set object ownership"
+
+  preferred_invocations:
+    - invocation: "pg_dump -U <user> -h <host> -F c -f backup.dump <dbname>"
+      use_when: "Full compressed backup (restoreable with pg_restore)"
+    - invocation: "pg_dump -U <user> -h <host> -F p <dbname> > backup.sql"
+      use_when: "Plain SQL dump for inspection or portability"
+    - invocation: "pg_dump -U <user> -s <dbname> > schema.sql"
+      use_when: "Schema-only dump"
+
+output_schema:
+  enable_filter: false

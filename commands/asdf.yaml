@@ -1,0 +1,40 @@
+command: asdf
+platform: all
+description: "Universal version manager — manage runtimes for Node, Python, Ruby, Java, and more"
+
+syntax:
+  usage: "asdf <subcommand> [plugin] [version]"
+  key_flags:
+    - flag: "plugin list"
+      description: "List installed plugins"
+    - flag: "plugin list all"
+      description: "List all available plugins in the registry"
+    - flag: "plugin add <name>"
+      description: "Install a plugin (e.g. nodejs, python, java)"
+    - flag: "install <plugin> <version>"
+      description: "Install a specific version"
+    - flag: "install <plugin> latest"
+      description: "Install the latest version"
+    - flag: "global <plugin> <version>"
+      description: "Set global default version"
+    - flag: "local <plugin> <version>"
+      description: "Set version for current directory (.tool-versions)"
+    - flag: "current"
+      description: "Show current versions of all installed plugins"
+    - flag: "list <plugin>"
+      description: "List installed versions of a plugin"
+    - flag: "list all <plugin>"
+      description: "List all available versions of a plugin"
+    - flag: "reshim <plugin>"
+      description: "Recreate shims after installing global packages"
+
+  preferred_invocations:
+    - invocation: "asdf install <plugin> latest"
+      use_when: "Install latest version of a runtime"
+    - invocation: "asdf local <plugin> <version>"
+      use_when: "Pin version for current project (writes .tool-versions)"
+    - invocation: "asdf current"
+      use_when: "Check active versions of all tools"
+
+output_schema:
+  enable_filter: false

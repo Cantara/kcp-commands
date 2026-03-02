@@ -1,0 +1,38 @@
+command: mise
+platform: all
+description: "mise (formerly rtx) — fast polyglot version manager and task runner"
+
+syntax:
+  usage: "mise <subcommand> [flags]"
+  key_flags:
+    - flag: "install"
+      description: "Install all tools specified in mise.toml / .tool-versions"
+    - flag: "install <tool>@<version>"
+      description: "Install a specific tool version"
+    - flag: "use <tool>@<version>"
+      description: "Set version for current project (writes mise.toml)"
+    - flag: "use -g <tool>@<version>"
+      description: "Set global default version"
+    - flag: "ls"
+      description: "List installed tools and versions"
+    - flag: "ls --current"
+      description: "Show currently active versions"
+    - flag: "upgrade"
+      description: "Upgrade all tools to latest"
+    - flag: "exec <tool>@<version> -- <cmd>"
+      description: "Run a command with a specific tool version"
+    - flag: "run <task>"
+      description: "Run a task defined in mise.toml"
+    - flag: "doctor"
+      description: "Diagnose mise installation issues"
+
+  preferred_invocations:
+    - invocation: "mise install"
+      use_when: "Install all tools for current project"
+    - invocation: "mise use node@lts"
+      use_when: "Pin Node LTS for current project"
+    - invocation: "mise ls --current"
+      use_when: "Check what tool versions are active"
+
+output_schema:
+  enable_filter: false

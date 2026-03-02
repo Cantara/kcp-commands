@@ -1,0 +1,44 @@
+command: glab
+platform: all
+description: "GitLab CLI — manage MRs, issues, pipelines, and repos from the terminal"
+
+syntax:
+  usage: "glab <subcommand> [flags]"
+  key_flags:
+    - flag: "mr create"
+      description: "Create a new merge request"
+    - flag: "mr list"
+      description: "List open merge requests"
+    - flag: "mr view <id>"
+      description: "View MR details"
+    - flag: "mr merge <id>"
+      description: "Merge a merge request"
+    - flag: "mr checkout <id>"
+      description: "Check out the branch for an MR"
+    - flag: "issue create"
+      description: "Create a new issue"
+    - flag: "issue list"
+      description: "List open issues"
+    - flag: "issue view <id>"
+      description: "View issue details"
+    - flag: "pipeline list"
+      description: "List recent pipelines"
+    - flag: "pipeline status"
+      description: "Show status of the latest pipeline"
+    - flag: "pipeline ci view"
+      description: "Watch pipeline jobs in real time"
+    - flag: "repo clone <path>"
+      description: "Clone a GitLab repository"
+    - flag: "auth login"
+      description: "Authenticate with GitLab (token or browser)"
+
+  preferred_invocations:
+    - invocation: "glab mr create --title '<title>' --description '<desc>'"
+      use_when: "Open a new merge request from current branch"
+    - invocation: "glab mr list"
+      use_when: "See open MRs for the current project"
+    - invocation: "glab pipeline ci view"
+      use_when: "Watch live CI pipeline output"
+
+output_schema:
+  enable_filter: false

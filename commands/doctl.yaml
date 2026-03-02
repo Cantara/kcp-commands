@@ -1,0 +1,38 @@
+command: doctl
+platform: all
+description: "DigitalOcean CLI — manage droplets, databases, apps, and Kubernetes clusters"
+
+syntax:
+  usage: "doctl <resource> <subcommand> [flags]"
+  key_flags:
+    - flag: "compute droplet list"
+      description: "List all droplets"
+    - flag: "compute droplet create"
+      description: "Create a new droplet"
+    - flag: "compute droplet delete <id>"
+      description: "Delete a droplet"
+    - flag: "compute ssh <droplet>"
+      description: "SSH into a droplet by name or ID"
+    - flag: "kubernetes cluster list"
+      description: "List Kubernetes clusters"
+    - flag: "kubernetes cluster kubeconfig save <name>"
+      description: "Download kubeconfig for a cluster"
+    - flag: "databases list"
+      description: "List managed databases"
+    - flag: "apps list"
+      description: "List App Platform apps"
+    - flag: "apps create --spec <file>"
+      description: "Deploy an app from a spec file"
+    - flag: "auth init"
+      description: "Authenticate with a DigitalOcean API token"
+
+  preferred_invocations:
+    - invocation: "doctl compute droplet list"
+      use_when: "List all running droplets"
+    - invocation: "doctl kubernetes cluster kubeconfig save <name>"
+      use_when: "Configure kubectl for a DOKS cluster"
+    - invocation: "doctl compute ssh <name>"
+      use_when: "SSH into a droplet by name"
+
+output_schema:
+  enable_filter: false

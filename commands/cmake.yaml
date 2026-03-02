@@ -1,0 +1,43 @@
+command: cmake
+platform: all
+description: "CMake build system generator — configure, generate, and build C/C++ projects"
+
+syntax:
+  usage: "cmake [options] <source_dir>"
+  key_flags:
+    - flag: "-B <build_dir>"
+      description: "Specify build directory (out-of-source build)"
+    - flag: "-S <source_dir>"
+      description: "Specify source directory"
+    - flag: "-G <generator>"
+      description: "Generator: 'Unix Makefiles', 'Ninja', 'Xcode', 'Visual Studio 17 2022'"
+    - flag: "-DCMAKE_BUILD_TYPE=<type>"
+      description: "Build type: Debug, Release, RelWithDebInfo, MinSizeRel"
+    - flag: "-DCMAKE_INSTALL_PREFIX=<path>"
+      description: "Installation prefix path"
+    - flag: "--build <build_dir>"
+      description: "Build the project in the build directory"
+    - flag: "--build <dir> --target <target>"
+      description: "Build a specific target"
+    - flag: "--build <dir> -j <N>"
+      description: "Parallel build with N jobs"
+    - flag: "--install <build_dir>"
+      description: "Install built artifacts"
+    - flag: "-L"
+      description: "List cache variables (see all -D options)"
+
+  preferred_invocations:
+    - invocation: "cmake -B build -S . -DCMAKE_BUILD_TYPE=Release"
+      use_when: "Configure a release build out-of-source"
+    - invocation: "cmake --build build -j$(nproc)"
+      use_when: "Build using all available cores"
+    - invocation: "cmake -B build -G Ninja && cmake --build build"
+      use_when: "Configure and build with Ninja (faster than Make)"
+
+output_schema:
+  enable_filter: true
+  noise_patterns:
+    - pattern: "^-- "
+      reason: "CMake status lines (configuration chatter)"
+  max_lines: 50
+  truncation_message: "... {remaining} more CMake lines. Check for errors or 'Build complete'."

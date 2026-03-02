@@ -1,0 +1,42 @@
+command: fly
+platform: all
+description: "Fly.io CLI — deploy and manage apps on the Fly.io platform"
+
+syntax:
+  usage: "fly <subcommand> [flags]"
+  key_flags:
+    - flag: "launch"
+      description: "Scan current directory and create a new Fly app"
+    - flag: "deploy"
+      description: "Build and deploy the current app"
+    - flag: "deploy --remote-only"
+      description: "Build on Fly's remote builder (no local Docker needed)"
+    - flag: "status"
+      description: "Show app status and machine states"
+    - flag: "logs"
+      description: "Stream live application logs"
+    - flag: "ssh console"
+      description: "Open a shell in a running machine"
+    - flag: "scale count <N>"
+      description: "Scale app to N machines"
+    - flag: "scale memory <MB>"
+      description: "Set memory per machine"
+    - flag: "secrets set KEY=value"
+      description: "Set an environment secret"
+    - flag: "secrets list"
+      description: "List secret names (not values)"
+    - flag: "postgres create"
+      description: "Create a managed Postgres cluster"
+    - flag: "apps list"
+      description: "List all apps in your organization"
+
+  preferred_invocations:
+    - invocation: "fly deploy"
+      use_when: "Deploy current app"
+    - invocation: "fly logs"
+      use_when: "Tail live application logs"
+    - invocation: "fly ssh console"
+      use_when: "Shell into a running instance"
+
+output_schema:
+  enable_filter: false

@@ -1,0 +1,53 @@
+command: dbt
+platform: all
+description: "dbt (data build tool) — transform data in your warehouse with SQL models"
+
+syntax:
+  usage: "dbt <subcommand> [flags]"
+  key_flags:
+    - flag: "run"
+      description: "Execute all models"
+    - flag: "run -s <model>"
+      description: "Run a specific model (or tag/path selector)"
+    - flag: "run -s +<model>"
+      description: "Run model and all its upstream dependencies"
+    - flag: "run -s <model>+"
+      description: "Run model and all its downstream dependents"
+    - flag: "test"
+      description: "Run all data tests"
+    - flag: "test -s <model>"
+      description: "Run tests for a specific model"
+    - flag: "build"
+      description: "Run models, tests, snapshots, and seeds in DAG order"
+    - flag: "compile"
+      description: "Compile SQL without executing"
+    - flag: "seed"
+      description: "Load CSV files from the seeds/ directory"
+    - flag: "snapshot"
+      description: "Execute snapshot models (SCD Type 2)"
+    - flag: "source freshness"
+      description: "Check source data freshness"
+    - flag: "docs generate"
+      description: "Generate documentation catalog"
+    - flag: "docs serve"
+      description: "Serve docs locally on port 8080"
+
+  preferred_invocations:
+    - invocation: "dbt build"
+      use_when: "Full pipeline: run models + tests in dependency order"
+    - invocation: "dbt run -s <model>"
+      use_when: "Run a single model during development"
+    - invocation: "dbt test -s <model>"
+      use_when: "Test a model after making changes"
+
+output_schema:
+  enable_filter: true
+  noise_patterns:
+    - pattern: "^\\d{2}:\\d{2}:\\d{2}  Running with dbt"
+      reason: "Startup version line"
+    - pattern: "^\\d{2}:\\d{2}:\\d{2}  Registered adapter"
+      reason: "Adapter registration line"
+    - pattern: "^\\d{2}:\\d{2}:\\d{2}  Found \\d"
+      reason: "Project summary line"
+  max_lines: 80
+  truncation_message: "... {remaining} more dbt lines. Check for ERROR or 'Completed successfully'."

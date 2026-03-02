@@ -1,0 +1,38 @@
+command: rustup
+platform: all
+description: "Rust toolchain manager — install and switch between Rust releases"
+
+syntax:
+  usage: "rustup <subcommand> [flags]"
+  key_flags:
+    - flag: "update"
+      description: "Update all installed toolchains to latest"
+    - flag: "toolchain install <channel>"
+      description: "Install a toolchain: stable, beta, nightly, or version"
+    - flag: "default <channel>"
+      description: "Set default toolchain"
+    - flag: "override set <channel>"
+      description: "Set toolchain override for current directory"
+    - flag: "show"
+      description: "Show installed toolchains and active toolchain"
+    - flag: "target add <triple>"
+      description: "Add a compilation target (e.g. wasm32-unknown-unknown)"
+    - flag: "target list --installed"
+      description: "List installed compilation targets"
+    - flag: "component add <name>"
+      description: "Add a component: clippy, rustfmt, rust-analyzer"
+    - flag: "component list --installed"
+      description: "List installed components"
+    - flag: "doc"
+      description: "Open local Rust documentation in browser"
+
+  preferred_invocations:
+    - invocation: "rustup update"
+      use_when: "Update Rust to latest stable"
+    - invocation: "rustup target add wasm32-unknown-unknown"
+      use_when: "Add WebAssembly compilation target"
+    - invocation: "rustup component add clippy rustfmt"
+      use_when: "Install linter and formatter"
+
+output_schema:
+  enable_filter: false

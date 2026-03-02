@@ -1,0 +1,34 @@
+command: mkdocs
+platform: all
+description: "MkDocs — build and serve static documentation sites from Markdown"
+
+syntax:
+  usage: "mkdocs <subcommand> [options]"
+  key_flags:
+    - flag: "serve"
+      description: "Start dev server with live reload (default: localhost:8000)"
+    - flag: "serve --dev-addr <host:port>"
+      description: "Bind dev server to a different address/port"
+    - flag: "build"
+      description: "Build static site to ./site/"
+    - flag: "build --clean"
+      description: "Remove old site/ before building"
+    - flag: "build --strict"
+      description: "Fail on warnings (useful in CI)"
+    - flag: "gh-deploy"
+      description: "Build and push to GitHub Pages (gh-pages branch)"
+    - flag: "gh-deploy --force"
+      description: "Force-push to gh-pages"
+    - flag: "new <project>"
+      description: "Scaffold a new MkDocs project"
+
+  preferred_invocations:
+    - invocation: "mkdocs serve"
+      use_when: "Local preview with live reload"
+    - invocation: "mkdocs build --clean --strict"
+      use_when: "Production build, fail on any warnings"
+    - invocation: "mkdocs gh-deploy"
+      use_when: "Publish to GitHub Pages"
+
+output_schema:
+  enable_filter: false

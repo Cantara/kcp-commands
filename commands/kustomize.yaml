@@ -1,0 +1,30 @@
+command: kustomize
+platform: all
+description: "Kubernetes configuration customization — overlay and patch YAML without templating"
+
+syntax:
+  usage: "kustomize <subcommand> [flags]"
+  key_flags:
+    - flag: "build <dir>"
+      description: "Generate final YAML from kustomization directory"
+    - flag: "build <dir> | kubectl apply -f -"
+      description: "Build and apply to cluster in one step"
+    - flag: "create --resources <file1>,<file2>"
+      description: "Create a new kustomization.yaml"
+    - flag: "edit set image <name>=<image:tag>"
+      description: "Update image tag in kustomization"
+    - flag: "edit add resource <file>"
+      description: "Add a resource to kustomization.yaml"
+    - flag: "edit add patch <file>"
+      description: "Add a patch to kustomization.yaml"
+
+  preferred_invocations:
+    - invocation: "kustomize build <overlay_dir>"
+      use_when: "Preview the final rendered YAML"
+    - invocation: "kustomize build <overlay_dir> | kubectl apply -f -"
+      use_when: "Build and deploy to Kubernetes"
+    - invocation: "kustomize edit set image app=<image>:<tag>"
+      use_when: "Update image tag in CI/CD pipeline"
+
+output_schema:
+  enable_filter: false

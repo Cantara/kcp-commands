@@ -1,0 +1,61 @@
+command: ffmpeg
+platform: all
+description: "FFmpeg — convert, transcode, stream, and process audio and video"
+
+syntax:
+  usage: "ffmpeg [global_opts] -i <input> [output_opts] <output>"
+  key_flags:
+    - flag: "-i <file>"
+      description: "Input file (required)"
+    - flag: "-c:v <codec>"
+      description: "Video codec: copy, libx264, libx265, libvpx-vp9"
+    - flag: "-c:a <codec>"
+      description: "Audio codec: copy, aac, mp3, libopus"
+    - flag: "-c copy"
+      description: "Copy all streams without re-encoding (fast, lossless)"
+    - flag: "-ss <time>"
+      description: "Seek/start position (HH:MM:SS or seconds)"
+    - flag: "-t <duration>"
+      description: "Duration to process"
+    - flag: "-to <time>"
+      description: "Stop at this timestamp"
+    - flag: "-vf '<filter>'"
+      description: "Video filter (e.g. scale=1280:720, fps=30)"
+    - flag: "-af '<filter>'"
+      description: "Audio filter (e.g. volume=2.0)"
+    - flag: "-crf <n>"
+      description: "Quality for libx264/x265: 18=high quality, 28=smaller file"
+    - flag: "-preset <name>"
+      description: "Encoding speed: ultrafast, fast, medium, slow, veryslow"
+    - flag: "-an"
+      description: "Strip audio"
+    - flag: "-vn"
+      description: "Strip video (audio-only output)"
+    - flag: "-y"
+      description: "Overwrite output without asking"
+    - flag: "-loglevel error"
+      description: "Suppress progress output (only show errors)"
+
+  preferred_invocations:
+    - invocation: "ffmpeg -i input.mp4 -c copy output.mkv"
+      use_when: "Remux container without re-encoding"
+    - invocation: "ffmpeg -i input.mp4 -ss 00:01:00 -t 30 -c copy clip.mp4"
+      use_when: "Cut a 30-second clip starting at 1 minute"
+    - invocation: "ffmpeg -i input.mp4 -vf scale=1280:720 -c:v libx264 -crf 23 output.mp4"
+      use_when: "Resize and re-encode video"
+    - invocation: "ffmpeg -i input.mp4 -vn -c:a mp3 output.mp3"
+      use_when: "Extract audio as MP3"
+
+output_schema:
+  enable_filter: true
+  noise_patterns:
+    - pattern: "^ffmpeg version"
+      reason: "Version banner"
+    - pattern: "^  (built with|configuration:|lib)"
+      reason: "Build info"
+    - pattern: "^(Input|Output) #"
+      reason: "Stream info (verbose but rarely needed in scripts)"
+    - pattern: "^frame=.*fps=.*time="
+      reason: "Progress line (updates in place)"
+  max_lines: 30
+  truncation_message: "... ffmpeg encoding in progress. Check output file on completion."

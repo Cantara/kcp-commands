@@ -1,0 +1,22 @@
+command: lazygit
+platform: all
+description: "Terminal UI for git — interactive staging, rebasing, and log navigation"
+
+syntax:
+  usage: "lazygit [flags]"
+  key_flags:
+    - flag: "(no args)"
+      description: "Open interactive git TUI in current repo"
+    - flag: "-p <path>"
+      description: "Open lazygit for a repository at the given path"
+    - flag: "-w <worktree>"
+      description: "Open lazygit for a specific worktree"
+    - flag: "--use-config-file <file>"
+      description: "Use a custom config file"
+
+  preferred_invocations:
+    - invocation: "lazygit"
+      use_when: "Interactive git operations (stage hunks, rebase, log)"
+
+output_schema:
+  enable_filter: false

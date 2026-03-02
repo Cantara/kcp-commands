@@ -1,0 +1,42 @@
+command: wrangler
+platform: all
+description: "Cloudflare Workers CLI — develop, test, and deploy Workers and Pages"
+
+syntax:
+  usage: "wrangler <subcommand> [flags]"
+  key_flags:
+    - flag: "dev"
+      description: "Start local development server"
+    - flag: "deploy"
+      description: "Deploy Worker to Cloudflare"
+    - flag: "publish"
+      description: "Alias for deploy (older versions)"
+    - flag: "tail"
+      description: "Stream live logs from a deployed Worker"
+    - flag: "secret put <name>"
+      description: "Add or update a secret"
+    - flag: "secret list"
+      description: "List secret names"
+    - flag: "kv:namespace list"
+      description: "List KV namespaces"
+    - flag: "kv:key put <key> <value>"
+      description: "Write a KV value"
+    - flag: "kv:key get <key>"
+      description: "Read a KV value"
+    - flag: "r2 bucket list"
+      description: "List R2 object storage buckets"
+    - flag: "pages deploy <dir>"
+      description: "Deploy a static site to Cloudflare Pages"
+    - flag: "login"
+      description: "Authenticate with Cloudflare"
+
+  preferred_invocations:
+    - invocation: "wrangler dev"
+      use_when: "Local development with live reload"
+    - invocation: "wrangler deploy"
+      use_when: "Deploy Worker to production"
+    - invocation: "wrangler tail"
+      use_when: "Stream live logs from deployed Worker"
+
+output_schema:
+  enable_filter: false

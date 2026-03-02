@@ -1,0 +1,40 @@
+command: argocd
+platform: all
+description: "Argo CD CLI — GitOps continuous delivery for Kubernetes"
+
+syntax:
+  usage: "argocd <subcommand> [flags]"
+  key_flags:
+    - flag: "app list"
+      description: "List all applications and their sync status"
+    - flag: "app get <name>"
+      description: "Show detailed status of an application"
+    - flag: "app sync <name>"
+      description: "Trigger a sync (deploy) of an application"
+    - flag: "app sync <name> --prune"
+      description: "Sync and remove resources no longer in Git"
+    - flag: "app diff <name>"
+      description: "Show diff between live and desired state"
+    - flag: "app history <name>"
+      description: "Show deployment history"
+    - flag: "app rollback <name> <revision>"
+      description: "Roll back to a previous revision"
+    - flag: "app set <name> --revision <branch>"
+      description: "Change tracked branch or tag"
+    - flag: "repo list"
+      description: "List registered Git repositories"
+    - flag: "cluster list"
+      description: "List registered Kubernetes clusters"
+    - flag: "login <server>"
+      description: "Log in to an Argo CD server"
+
+  preferred_invocations:
+    - invocation: "argocd app list"
+      use_when: "Check sync status of all apps"
+    - invocation: "argocd app sync <name>"
+      use_when: "Trigger a deployment"
+    - invocation: "argocd app diff <name>"
+      use_when: "Preview what a sync would change"
+
+output_schema:
+  enable_filter: false

@@ -1,0 +1,44 @@
+command: heroku
+platform: all
+description: "Heroku CLI — manage Heroku apps, dynos, addons, and config"
+
+syntax:
+  usage: "heroku <subcommand> [flags]"
+  key_flags:
+    - flag: "create <name>"
+      description: "Create a new Heroku app"
+    - flag: "apps"
+      description: "List your Heroku apps"
+    - flag: "logs --tail"
+      description: "Stream live application logs"
+    - flag: "logs -n <N>"
+      description: "Show last N log lines"
+    - flag: "ps"
+      description: "List running dynos"
+    - flag: "ps:scale web=<N>"
+      description: "Scale web dynos"
+    - flag: "config"
+      description: "Show all config vars (env)"
+    - flag: "config:set KEY=value"
+      description: "Set a config var"
+    - flag: "config:unset KEY"
+      description: "Remove a config var"
+    - flag: "run <cmd>"
+      description: "Run a one-off command in a dyno"
+    - flag: "addons"
+      description: "List addons for current app"
+    - flag: "releases"
+      description: "List recent deployments"
+    - flag: "-a <app>"
+      description: "Target a specific app (override git remote)"
+
+  preferred_invocations:
+    - invocation: "heroku logs --tail -a <app>"
+      use_when: "Stream live logs"
+    - invocation: "heroku config -a <app>"
+      use_when: "Inspect environment variables"
+    - invocation: "heroku run bash -a <app>"
+      use_when: "Open a shell in a one-off dyno"
+
+output_schema:
+  enable_filter: false

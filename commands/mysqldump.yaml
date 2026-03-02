@@ -1,0 +1,42 @@
+command: mysqldump
+platform: all
+description: "MySQL database backup — dump schema and data to SQL file"
+
+syntax:
+  usage: "mysqldump [options] <dbname> [tables ...]"
+  key_flags:
+    - flag: "-h <host>"
+      description: "Database host"
+    - flag: "-u <user>"
+      description: "Database user"
+    - flag: "-p"
+      description: "Prompt for password (do not pass password on command line)"
+    - flag: "<dbname>"
+      description: "Database to dump"
+    - flag: "--all-databases / -A"
+      description: "Dump all databases"
+    - flag: "--no-data / -d"
+      description: "Schema only (no data)"
+    - flag: "--no-create-info / -t"
+      description: "Data only (no CREATE TABLE)"
+    - flag: "--single-transaction"
+      description: "Consistent dump for InnoDB without locking tables"
+    - flag: "--routines / -R"
+      description: "Include stored procedures and functions"
+    - flag: "--triggers"
+      description: "Include triggers (default: on)"
+    - flag: "--compress"
+      description: "Compress data between client and server"
+    - flag: "--result-file <file>"
+      description: "Write to file instead of stdout"
+
+  preferred_invocations:
+    - invocation: "mysqldump -h <host> -u <user> -p --single-transaction <dbname> > backup.sql"
+      use_when: "Full consistent InnoDB backup"
+    - invocation: "mysqldump -u <user> -p --no-data <dbname> > schema.sql"
+      use_when: "Schema-only dump"
+    - invocation: "mysqldump -u <user> -p -A --single-transaction | gzip > all_dbs.sql.gz"
+      use_when: "Compressed full-server backup"
+
+output_schema:
+  enable_filter: false

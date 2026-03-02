@@ -1,0 +1,40 @@
+command: flux
+platform: all
+description: "Flux CLI — GitOps toolkit for Kubernetes continuous delivery"
+
+syntax:
+  usage: "flux <subcommand> [flags]"
+  key_flags:
+    - flag: "bootstrap github --owner <org> --repository <repo>"
+      description: "Install Flux and connect it to a GitHub repository"
+    - flag: "get all"
+      description: "Show status of all Flux resources"
+    - flag: "get kustomizations"
+      description: "List Kustomization sync status"
+    - flag: "get helmreleases"
+      description: "List Helm release status"
+    - flag: "get sources git"
+      description: "List Git source repositories"
+    - flag: "reconcile kustomization <name>"
+      description: "Trigger immediate reconciliation"
+    - flag: "reconcile source git <name>"
+      description: "Force a Git pull and reconcile"
+    - flag: "suspend kustomization <name>"
+      description: "Pause reconciliation for a resource"
+    - flag: "resume kustomization <name>"
+      description: "Resume reconciliation"
+    - flag: "logs"
+      description: "Stream Flux controller logs"
+    - flag: "check"
+      description: "Verify cluster meets Flux prerequisites"
+
+  preferred_invocations:
+    - invocation: "flux get all"
+      use_when: "Overall GitOps sync health check"
+    - invocation: "flux reconcile kustomization <name>"
+      use_when: "Force immediate sync without waiting"
+    - invocation: "flux logs --follow"
+      use_when: "Stream reconciliation logs for debugging"
+
+output_schema:
+  enable_filter: false

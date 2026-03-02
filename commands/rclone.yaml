@@ -1,0 +1,49 @@
+command: rclone
+platform: all
+description: "Cloud file sync and transfer — S3, GCS, Azure, GDrive, SFTP, and 70+ backends"
+
+syntax:
+  usage: "rclone <subcommand> [options] <source> <dest>"
+  key_flags:
+    - flag: "copy <src> <dst>"
+      description: "Copy files (skip identical, never delete)"
+    - flag: "sync <src> <dst>"
+      description: "Sync source to dest (deletes from dest what's not in src)"
+    - flag: "ls <remote:path>"
+      description: "List files with size and path"
+    - flag: "lsd <remote:>"
+      description: "List directories only"
+    - flag: "lsf <remote:path>"
+      description: "List files and dirs in a parseable format"
+    - flag: "mkdir <remote:path>"
+      description: "Create a directory/bucket"
+    - flag: "delete <remote:path>"
+      description: "Delete files at path"
+    - flag: "mount <remote:path> <mountpoint>"
+      description: "Mount remote as local filesystem (FUSE)"
+    - flag: "--dry-run / -n"
+      description: "Show what would be transferred without doing it"
+    - flag: "--progress / -P"
+      description: "Show transfer progress"
+    - flag: "--transfers <N>"
+      description: "Number of parallel file transfers"
+    - flag: "--include '<pattern>'"
+      description: "Include only matching files"
+    - flag: "--exclude '<pattern>'"
+      description: "Exclude matching files"
+
+  preferred_invocations:
+    - invocation: "rclone copy --progress <src> <remote:bucket/path>"
+      use_when: "Upload files to cloud with progress"
+    - invocation: "rclone sync --dry-run <src> <remote:path>"
+      use_when: "Preview what sync would change"
+    - invocation: "rclone ls <remote:path>"
+      use_when: "List remote files"
+
+output_schema:
+  enable_filter: true
+  noise_patterns:
+    - pattern: "^[0-9].*ETA"
+      reason: "Transfer progress lines"
+  max_lines: 50
+  truncation_message: "... {remaining} more rclone lines. Check for Transferred/Errors summary."

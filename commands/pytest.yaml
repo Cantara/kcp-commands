@@ -1,0 +1,53 @@
+command: pytest
+platform: all
+description: "Python test runner — discover and run tests with rich output"
+
+syntax:
+  usage: "pytest [options] [file_or_dir ...]"
+  key_flags:
+    - flag: "(no args)"
+      description: "Discover and run all tests from current directory"
+    - flag: "<path>"
+      description: "Run tests in specific file or directory"
+    - flag: "-v / --verbose"
+      description: "Verbose output — show each test name"
+    - flag: "-k '<expr>'"
+      description: "Run tests matching expression (e.g. 'test_login or test_auth')"
+    - flag: "-m '<marker>'"
+      description: "Run tests with matching marker"
+    - flag: "-x / --exitfirst"
+      description: "Stop after first failure"
+    - flag: "--tb=short"
+      description: "Shorter traceback format (short, long, no, line)"
+    - flag: "-s / --capture=no"
+      description: "Show stdout/print output"
+    - flag: "--lf / --last-failed"
+      description: "Run only tests that failed last time"
+    - flag: "-n <N>"
+      description: "Parallel test execution (requires pytest-xdist)"
+    - flag: "--cov=<pkg>"
+      description: "Coverage report for package (requires pytest-cov)"
+    - flag: "-q / --quiet"
+      description: "Less output"
+
+  preferred_invocations:
+    - invocation: "pytest"
+      use_when: "Run full test suite"
+    - invocation: "pytest -x --tb=short"
+      use_when: "Stop on first failure with compact tracebacks"
+    - invocation: "pytest -k '<test_name>'"
+      use_when: "Run a specific test or group by name"
+    - invocation: "pytest --lf -v"
+      use_when: "Re-run only the failures from last run"
+
+output_schema:
+  enable_filter: true
+  noise_patterns:
+    - pattern: "^platform "
+      reason: "Platform header line"
+    - pattern: "^cacheprovider"
+      reason: "Plugin info line"
+    - pattern: "^collecting \\.\\.\\..*"
+      reason: "Collection progress"
+  max_lines: 100
+  truncation_message: "... {remaining} more pytest lines. Look for PASSED/FAILED/ERROR summary."

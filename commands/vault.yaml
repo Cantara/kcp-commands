@@ -1,0 +1,40 @@
+command: vault
+platform: all
+description: "HashiCorp Vault — secrets management, encryption, and identity"
+
+syntax:
+  usage: "vault <subcommand> [flags]"
+  key_flags:
+    - flag: "kv get <path>"
+      description: "Read a secret from KV store"
+    - flag: "kv put <path> key=value"
+      description: "Write a secret to KV store"
+    - flag: "kv list <path>"
+      description: "List secrets at a path"
+    - flag: "kv delete <path>"
+      description: "Delete a secret"
+    - flag: "secrets list"
+      description: "List mounted secret engines"
+    - flag: "auth list"
+      description: "List enabled authentication methods"
+    - flag: "login -method=<method>"
+      description: "Authenticate (token, userpass, ldap, aws, etc.)"
+    - flag: "token lookup"
+      description: "Show current token details and policies"
+    - flag: "policy list"
+      description: "List all policies"
+    - flag: "policy read <name>"
+      description: "Read a specific policy"
+    - flag: "status"
+      description: "Show Vault server status (sealed, initialized)"
+
+  preferred_invocations:
+    - invocation: "vault kv get secret/<path>"
+      use_when: "Read a secret from the KV engine"
+    - invocation: "vault kv put secret/<path> key=value"
+      use_when: "Write or update a secret"
+    - invocation: "vault status"
+      use_when: "Check if Vault is unsealed and reachable"
+
+output_schema:
+  enable_filter: false

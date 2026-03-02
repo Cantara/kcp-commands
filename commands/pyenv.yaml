@@ -1,0 +1,36 @@
+command: pyenv
+platform: all
+description: "Python version manager — install and switch between Python versions"
+
+syntax:
+  usage: "pyenv <subcommand> [version]"
+  key_flags:
+    - flag: "install <version>"
+      description: "Install a Python version (e.g. 3.12.0)"
+    - flag: "install --list"
+      description: "List all available Python versions to install"
+    - flag: "global <version>"
+      description: "Set system-wide default Python version"
+    - flag: "local <version>"
+      description: "Set version for current directory (.python-version)"
+    - flag: "shell <version>"
+      description: "Set version for current shell session only"
+    - flag: "versions"
+      description: "List all installed Python versions"
+    - flag: "version"
+      description: "Show current active Python version and its origin"
+    - flag: "which python"
+      description: "Show path to active Python binary"
+    - flag: "rehash"
+      description: "Refresh shims after installing packages with new binaries"
+
+  preferred_invocations:
+    - invocation: "pyenv install 3.12.0 && pyenv global 3.12.0"
+      use_when: "Install and set a Python version globally"
+    - invocation: "pyenv local 3.11.0"
+      use_when: "Pin Python version for current project"
+    - invocation: "pyenv versions"
+      use_when: "See all installed Python versions"
+
+output_schema:
+  enable_filter: false

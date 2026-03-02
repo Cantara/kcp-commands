@@ -1,0 +1,40 @@
+command: vercel
+platform: all
+description: "Vercel CLI — deploy frontends and serverless functions to Vercel"
+
+syntax:
+  usage: "vercel [subcommand] [flags]"
+  key_flags:
+    - flag: "(no args)"
+      description: "Deploy current directory to a preview URL"
+    - flag: "--prod"
+      description: "Deploy to production"
+    - flag: "dev"
+      description: "Start local development server mirroring Vercel environment"
+    - flag: "env list"
+      description: "List environment variables"
+    - flag: "env add <name>"
+      description: "Add an environment variable"
+    - flag: "env pull"
+      description: "Pull environment variables to local .env file"
+    - flag: "logs <url>"
+      description: "Stream logs for a deployment"
+    - flag: "ls"
+      description: "List recent deployments"
+    - flag: "domains list"
+      description: "List domains on the project"
+    - flag: "link"
+      description: "Link current directory to an existing Vercel project"
+    - flag: "pull"
+      description: "Pull project settings and env vars from Vercel"
+
+  preferred_invocations:
+    - invocation: "vercel --prod"
+      use_when: "Deploy to production"
+    - invocation: "vercel dev"
+      use_when: "Local dev with Vercel edge runtime"
+    - invocation: "vercel env pull .env.local"
+      use_when: "Sync remote env vars to local dev"
+
+output_schema:
+  enable_filter: false

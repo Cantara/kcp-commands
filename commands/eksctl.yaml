@@ -1,0 +1,45 @@
+command: eksctl
+platform: all
+description: "AWS EKS cluster manager — create, manage, and delete EKS Kubernetes clusters"
+
+syntax:
+  usage: "eksctl <subcommand> [flags]"
+  key_flags:
+    - flag: "create cluster --name <name> --region <region>"
+      description: "Create a new EKS cluster"
+    - flag: "create cluster -f <config.yaml>"
+      description: "Create cluster from config file"
+    - flag: "get cluster"
+      description: "List EKS clusters"
+    - flag: "get cluster --name <name>"
+      description: "Get details for a specific cluster"
+    - flag: "delete cluster --name <name>"
+      description: "Delete a cluster"
+    - flag: "create nodegroup --cluster <name>"
+      description: "Add a node group to an existing cluster"
+    - flag: "get nodegroup --cluster <name>"
+      description: "List node groups"
+    - flag: "scale nodegroup --cluster <name> --name <ng> --nodes <N>"
+      description: "Scale a node group"
+    - flag: "utils write-kubeconfig --cluster <name>"
+      description: "Update kubeconfig to access the cluster"
+    - flag: "upgrade cluster --name <name>"
+      description: "Upgrade cluster Kubernetes version"
+
+  preferred_invocations:
+    - invocation: "eksctl create cluster --name <name> --region <region> --nodes 3"
+      use_when: "Provision a new EKS cluster"
+    - invocation: "eksctl utils write-kubeconfig --cluster <name>"
+      use_when: "Configure kubectl for the cluster"
+    - invocation: "eksctl get cluster"
+      use_when: "List all EKS clusters in current region"
+
+output_schema:
+  enable_filter: true
+  noise_patterns:
+    - pattern: "^\\[ℹ\\]"
+      reason: "Info log lines (verbose eksctl output)"
+    - pattern: "^\\[!\\]"
+      reason: "Warning log lines"
+  max_lines: 50
+  truncation_message: "... {remaining} more eksctl lines. Check for cluster status."

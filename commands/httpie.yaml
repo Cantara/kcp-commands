@@ -1,0 +1,40 @@
+command: http
+platform: all
+description: "HTTPie — human-friendly HTTP client, curl alternative with JSON support"
+
+syntax:
+  usage: "http [options] METHOD URL [item ...]"
+  key_flags:
+    - flag: "GET <url>"
+      description: "HTTP GET request"
+    - flag: "POST <url> key=value"
+      description: "POST with JSON body (key=value pairs auto-serialized)"
+    - flag: "POST <url> key==value"
+      description: "POST with query parameter (== for params, = for body)"
+    - flag: "-v / --verbose"
+      description: "Show full request and response including headers"
+    - flag: "-h / --headers"
+      description: "Print only response headers"
+    - flag: "-b / --body"
+      description: "Print only response body"
+    - flag: "--auth user:pass"
+      description: "HTTP Basic authentication"
+    - flag: "Authorization:'Bearer <token>'"
+      description: "Add a custom header (Header:Value syntax)"
+    - flag: "--download / -d"
+      description: "Download file (like wget)"
+    - flag: "--follow"
+      description: "Follow redirects"
+    - flag: "--timeout <sec>"
+      description: "Request timeout in seconds"
+
+  preferred_invocations:
+    - invocation: "http GET <url>"
+      use_when: "Simple GET with pretty-printed JSON response"
+    - invocation: "http POST <url> key=value key2=value2"
+      use_when: "POST a JSON object"
+    - invocation: "http -v POST <url> Authorization:'Bearer <token>' key=value"
+      use_when: "Authenticated POST showing full request/response"
+
+output_schema:
+  enable_filter: false
