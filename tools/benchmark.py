@@ -18,7 +18,7 @@ import sys
 import time
 from pathlib import Path
 
-SCRIPT_DIR = Path(__file__).parent
+SCRIPT_DIR = Path(__file__).parent.parent  # repo root
 
 # ── Inputs ────────────────────────────────────────────────────────────────────
 

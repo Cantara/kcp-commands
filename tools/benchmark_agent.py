@@ -32,7 +32,7 @@ import time
 from dataclasses import dataclass
 from pathlib import Path
 
-SCRIPT_DIR = Path(__file__).parent
+SCRIPT_DIR = Path(__file__).parent.parent  # repo root
 TOKENS_PER_CHAR = 0.25  # 1 token ≈ 4 chars
 
 # ── Data classes ──────────────────────────────────────────────────────────────
