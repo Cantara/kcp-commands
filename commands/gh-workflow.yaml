@@ -1,0 +1,33 @@
+command: gh
+subcommand: workflow
+platform: all
+description: "GitHub CLI — manage GitHub Actions workflows"
+
+syntax:
+  usage: "gh workflow <subcommand> [flags]"
+  key_flags:
+    - flag: "list"
+      description: "List workflows in the repository"
+    - flag: "view <name>"
+      description: "View a workflow"
+    - flag: "run <name>"
+      description: "Trigger a workflow run"
+    - flag: "run <name> --ref <branch>"
+      description: "Trigger workflow on a specific branch"
+    - flag: "enable <name>"
+      description: "Enable a disabled workflow"
+    - flag: "disable <name>"
+      description: "Disable a workflow"
+
+  preferred_invocations:
+    - invocation: "gh workflow list"
+      use_when: "See available workflows"
+    - invocation: "gh run list --workflow=<name>"
+      use_when: "See recent runs of a workflow"
+    - invocation: "gh run view <run-id>"
+      use_when: "View a specific run's details and logs"
+    - invocation: "gh workflow run <name>"
+      use_when: "Manually trigger a workflow"
+
+output_schema:
+  enable_filter: false

@@ -1,0 +1,50 @@
+command: yarn
+platform: all
+description: "Fast, reliable JavaScript package manager (alternative to npm)"
+
+syntax:
+  usage: "yarn [command] [flags]"
+  key_flags:
+    - flag: "(no args)"
+      description: "Install all dependencies from yarn.lock"
+      use_when: "After clone or when node_modules is missing"
+    - flag: "add <pkg>"
+      description: "Add a dependency"
+    - flag: "add -D <pkg>"
+      description: "Add as dev dependency"
+    - flag: "remove <pkg>"
+      description: "Remove a package"
+    - flag: "upgrade <pkg>"
+      description: "Upgrade a specific package"
+    - flag: "run <script>"
+      description: "Run a package.json script"
+    - flag: "test"
+      description: "Run the test script"
+    - flag: "build"
+      description: "Run the build script"
+    - flag: "list --depth=0"
+      description: "List top-level dependencies"
+
+  preferred_invocations:
+    - invocation: "yarn"
+      use_when: "Install dependencies"
+    - invocation: "yarn add <pkg>"
+      use_when: "Add a new package"
+    - invocation: "yarn run build"
+      use_when: "Build the project"
+    - invocation: "yarn test"
+      use_when: "Run tests"
+
+output_schema:
+  enable_filter: true
+  noise_patterns:
+    - pattern: "^yarn install v"
+      reason: "Version header"
+    - pattern: "^\\[\\d+/\\d+\\]"
+      reason: "Step progress indicators"
+    - pattern: "^info "
+      reason: "Informational messages"
+    - pattern: "^success "
+      reason: "Success messages — visible at end"
+  max_lines: 50
+  truncation_message: "... {remaining} more yarn lines."

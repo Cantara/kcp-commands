@@ -1,0 +1,28 @@
+command: free
+platform: linux
+description: "Display memory usage — total, used, free, and available RAM and swap"
+
+syntax:
+  usage: "free [options]"
+  key_flags:
+    - flag: "-h"
+      description: "Human-readable sizes (K, M, G)"
+      use_when: "Default — always use for readability"
+    - flag: "-m"
+      description: "Show in megabytes"
+    - flag: "-g"
+      description: "Show in gigabytes"
+    - flag: "-s <N>"
+      description: "Repeat every N seconds"
+      use_when: "Watch memory usage over time"
+    - flag: "-c <N>"
+      description: "Repeat N times then stop"
+
+  preferred_invocations:
+    - invocation: "free -h"
+      use_when: "Check current memory usage"
+    - invocation: "free -h -s 2"
+      use_when: "Watch memory usage every 2 seconds"
+
+output_schema:
+  enable_filter: false

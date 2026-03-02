@@ -1,0 +1,37 @@
+command: diff
+platform: all
+description: "Compare files line by line and show differences"
+
+syntax:
+  usage: "diff [options] file1 file2"
+  key_flags:
+    - flag: "-u"
+      description: "Unified diff format (±lines with context)"
+      use_when: "Default — produces patch-compatible output"
+    - flag: "-u -N"
+      description: "N lines of context around each change (default 3)"
+    - flag: "-r"
+      description: "Recursively compare directories"
+    - flag: "--color"
+      description: "Colorize output (GNU diff)"
+    - flag: "-i"
+      description: "Ignore case differences"
+    - flag: "-w"
+      description: "Ignore all whitespace"
+    - flag: "-b"
+      description: "Ignore changes in whitespace amount"
+    - flag: "-q"
+      description: "Only report whether files differ, not how"
+    - flag: "--stat"
+      description: "Show a brief change summary (git-diff-style)"
+
+  preferred_invocations:
+    - invocation: "diff -u file1 file2"
+      use_when: "Compare two files with context"
+    - invocation: "diff -ur dir1/ dir2/"
+      use_when: "Compare two directories recursively"
+    - invocation: "diff -u original modified > changes.patch"
+      use_when: "Create a patch file"
+
+output_schema:
+  enable_filter: false

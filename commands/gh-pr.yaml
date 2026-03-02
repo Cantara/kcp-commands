@@ -1,0 +1,48 @@
+command: gh
+subcommand: pr
+platform: all
+description: "GitHub CLI — manage pull requests"
+
+syntax:
+  usage: "gh pr <subcommand> [flags]"
+  key_flags:
+    - flag: "list"
+      description: "List open pull requests"
+    - flag: "list --author @me"
+      description: "My open PRs"
+    - flag: "list --state all"
+      description: "All PRs including closed/merged"
+    - flag: "view <number>"
+      description: "View PR details"
+    - flag: "view <number> --web"
+      description: "Open PR in browser"
+    - flag: "create"
+      description: "Create a new pull request (interactive)"
+    - flag: "create --title '...' --body '...'"
+      description: "Create PR non-interactively"
+    - flag: "checkout <number>"
+      description: "Check out a PR branch locally"
+    - flag: "merge <number>"
+      description: "Merge a PR"
+    - flag: "close <number>"
+      description: "Close a PR without merging"
+    - flag: "review <number> --approve"
+      description: "Approve a PR"
+    - flag: "status"
+      description: "Show status of PRs relevant to you"
+
+  preferred_invocations:
+    - invocation: "gh pr list"
+      use_when: "See open pull requests"
+    - invocation: "gh pr create --title '...' --body '...'"
+      use_when: "Open a PR from current branch"
+    - invocation: "gh pr checkout <number>"
+      use_when: "Review a PR locally"
+    - invocation: "gh pr status"
+      use_when: "Check your PR review queue"
+
+output_schema:
+  enable_filter: true
+  noise_patterns: []
+  max_lines: 50
+  truncation_message: "... {remaining} more PRs."

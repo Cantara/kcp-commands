@@ -1,0 +1,37 @@
+command: gh
+subcommand: repo
+platform: all
+description: "GitHub CLI — manage repositories"
+
+syntax:
+  usage: "gh repo <subcommand> [flags]"
+  key_flags:
+    - flag: "view"
+      description: "View the current repository"
+    - flag: "view <owner/repo>"
+      description: "View a specific repository"
+    - flag: "view --web"
+      description: "Open repository in browser"
+    - flag: "clone <owner/repo>"
+      description: "Clone a repository"
+    - flag: "create <name>"
+      description: "Create a new repository"
+    - flag: "list"
+      description: "List your repositories"
+    - flag: "list --org <org>"
+      description: "List repositories in an organization"
+    - flag: "fork"
+      description: "Fork the current repository"
+    - flag: "sync"
+      description: "Sync fork with upstream"
+
+  preferred_invocations:
+    - invocation: "gh repo view --web"
+      use_when: "Open the current repo in browser"
+    - invocation: "gh repo clone <owner/repo>"
+      use_when: "Clone a GitHub repo"
+    - invocation: "gh repo list --org <org>"
+      use_when: "List all repos in an organization"
+
+output_schema:
+  enable_filter: false

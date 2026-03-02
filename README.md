@@ -6,7 +6,7 @@ kcp-commands is a [Claude Code hook](https://docs.anthropic.com/en/docs/claude-c
 
 Measured across a typical agentic coding session: **67,352 tokens saved -- 33.7% of a 200K context window recovered**, equivalent to 33 additional tool call results fitting in the same context.
 
-Part of the [Knowledge Context Protocol](https://cantara.github.io/knowledge-context-protocol/) ecosystem.
+114 bundled manifests. Part of the [Knowledge Context Protocol](https://cantara.github.io/knowledge-context-protocol/) ecosystem.
 Read the [release post](https://wiki.totto.org/blog/2026/03/02/kcp-commands/) for the full benchmark methodology and design rationale.
 
 ---
@@ -91,17 +91,27 @@ Full methodology and raw numbers: [docs/benchmark-results.md](docs/benchmark-res
 
 ## Supported commands
 
-### Bundled manifests (62 primed)
+### Bundled manifests (114 primed)
 
-**Git** — `git log` · `git diff` · `git status` · `git add` · `git commit` · `git push` · `git pull` · `git fetch` · `git branch` · `git checkout` · `git stash` · `git merge` · `git rebase` · `git clone` · `git reset` · `git tag` · `git remote` · `git show`
+**Git** — `git log` · `git diff` · `git status` · `git add` · `git commit` · `git push` · `git pull` · `git fetch` · `git branch` · `git checkout` · `git stash` · `git merge` · `git rebase` · `git clone` · `git reset` · `git tag` · `git remote` · `git show` · `git cherry-pick` · `git bisect` · `git worktree` · `git submodule`
 
-**Linux / macOS** — `ls` · `ps` · `find` · `cp` · `mv` · `rm` · `mkdir` · `cat` · `head` · `tail` · `grep` · `chmod` · `df` · `du` · `tar` · `ln` · `rsync` · `top` · `kill` · `systemctl` · `journalctl` · `lsof` · `netstat` · `ss` · `ping`
+**Linux / macOS** — `ls` · `ps` · `find` · `cp` · `mv` · `rm` · `mkdir` · `cat` · `head` · `tail` · `grep` · `chmod` · `df` · `du` · `tar` · `ln` · `rsync` · `top` · `kill` · `systemctl` · `journalctl` · `lsof` · `netstat` · `ss` · `ping` · `free` · `watch` · `wget` · `dig` · `openssl` · `scp`
 
-**Cross-platform** — `curl` · `npm` · `node` · `ssh` · `docker ps` · `docker images` · `docker logs` · `kubectl get` · `kubectl logs` · `kubectl describe`
+**Text processing** — `jq` · `sed` · `awk` · `sort` · `uniq` · `wc` · `cut` · `xargs` · `tee` · `tr` · `diff` · `make`
+
+**Build tools** — `mvn` · `gradle` · `cargo` · `go build` · `go test` · `go mod`
+
+**Package managers** — `npm` · `yarn` · `pnpm` · `bun` · `pip` · `brew` · `apt` · `yum`
+
+**GitHub CLI** — `gh pr` · `gh issue` · `gh repo` · `gh workflow`
+
+**Cross-platform** — `curl` · `node` · `ssh` · `docker ps` · `docker images` · `docker logs` · `docker build` · `docker run` · `docker exec` · `docker compose` · `kubectl get` · `kubectl logs` · `kubectl describe` · `kubectl apply` · `kubectl exec` · `kubectl port-forward` · `kubectl delete`
+
+**Cloud / IaC** — `aws` · `gcloud` · `az` · `terraform` · `helm`
 
 **Windows** — `dir` · `tasklist` · `taskkill` · `ipconfig` · `netstat` · `where` · `robocopy` · `type` · `xcopy` (all include PowerShell equivalents)
 
-Phase B output filtering is enabled on the high-noise commands: `ps`, `find`, `top`, `df`, `du`, `grep`, `journalctl`, `systemctl`, `lsof`, `netstat`, `ss`, `rsync`, `npm`, `docker ps`, `docker images`, `docker logs`, `kubectl get`, `kubectl logs`, `kubectl describe`, `dir`, `tasklist`.
+Phase B output filtering is enabled on the high-noise commands: `ps`, `find`, `top`, `df`, `du`, `grep`, `journalctl`, `systemctl`, `lsof`, `netstat`, `ss`, `rsync`, `npm`, `yarn`, `pnpm`, `pip`, `brew`, `apt`, `yum`, `mvn`, `gradle`, `cargo`, `go test`, `make`, `docker ps`, `docker images`, `docker logs`, `docker build`, `docker compose`, `kubectl get`, `kubectl logs`, `kubectl describe`, `aws`, `gcloud`, `az`, `terraform`, `dig`, `openssl`, `dir`, `tasklist`.
 
 ### Auto-generated manifests
 

@@ -1,0 +1,30 @@
+command: docker
+subcommand: exec
+platform: all
+description: "Execute a command inside a running container"
+
+syntax:
+  usage: "docker exec [OPTIONS] CONTAINER COMMAND"
+  key_flags:
+    - flag: "-it <container> /bin/sh"
+      description: "Open interactive shell in container"
+      use_when: "Debug — most common use"
+    - flag: "-it <container> /bin/bash"
+      description: "Open bash shell (if available)"
+    - flag: "-e <KEY=value>"
+      description: "Set environment variable for this command"
+    - flag: "-u <user>"
+      description: "Run as a specific user"
+    - flag: "-w <dir>"
+      description: "Set working directory inside container"
+
+  preferred_invocations:
+    - invocation: "docker exec -it <container> /bin/sh"
+      use_when: "Get a shell inside a running container"
+    - invocation: "docker exec <container> <cmd>"
+      use_when: "Run a one-off command in a running container"
+    - invocation: "docker exec <container> env"
+      use_when: "Inspect environment variables in the container"
+
+output_schema:
+  enable_filter: false

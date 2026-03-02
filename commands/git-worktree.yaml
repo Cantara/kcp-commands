@@ -1,0 +1,32 @@
+command: git
+subcommand: worktree
+platform: all
+description: "Manage multiple working trees from a single repository"
+
+syntax:
+  usage: "git worktree <subcommand> [options]"
+  key_flags:
+    - flag: "add <path> <branch>"
+      description: "Create a new worktree at path, checking out branch"
+      use_when: "Work on two branches simultaneously without stashing"
+    - flag: "add <path> -b <new-branch>"
+      description: "Create worktree with a new branch"
+    - flag: "list"
+      description: "List all worktrees"
+    - flag: "remove <path>"
+      description: "Remove a worktree (branch is not deleted)"
+    - flag: "prune"
+      description: "Remove stale worktree entries"
+
+  preferred_invocations:
+    - invocation: "git worktree add ../feature-branch feature/my-feature"
+      use_when: "Work on a feature branch in a separate directory"
+    - invocation: "git worktree add ../hotfix -b hotfix/urgent-fix"
+      use_when: "Create a hotfix worktree without disturbing current work"
+    - invocation: "git worktree list"
+      use_when: "See all active worktrees"
+    - invocation: "git worktree remove ../feature-branch"
+      use_when: "Clean up when done"
+
+output_schema:
+  enable_filter: false

@@ -1,0 +1,37 @@
+command: git
+subcommand: cherry-pick
+platform: all
+description: "Apply commits from one branch onto another"
+
+syntax:
+  usage: "git cherry-pick [options] <commit>..."
+  key_flags:
+    - flag: "<commit-hash>"
+      description: "Apply a single commit to current branch"
+    - flag: "<hash1>..<hash2>"
+      description: "Apply a range of commits"
+    - flag: "-n"
+      description: "Stage changes without committing"
+      use_when: "Combine multiple cherry-picks into one commit"
+    - flag: "--no-commit"
+      description: "Alias for -n"
+    - flag: "-x"
+      description: "Append original commit hash to message"
+      use_when: "Tracking origin for backports"
+    - flag: "--continue"
+      description: "Continue after resolving conflicts"
+    - flag: "--abort"
+      description: "Abort and return to original state"
+    - flag: "--skip"
+      description: "Skip the current conflicted commit"
+
+  preferred_invocations:
+    - invocation: "git cherry-pick <hash>"
+      use_when: "Apply a specific fix commit to current branch"
+    - invocation: "git cherry-pick <hash1>^..<hash2>"
+      use_when: "Apply a range of commits"
+    - invocation: "git cherry-pick -n <hash>"
+      use_when: "Stage the changes without committing"
+
+output_schema:
+  enable_filter: false

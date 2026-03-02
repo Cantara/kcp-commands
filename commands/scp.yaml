@@ -1,0 +1,32 @@
+command: scp
+platform: all
+description: "Securely copy files between hosts over SSH"
+
+syntax:
+  usage: "scp [options] source destination"
+  key_flags:
+    - flag: "<file> user@host:/path"
+      description: "Copy local file to remote host"
+    - flag: "user@host:/path <local>"
+      description: "Copy remote file to local"
+    - flag: "-r <dir> user@host:/path"
+      description: "Copy directory recursively"
+    - flag: "-i <keyfile>"
+      description: "Use a specific SSH identity file"
+    - flag: "-P <port>"
+      description: "Connect on a non-standard SSH port"
+    - flag: "-p"
+      description: "Preserve file timestamps and permissions"
+    - flag: "-q"
+      description: "Quiet mode — suppress progress"
+
+  preferred_invocations:
+    - invocation: "scp file.tar.gz user@server:/tmp/"
+      use_when: "Upload a file to a server"
+    - invocation: "scp -r ./dist user@server:/var/www/app"
+      use_when: "Deploy a build directory"
+    - invocation: "scp -i ~/.ssh/key.pem user@server:/etc/config ./config-backup"
+      use_when: "Download a config file with a specific key"
+
+output_schema:
+  enable_filter: false

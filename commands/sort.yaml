@@ -1,0 +1,37 @@
+command: sort
+platform: all
+description: "Sort lines of text — alphabetically, numerically, or by field"
+
+syntax:
+  usage: "sort [options] [file...]"
+  key_flags:
+    - flag: "-n"
+      description: "Numeric sort (treats fields as numbers)"
+      use_when: "Sorting numbers — prevents lexicographic ordering"
+    - flag: "-r"
+      description: "Reverse order (descending)"
+    - flag: "-k <N>"
+      description: "Sort by Nth field"
+    - flag: "-k <N> -n"
+      description: "Sort by Nth field numerically"
+    - flag: "-t <sep>"
+      description: "Use sep as field delimiter"
+      use_when: "Parsing CSV or colon-separated input"
+    - flag: "-u"
+      description: "Output unique lines only (deduplicate)"
+    - flag: "-h"
+      description: "Human-readable size sort (1K < 10M < 2G)"
+      use_when: "Sorting du / df output"
+
+  preferred_invocations:
+    - invocation: "sort -n file"
+      use_when: "Sort numerically ascending"
+    - invocation: "sort -rn file"
+      use_when: "Sort numerically descending (largest first)"
+    - invocation: "du -sh * | sort -h"
+      use_when: "Sort directories by size"
+    - invocation: "sort -t: -k3 -n /etc/passwd"
+      use_when: "Sort passwd by UID"
+
+output_schema:
+  enable_filter: false

@@ -1,0 +1,65 @@
+command: mvn
+platform: all
+description: "Apache Maven build tool — build, test, package, and manage Java projects"
+
+syntax:
+  usage: "mvn [options] [<goal(s)>]"
+  key_flags:
+    - flag: "test"
+      description: "Compile and run tests"
+      use_when: "Verify the build after changes"
+    - flag: "package"
+      description: "Compile, test, and package into JAR/WAR"
+    - flag: "install"
+      description: "Package and install to local ~/.m2 repository"
+      use_when: "Make artifact available to other local projects"
+    - flag: "clean"
+      description: "Delete target/ directory"
+    - flag: "clean package"
+      description: "Clean then package (most common full build)"
+    - flag: "-pl <module>"
+      description: "Build only a specific module"
+      use_when: "Working in a multi-module project"
+    - flag: "-am"
+      description: "Also build modules the target depends on"
+    - flag: "-DskipTests"
+      description: "Skip test execution (still compiles tests)"
+      use_when: "Fast build when tests are known good"
+    - flag: "-T 4"
+      description: "Parallel build with 4 threads"
+    - flag: "-q"
+      description: "Quiet — only errors"
+
+  preferred_invocations:
+    - invocation: "mvn test"
+      use_when: "Run all tests"
+    - invocation: "mvn clean package -DskipTests"
+      use_when: "Fast build — produce JAR without running tests"
+    - invocation: "mvn test -pl <module>"
+      use_when: "Test a single module"
+    - invocation: "mvn clean install"
+      use_when: "Full build and install to local repo"
+
+output_schema:
+  enable_filter: true
+  noise_patterns:
+    - pattern: "^\\[INFO\\] Scanning for projects"
+      reason: "Boilerplate startup"
+    - pattern: "^\\[INFO\\] -+$"
+      reason: "Separator lines"
+    - pattern: "^\\[INFO\\] Building jar"
+      reason: "Packaging progress"
+    - pattern: "^\\[INFO\\] --- "
+      reason: "Plugin execution headers"
+    - pattern: "^\\[INFO\\]\\s*$"
+      reason: "Blank INFO lines"
+    - pattern: "^\\[INFO\\] BUILD"
+      reason: "Keep — but handled by truncation_message hint"
+    - pattern: "^Downloading from "
+      reason: "Dependency download progress"
+    - pattern: "^Downloaded from "
+      reason: "Dependency download completion"
+    - pattern: "^Progress"
+      reason: "Download progress indicators"
+  max_lines: 80
+  truncation_message: "... {remaining} more Maven lines. Check for BUILD SUCCESS/FAILURE at the end."

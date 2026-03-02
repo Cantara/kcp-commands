@@ -1,0 +1,55 @@
+command: brew
+platform: macos
+description: "Homebrew package manager for macOS and Linux"
+
+syntax:
+  usage: "brew <command> [options] [formula|cask]"
+  key_flags:
+    - flag: "install <formula>"
+      description: "Install a package"
+    - flag: "install --cask <app>"
+      description: "Install a macOS GUI application"
+    - flag: "uninstall <formula>"
+      description: "Remove a package"
+    - flag: "update"
+      description: "Fetch latest package index"
+    - flag: "upgrade"
+      description: "Upgrade all outdated packages"
+    - flag: "upgrade <formula>"
+      description: "Upgrade a specific package"
+    - flag: "list"
+      description: "List installed formulae"
+    - flag: "list --cask"
+      description: "List installed casks"
+    - flag: "info <formula>"
+      description: "Show package details and dependencies"
+    - flag: "search <query>"
+      description: "Search for a formula or cask"
+    - flag: "doctor"
+      description: "Check system for issues"
+    - flag: "outdated"
+      description: "List packages with updates available"
+
+  preferred_invocations:
+    - invocation: "brew install <formula>"
+      use_when: "Install a CLI tool"
+    - invocation: "brew update && brew upgrade"
+      use_when: "Update all packages"
+    - invocation: "brew list"
+      use_when: "See what's installed"
+    - invocation: "brew outdated"
+      use_when: "Check what needs upgrading"
+
+output_schema:
+  enable_filter: true
+  noise_patterns:
+    - pattern: "^==> Downloading"
+      reason: "Download progress headers"
+    - pattern: "^Already downloaded"
+      reason: "Cache hit messages"
+    - pattern: "^==> Installing dependencies"
+      reason: "Dependency installation header"
+    - pattern: "^==> Pouring"
+      reason: "Bottle installation steps"
+  max_lines: 50
+  truncation_message: "... {remaining} more brew lines."

@@ -1,0 +1,51 @@
+command: pnpm
+platform: all
+description: "Performant Node.js package manager — fast, disk-efficient alternative to npm"
+
+syntax:
+  usage: "pnpm <command> [options]"
+  key_flags:
+    - flag: "install"
+      description: "Install all dependencies"
+      use_when: "After clone or when node_modules is missing"
+    - flag: "add <pkg>"
+      description: "Add a dependency"
+    - flag: "add -D <pkg>"
+      description: "Add as dev dependency"
+    - flag: "remove <pkg>"
+      description: "Remove a package"
+    - flag: "update"
+      description: "Update packages to latest compatible versions"
+    - flag: "run <script>"
+      description: "Run a package.json script"
+    - flag: "test"
+      description: "Run the test script"
+    - flag: "build"
+      description: "Run the build script"
+    - flag: "list --depth=0"
+      description: "List top-level packages"
+    - flag: "-r <command>"
+      description: "Run command in all workspace packages"
+      use_when: "Monorepo — run across all packages"
+
+  preferred_invocations:
+    - invocation: "pnpm install"
+      use_when: "Install dependencies"
+    - invocation: "pnpm add <pkg>"
+      use_when: "Add a package"
+    - invocation: "pnpm run build"
+      use_when: "Build the project"
+    - invocation: "pnpm -r run test"
+      use_when: "Test all workspace packages"
+
+output_schema:
+  enable_filter: true
+  noise_patterns:
+    - pattern: "^Packages: "
+      reason: "Package count summary"
+    - pattern: "^Progress:"
+      reason: "Download progress"
+    - pattern: "^\\.\\.\\."
+      reason: "Continuation indicators"
+  max_lines: 50
+  truncation_message: "... {remaining} more pnpm lines."

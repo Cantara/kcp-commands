@@ -1,0 +1,41 @@
+command: sed
+platform: all
+description: "Stream editor — find-and-replace, delete, or transform text line by line"
+
+syntax:
+  usage: "sed [options] 'script' [file...]"
+  key_flags:
+    - flag: "'s/pattern/replacement/'"
+      description: "Substitute first match per line"
+      use_when: "Replace text in a stream or file"
+    - flag: "'s/pattern/replacement/g'"
+      description: "Substitute all matches per line (global)"
+    - flag: "-i 's/old/new/g' file"
+      description: "Edit file in-place"
+      use_when: "Modify a file directly"
+    - flag: "-i.bak 's/old/new/g' file"
+      description: "In-place edit with .bak backup"
+      use_when: "Safe in-place edit"
+    - flag: "-n 'p'"
+      description: "Print only matching lines (suppress default)"
+    - flag: "'/pattern/d'"
+      description: "Delete lines matching pattern"
+      use_when: "Strip noise from output"
+    - flag: "-E"
+      description: "Use extended regex (ERE) — enables + ? | ( )"
+      use_when: "Complex patterns"
+    - flag: "'NUMq'"
+      description: "Quit after N lines"
+
+  preferred_invocations:
+    - invocation: "sed 's/old/new/g' file"
+      use_when: "Replace text globally in a file"
+    - invocation: "sed -i 's/old/new/g' file"
+      use_when: "Modify file in-place"
+    - invocation: "cat file | sed '/^#/d' | sed '/^$/d'"
+      use_when: "Strip comments and blank lines"
+    - invocation: "sed -n '10,20p' file"
+      use_when: "Print lines 10-20"
+
+output_schema:
+  enable_filter: false

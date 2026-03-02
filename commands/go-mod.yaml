@@ -1,0 +1,33 @@
+command: go
+subcommand: mod
+platform: all
+description: "Go module management — add, update, and tidy dependencies"
+
+syntax:
+  usage: "go mod <command> [arguments]"
+  key_flags:
+    - flag: "tidy"
+      description: "Add missing and remove unused dependencies"
+      use_when: "After adding/removing imports — keep go.sum in sync"
+    - flag: "download"
+      description: "Download modules to local cache"
+    - flag: "verify"
+      description: "Verify module checksums against go.sum"
+    - flag: "graph"
+      description: "Print module dependency graph"
+    - flag: "why <package>"
+      description: "Explain why a package is needed"
+    - flag: "edit -replace=old=new"
+      description: "Replace a dependency with a local path"
+      use_when: "Local development with a modified dependency"
+
+  preferred_invocations:
+    - invocation: "go mod tidy"
+      use_when: "Clean up go.mod and go.sum after dependency changes"
+    - invocation: "go mod download"
+      use_when: "Pre-download all dependencies"
+    - invocation: "go get <module>@<version>"
+      use_when: "Add or update a specific dependency"
+
+output_schema:
+  enable_filter: false

@@ -1,0 +1,33 @@
+command: kubectl
+subcommand: delete
+platform: all
+description: "Delete Kubernetes resources by name, label, or manifest file"
+
+syntax:
+  usage: "kubectl delete [TYPE/NAME | -f file | -l label] [flags]"
+  key_flags:
+    - flag: "<type> <name>"
+      description: "Delete a named resource (e.g. pod mypod)"
+    - flag: "-f <file.yaml>"
+      description: "Delete resources defined in a manifest"
+      use_when: "Mirror of kubectl apply -f — clean up what you applied"
+    - flag: "-l <key=value>"
+      description: "Delete all resources matching a label selector"
+    - flag: "--all"
+      description: "Delete all resources of the specified type"
+    - flag: "-n <namespace>"
+      description: "Target a specific namespace"
+    - flag: "--grace-period=0 --force"
+      description: "Immediately force-delete a stuck pod"
+      use_when: "Pod stuck in Terminating — last resort"
+
+  preferred_invocations:
+    - invocation: "kubectl delete -f deployment.yaml"
+      use_when: "Remove what a manifest created"
+    - invocation: "kubectl delete pod <name> -n <namespace>"
+      use_when: "Delete a specific pod (it will restart if managed)"
+    - invocation: "kubectl delete -l app=myapp"
+      use_when: "Delete all resources with a label"
+
+output_schema:
+  enable_filter: false

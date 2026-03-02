@@ -1,0 +1,35 @@
+command: xargs
+platform: all
+description: "Build and execute commands from stdin — apply a command to each item in a list"
+
+syntax:
+  usage: "xargs [options] [command [initial-args]]"
+  key_flags:
+    - flag: "-I {} <cmd> {}"
+      description: "Replace {} with each input item"
+      use_when: "Position the argument within the command"
+    - flag: "-n <N>"
+      description: "Pass N arguments per command invocation"
+    - flag: "-P <N>"
+      description: "Run N processes in parallel"
+      use_when: "Parallelize bulk operations"
+    - flag: "-0"
+      description: "Input items separated by null (use with find -print0)"
+      use_when: "Safe handling of filenames with spaces"
+    - flag: "-r"
+      description: "Do not run command if stdin is empty"
+    - flag: "--dry-run"
+      description: "Print commands without running them"
+
+  preferred_invocations:
+    - invocation: "find . -name '*.log' | xargs rm"
+      use_when: "Delete all matching files"
+    - invocation: "find . -name '*.java' -print0 | xargs -0 grep 'pattern'"
+      use_when: "Search in files with spaces in names"
+    - invocation: "cat ids.txt | xargs -I {} curl -s https://api.example.com/{}"
+      use_when: "Make API call for each ID"
+    - invocation: "ls *.txt | xargs -P 4 -I {} gzip {}"
+      use_when: "Compress files in parallel"
+
+output_schema:
+  enable_filter: false

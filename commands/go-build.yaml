@@ -1,0 +1,35 @@
+command: go
+subcommand: build
+platform: all
+description: "Compile Go packages and dependencies"
+
+syntax:
+  usage: "go build [flags] [packages]"
+  key_flags:
+    - flag: "."
+      description: "Build the package in the current directory"
+    - flag: "./..."
+      description: "Build all packages in the module"
+    - flag: "-o <output>"
+      description: "Write output to named file"
+    - flag: "-v"
+      description: "Print package names as they are compiled"
+    - flag: "-race"
+      description: "Enable data race detection"
+      use_when: "Debugging concurrency issues"
+    - flag: "GOOS=linux GOARCH=amd64 go build"
+      description: "Cross-compile for Linux amd64"
+      use_when: "Building for a different OS/arch"
+
+  preferred_invocations:
+    - invocation: "go build ."
+      use_when: "Build the current package"
+    - invocation: "go build -o myapp ."
+      use_when: "Build with specific output name"
+    - invocation: "go build ./..."
+      use_when: "Build all packages — verify the module compiles"
+    - invocation: "GOOS=linux go build -o app-linux ."
+      use_when: "Cross-compile for Linux"
+
+output_schema:
+  enable_filter: false

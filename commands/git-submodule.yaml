@@ -1,0 +1,34 @@
+command: git
+subcommand: submodule
+platform: all
+description: "Manage repository submodules — embedded repositories within a repository"
+
+syntax:
+  usage: "git submodule <subcommand> [options]"
+  key_flags:
+    - flag: "update --init"
+      description: "Initialize and fetch all submodules"
+      use_when: "After clone — submodules are empty until this runs"
+    - flag: "update --init --recursive"
+      description: "Initialize nested submodules too"
+    - flag: "add <url> <path>"
+      description: "Add a new submodule"
+    - flag: "update --remote"
+      description: "Update submodules to latest remote commit"
+    - flag: "status"
+      description: "Show submodule status and commit SHAs"
+    - flag: "foreach <cmd>"
+      description: "Run a shell command in each submodule"
+    - flag: "deinit <path>"
+      description: "Unregister a submodule"
+
+  preferred_invocations:
+    - invocation: "git submodule update --init --recursive"
+      use_when: "After clone — get all submodule content"
+    - invocation: "git submodule update --remote"
+      use_when: "Update all submodules to their latest upstream commit"
+    - invocation: "git submodule foreach git pull origin main"
+      use_when: "Pull latest in every submodule"
+
+output_schema:
+  enable_filter: false

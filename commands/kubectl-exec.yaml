@@ -1,0 +1,30 @@
+command: kubectl
+subcommand: exec
+platform: all
+description: "Execute a command in a container running in a pod"
+
+syntax:
+  usage: "kubectl exec [flags] POD -- COMMAND"
+  key_flags:
+    - flag: "-it <pod> -- /bin/sh"
+      description: "Open interactive shell in pod"
+      use_when: "Debug — most common use"
+    - flag: "-it <pod> -- /bin/bash"
+      description: "Open bash shell (if available)"
+    - flag: "-c <container>"
+      description: "Target a specific container in a multi-container pod"
+    - flag: "-n <namespace>"
+      description: "Pod is in a specific namespace"
+    - flag: "<pod> -- <cmd>"
+      description: "Run a non-interactive command"
+
+  preferred_invocations:
+    - invocation: "kubectl exec -it <pod> -- /bin/sh"
+      use_when: "Get a shell inside a running pod"
+    - invocation: "kubectl exec -it <pod> -c <container> -- /bin/sh"
+      use_when: "Shell into a specific container in a multi-container pod"
+    - invocation: "kubectl exec <pod> -- env"
+      use_when: "Check environment variables in a pod"
+
+output_schema:
+  enable_filter: false

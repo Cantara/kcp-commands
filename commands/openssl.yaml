@@ -1,0 +1,46 @@
+command: openssl
+platform: all
+description: "SSL/TLS toolkit — inspect certificates, generate keys, and test connections"
+
+syntax:
+  usage: "openssl <command> [options]"
+  key_flags:
+    - flag: "s_client -connect <host:443>"
+      description: "Connect and inspect TLS certificate"
+      use_when: "Check what certificate a server is presenting"
+    - flag: "s_client -connect <host:443> </dev/null"
+      description: "Non-interactive certificate inspection"
+    - flag: "x509 -in <cert.pem> -text -noout"
+      description: "Decode and display a PEM certificate"
+    - flag: "x509 -in <cert.pem> -enddate -noout"
+      description: "Check certificate expiry date"
+    - flag: "genrsa -out key.pem 2048"
+      description: "Generate a 2048-bit RSA private key"
+    - flag: "req -new -key key.pem -out csr.pem"
+      description: "Generate a Certificate Signing Request"
+    - flag: "req -x509 -newkey rsa:4096 -keyout key.pem -out cert.pem -days 365 -nodes"
+      description: "Self-signed certificate in one command"
+    - flag: "verify -CAfile ca.pem cert.pem"
+      description: "Verify certificate against a CA"
+
+  preferred_invocations:
+    - invocation: "echo | openssl s_client -connect <host>:443 2>/dev/null | openssl x509 -noout -dates"
+      use_when: "Check certificate expiry for a live host"
+    - invocation: "openssl x509 -in cert.pem -text -noout"
+      use_when: "Decode a PEM certificate file"
+    - invocation: "openssl req -x509 -newkey rsa:4096 -keyout key.pem -out cert.pem -days 365 -nodes"
+      use_when: "Generate self-signed cert for local testing"
+
+output_schema:
+  enable_filter: true
+  noise_patterns:
+    - pattern: "^depth="
+      reason: "Certificate chain depth lines"
+    - pattern: "^verify "
+      reason: "Verification output lines"
+    - pattern: "^CONNECTED"
+      reason: "Connection established message"
+    - pattern: "^---$"
+      reason: "Section dividers"
+  max_lines: 60
+  truncation_message: "... {remaining} more lines."

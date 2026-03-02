@@ -1,0 +1,44 @@
+command: gh
+subcommand: issue
+platform: all
+description: "GitHub CLI — manage issues"
+
+syntax:
+  usage: "gh issue <subcommand> [flags]"
+  key_flags:
+    - flag: "list"
+      description: "List open issues"
+    - flag: "list --assignee @me"
+      description: "Issues assigned to me"
+    - flag: "list --label <label>"
+      description: "Issues with a specific label"
+    - flag: "view <number>"
+      description: "View issue details"
+    - flag: "view <number> --web"
+      description: "Open issue in browser"
+    - flag: "create"
+      description: "Create a new issue (interactive)"
+    - flag: "create --title '...' --body '...'"
+      description: "Create issue non-interactively"
+    - flag: "close <number>"
+      description: "Close an issue"
+    - flag: "comment <number> --body '...'"
+      description: "Add a comment"
+    - flag: "status"
+      description: "Show issues relevant to you"
+
+  preferred_invocations:
+    - invocation: "gh issue list"
+      use_when: "See open issues"
+    - invocation: "gh issue list --assignee @me"
+      use_when: "See my assigned issues"
+    - invocation: "gh issue view <number>"
+      use_when: "Read issue details"
+    - invocation: "gh issue create --title '...' --body '...'"
+      use_when: "File a new issue"
+
+output_schema:
+  enable_filter: true
+  noise_patterns: []
+  max_lines: 50
+  truncation_message: "... {remaining} more issues."

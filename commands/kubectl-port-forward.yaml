@@ -1,0 +1,29 @@
+command: kubectl
+subcommand: port-forward
+platform: all
+description: "Forward local ports to a pod, service, or deployment"
+
+syntax:
+  usage: "kubectl port-forward TYPE/NAME [LOCAL_PORT:]REMOTE_PORT"
+  key_flags:
+    - flag: "pod/<name> <local>:<remote>"
+      description: "Forward to a pod directly"
+    - flag: "service/<name> <local>:<remote>"
+      description: "Forward to a service (preferred — survives pod restarts)"
+      use_when: "Default — use service name rather than pod name"
+    - flag: "deployment/<name> <local>:<remote>"
+      description: "Forward to a pod selected by deployment"
+    - flag: "-n <namespace>"
+      description: "Resource is in a specific namespace"
+    - flag: "--address 0.0.0.0"
+      description: "Bind on all interfaces (not just localhost)"
+      use_when: "Allow remote access to the forwarded port"
+
+  preferred_invocations:
+    - invocation: "kubectl port-forward service/<name> 8080:80"
+      use_when: "Access a service locally at localhost:8080"
+    - invocation: "kubectl port-forward -n <ns> service/<name> 5432:5432"
+      use_when: "Connect to a database in a namespace"
+
+output_schema:
+  enable_filter: false

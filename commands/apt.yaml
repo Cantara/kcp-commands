@@ -1,0 +1,57 @@
+command: apt
+platform: linux
+description: "Advanced Package Tool for Debian/Ubuntu — install, update, and manage system packages"
+
+syntax:
+  usage: "apt [options] <command>"
+  key_flags:
+    - flag: "install <pkg>"
+      description: "Install a package"
+    - flag: "install -y <pkg>"
+      description: "Install without interactive confirmation"
+      use_when: "Scripts and automation"
+    - flag: "remove <pkg>"
+      description: "Remove a package (keep config files)"
+    - flag: "purge <pkg>"
+      description: "Remove package and its configuration files"
+    - flag: "update"
+      description: "Refresh package index from repositories"
+      use_when: "Always run before install on fresh systems"
+    - flag: "upgrade"
+      description: "Upgrade all installed packages"
+    - flag: "full-upgrade"
+      description: "Upgrade with dependency resolution (may remove packages)"
+    - flag: "list --installed"
+      description: "List installed packages"
+    - flag: "search <query>"
+      description: "Search package names and descriptions"
+    - flag: "show <pkg>"
+      description: "Show package details"
+    - flag: "autoremove"
+      description: "Remove unused dependency packages"
+
+  preferred_invocations:
+    - invocation: "apt update && apt install -y <pkg>"
+      use_when: "Install a package (update index first)"
+    - invocation: "apt list --installed | grep <name>"
+      use_when: "Check if a package is installed"
+    - invocation: "apt update && apt upgrade -y"
+      use_when: "Update all packages"
+
+output_schema:
+  enable_filter: true
+  noise_patterns:
+    - pattern: "^Get:\\d+"
+      reason: "Package download progress lines"
+    - pattern: "^Hit:\\d+"
+      reason: "Repository cache hit lines"
+    - pattern: "^Fetched "
+      reason: "Download summary"
+    - pattern: "^Reading package lists"
+      reason: "Boilerplate progress"
+    - pattern: "^Building dependency tree"
+      reason: "Boilerplate progress"
+    - pattern: "^Reading state information"
+      reason: "Boilerplate progress"
+  max_lines: 40
+  truncation_message: "... {remaining} more apt lines."

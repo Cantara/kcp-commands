@@ -1,0 +1,40 @@
+command: docker
+subcommand: run
+platform: all
+description: "Create and start a container from an image"
+
+syntax:
+  usage: "docker run [OPTIONS] IMAGE [COMMAND]"
+  key_flags:
+    - flag: "-d"
+      description: "Detached mode — run in background"
+      use_when: "Long-running services"
+    - flag: "-it"
+      description: "Interactive with TTY — stay attached"
+      use_when: "Interactive shell or debugging"
+    - flag: "--rm"
+      description: "Remove container after it exits"
+      use_when: "One-shot commands — avoids container accumulation"
+    - flag: "-p <host:container>"
+      description: "Publish port (e.g. -p 8080:80)"
+    - flag: "-v <host:container>"
+      description: "Mount a volume (e.g. -v $(pwd):/app)"
+    - flag: "-e <KEY=value>"
+      description: "Set environment variable"
+    - flag: "--name <name>"
+      description: "Assign a name to the container"
+    - flag: "--network <net>"
+      description: "Connect to a Docker network"
+    - flag: "--env-file <file>"
+      description: "Load environment variables from a file"
+
+  preferred_invocations:
+    - invocation: "docker run -d -p 8080:80 --name myapp myimage"
+      use_when: "Start a web service in the background"
+    - invocation: "docker run --rm -it myimage /bin/sh"
+      use_when: "Debug — get a shell inside the image"
+    - invocation: "docker run --rm -v $(pwd):/app myimage <cmd>"
+      use_when: "Run a one-off command with local files mounted"
+
+output_schema:
+  enable_filter: false

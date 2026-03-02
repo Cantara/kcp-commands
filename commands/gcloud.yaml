@@ -1,0 +1,48 @@
+command: gcloud
+platform: all
+description: "Google Cloud CLI — manage Google Cloud Platform resources"
+
+syntax:
+  usage: "gcloud <group> <command> [options]"
+  key_flags:
+    - flag: "compute instances list"
+      description: "List Compute Engine VMs"
+    - flag: "container clusters list"
+      description: "List GKE clusters"
+    - flag: "container clusters get-credentials <name>"
+      description: "Configure kubectl for a GKE cluster"
+      use_when: "First step before using kubectl with GKE"
+    - flag: "projects list"
+      description: "List accessible projects"
+    - flag: "config set project <id>"
+      description: "Set the active project"
+    - flag: "auth list"
+      description: "List credentialed accounts"
+    - flag: "config list"
+      description: "Show active configuration"
+    - flag: "--project <id>"
+      description: "Override the active project"
+    - flag: "--format json|table|yaml"
+      description: "Output format"
+    - flag: "--filter '<expr>'"
+      description: "Filter results"
+
+  preferred_invocations:
+    - invocation: "gcloud config set project <id>"
+      use_when: "Switch to a different GCP project"
+    - invocation: "gcloud container clusters get-credentials <name> --region <region>"
+      use_when: "Connect kubectl to a GKE cluster"
+    - invocation: "gcloud compute instances list"
+      use_when: "List all VMs in the project"
+    - invocation: "gcloud auth application-default login"
+      use_when: "Authenticate for local development"
+
+output_schema:
+  enable_filter: true
+  noise_patterns:
+    - pattern: "^Updated property"
+      reason: "Config change confirmation"
+    - pattern: "^WARNING:"
+      reason: "Deprecation and informational warnings"
+  max_lines: 80
+  truncation_message: "... {remaining} more lines."

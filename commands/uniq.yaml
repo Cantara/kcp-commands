@@ -1,0 +1,30 @@
+command: uniq
+platform: all
+description: "Remove or count duplicate adjacent lines — always pipe sort first"
+
+syntax:
+  usage: "uniq [options] [input [output]]"
+  key_flags:
+    - flag: "(no flags)"
+      description: "Remove consecutive duplicate lines"
+      use_when: "Always sort input first: sort | uniq"
+    - flag: "-c"
+      description: "Prefix each line with occurrence count"
+      use_when: "Count occurrences — sort | uniq -c | sort -rn for frequency table"
+    - flag: "-d"
+      description: "Print only duplicate lines"
+    - flag: "-u"
+      description: "Print only unique (non-duplicate) lines"
+    - flag: "-i"
+      description: "Case-insensitive comparison"
+
+  preferred_invocations:
+    - invocation: "sort file | uniq"
+      use_when: "Deduplicate lines"
+    - invocation: "sort file | uniq -c | sort -rn"
+      use_when: "Frequency table — most common lines first"
+    - invocation: "sort file | uniq -d"
+      use_when: "Find lines that appear more than once"
+
+output_schema:
+  enable_filter: false

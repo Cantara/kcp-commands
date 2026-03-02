@@ -1,0 +1,48 @@
+command: helm
+platform: all
+description: "Kubernetes package manager — install, upgrade, and manage Helm charts"
+
+syntax:
+  usage: "helm <command> [flags]"
+  key_flags:
+    - flag: "install <release> <chart>"
+      description: "Install a chart as a named release"
+    - flag: "install <release> <chart> -f values.yaml"
+      description: "Install with custom values"
+    - flag: "upgrade <release> <chart>"
+      description: "Upgrade an existing release"
+    - flag: "upgrade --install <release> <chart>"
+      description: "Install or upgrade (idempotent)"
+      use_when: "CI/CD — safe to run repeatedly"
+    - flag: "list"
+      description: "List installed releases"
+    - flag: "list -A"
+      description: "List releases across all namespaces"
+    - flag: "status <release>"
+      description: "Show release status"
+    - flag: "uninstall <release>"
+      description: "Remove a release"
+    - flag: "repo add <name> <url>"
+      description: "Add a chart repository"
+    - flag: "repo update"
+      description: "Update chart repository index"
+    - flag: "template <release> <chart>"
+      description: "Render chart templates locally — preview manifests"
+      use_when: "Inspect what will be deployed before installing"
+    - flag: "-n <namespace>"
+      description: "Target a specific namespace"
+    - flag: "--dry-run"
+      description: "Simulate install/upgrade without making changes"
+
+  preferred_invocations:
+    - invocation: "helm upgrade --install <release> <chart> -f values.yaml"
+      use_when: "Deploy or update a chart (idempotent)"
+    - invocation: "helm list -A"
+      use_when: "See all installed releases across namespaces"
+    - invocation: "helm template <release> <chart> -f values.yaml"
+      use_when: "Preview generated Kubernetes manifests"
+    - invocation: "helm repo add <name> <url> && helm repo update"
+      use_when: "Add a new chart repository"
+
+output_schema:
+  enable_filter: false

@@ -1,0 +1,26 @@
+command: tee
+platform: all
+description: "Read stdin and write to both stdout and a file simultaneously"
+
+syntax:
+  usage: "tee [options] [file...]"
+  key_flags:
+    - flag: "<file>"
+      description: "Write stdin to file and also pass through to stdout"
+      use_when: "Capture output while keeping the pipeline flowing"
+    - flag: "-a <file>"
+      description: "Append to file instead of overwriting"
+    - flag: "/dev/stderr"
+      description: "Copy to stderr while passing stdout through"
+      use_when: "Log to stderr within a pipeline"
+
+  preferred_invocations:
+    - invocation: "make build 2>&1 | tee build.log"
+      use_when: "Capture build output to file and see it live"
+    - invocation: "curl -s <url> | tee response.json | jq ."
+      use_when: "Save API response and pretty-print it"
+    - invocation: "cmd | tee -a output.log | grep ERROR"
+      use_when: "Log everything, only show errors"
+
+output_schema:
+  enable_filter: false

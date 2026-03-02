@@ -1,0 +1,53 @@
+command: docker
+subcommand: compose
+platform: all
+description: "Define and run multi-container Docker applications"
+
+syntax:
+  usage: "docker compose [OPTIONS] COMMAND"
+  key_flags:
+    - flag: "up"
+      description: "Create and start all services"
+    - flag: "up -d"
+      description: "Start services in detached (background) mode"
+      use_when: "Production-style startup"
+    - flag: "up --build"
+      description: "Rebuild images before starting"
+      use_when: "After code changes that affect Dockerfile"
+    - flag: "down"
+      description: "Stop and remove containers, networks"
+    - flag: "down -v"
+      description: "Also remove named volumes"
+      use_when: "Clean state — removes databases etc."
+    - flag: "restart <service>"
+      description: "Restart a specific service"
+    - flag: "logs -f <service>"
+      description: "Follow logs for a service"
+    - flag: "exec <service> <cmd>"
+      description: "Run command in a running service container"
+    - flag: "ps"
+      description: "List running compose services"
+    - flag: "pull"
+      description: "Pull latest images for all services"
+    - flag: "-f <file>"
+      description: "Specify alternate compose file"
+
+  preferred_invocations:
+    - invocation: "docker compose up -d"
+      use_when: "Start all services in background"
+    - invocation: "docker compose up --build"
+      use_when: "Rebuild and start after code changes"
+    - invocation: "docker compose logs -f <service>"
+      use_when: "Watch logs for a specific service"
+    - invocation: "docker compose down && docker compose up -d"
+      use_when: "Restart the whole stack"
+
+output_schema:
+  enable_filter: true
+  noise_patterns:
+    - pattern: "^\\s*Container \\S+ +Running"
+      reason: "Already-running container status lines"
+    - pattern: "^\\[\\+\\] Running "
+      reason: "Step count summary"
+  max_lines: 50
+  truncation_message: "... {remaining} more compose lines."

@@ -1,0 +1,38 @@
+command: awk
+platform: all
+description: "Text processing language — field extraction, pattern matching, aggregation"
+
+syntax:
+  usage: "awk [options] 'program' [file...]"
+  key_flags:
+    - flag: "'{print $1}'"
+      description: "Print first field (whitespace-delimited)"
+    - flag: "'{print $NF}'"
+      description: "Print last field"
+    - flag: "-F: '{print $1}'"
+      description: "Use colon as field separator"
+      use_when: "Parsing /etc/passwd or colon-delimited files"
+    - flag: "'/pattern/ {print}'"
+      description: "Print lines matching pattern"
+    - flag: "'{sum += $1} END {print sum}'"
+      description: "Sum a numeric column"
+    - flag: "NR==2"
+      description: "Match line number 2"
+    - flag: "NF"
+      description: "True when line has fields (skip blank lines)"
+    - flag: "'BEGIN {FS=\",\"} {print $2}'"
+      description: "Set comma as separator, print second column"
+      use_when: "Parsing CSV-style output"
+
+  preferred_invocations:
+    - invocation: "awk '{print $1, $3}' file"
+      use_when: "Extract specific columns"
+    - invocation: "awk -F: '{print $1}' /etc/passwd"
+      use_when: "List all usernames"
+    - invocation: "awk 'NR>1 {print $0}' file"
+      use_when: "Skip header line"
+    - invocation: "ps aux | awk 'NR>1 {sum += $3} END {print sum\"%\"}'"
+      use_when: "Sum a column from command output"
+
+output_schema:
+  enable_filter: false

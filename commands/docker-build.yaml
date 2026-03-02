@@ -1,0 +1,45 @@
+command: docker
+subcommand: build
+platform: all
+description: "Build a Docker image from a Dockerfile"
+
+syntax:
+  usage: "docker build [OPTIONS] PATH | URL"
+  key_flags:
+    - flag: "-t <name:tag>"
+      description: "Tag the built image (name:tag)"
+      use_when: "Always tag for easy reference"
+    - flag: "."
+      description: "Build context is the current directory"
+    - flag: "-f <Dockerfile>"
+      description: "Specify a different Dockerfile path"
+    - flag: "--no-cache"
+      description: "Build without using layer cache"
+      use_when: "Force fresh build — debug caching issues"
+    - flag: "--build-arg <KEY=value>"
+      description: "Pass a build argument"
+    - flag: "--target <stage>"
+      description: "Build to a specific multi-stage target"
+    - flag: "--platform linux/amd64"
+      description: "Build for a specific platform"
+      use_when: "Building on Apple Silicon for deployment on amd64"
+
+  preferred_invocations:
+    - invocation: "docker build -t myapp:latest ."
+      use_when: "Build image from current directory"
+    - invocation: "docker build -t myapp:latest --no-cache ."
+      use_when: "Force complete rebuild"
+    - invocation: "docker build -f docker/Dockerfile.prod -t myapp:prod ."
+      use_when: "Build with a specific Dockerfile"
+
+output_schema:
+  enable_filter: true
+  noise_patterns:
+    - pattern: "^\\[\\+\\] Building "
+      reason: "Overall build progress indicator"
+    - pattern: "^ => CACHED "
+      reason: "Cached layer messages"
+    - pattern: "^ => \\[internal\\]"
+      reason: "Internal build metadata steps"
+  max_lines: 60
+  truncation_message: "... {remaining} more build lines. Look for 'ERROR' to diagnose failures."

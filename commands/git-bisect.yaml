@@ -1,0 +1,34 @@
+command: git
+subcommand: bisect
+platform: all
+description: "Binary search through commit history to find which commit introduced a bug"
+
+syntax:
+  usage: "git bisect <subcommand>"
+  key_flags:
+    - flag: "start"
+      description: "Start a bisect session"
+    - flag: "bad"
+      description: "Mark current commit as bad (has the bug)"
+    - flag: "good <commit>"
+      description: "Mark a known-good commit"
+    - flag: "bad / good"
+      description: "Continue: mark each offered commit as bad or good"
+    - flag: "reset"
+      description: "End bisect session and return to original branch"
+    - flag: "run <script>"
+      description: "Automate bisect — script exits 0 for good, 1 for bad"
+      use_when: "When you have a reproducible test — fastest path"
+    - flag: "log"
+      description: "Show bisect history so far"
+
+  preferred_invocations:
+    - invocation: "git bisect start && git bisect bad && git bisect good <known-good-hash>"
+      use_when: "Start bisect with current as bad"
+    - invocation: "git bisect run ./test.sh"
+      use_when: "Automated bisect with a test script"
+    - invocation: "git bisect reset"
+      use_when: "End bisect and return to original HEAD"
+
+output_schema:
+  enable_filter: false

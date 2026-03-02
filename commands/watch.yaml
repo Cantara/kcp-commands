@@ -1,0 +1,31 @@
+command: watch
+platform: linux
+description: "Run a command repeatedly and display its output — live monitoring"
+
+syntax:
+  usage: "watch [options] command"
+  key_flags:
+    - flag: "-n <seconds>"
+      description: "Refresh interval in seconds (default: 2)"
+    - flag: "-d"
+      description: "Highlight differences between updates"
+      use_when: "Spot what's changing between runs"
+    - flag: "-n 1 <cmd>"
+      description: "Refresh every second"
+    - flag: "-e"
+      description: "Exit if command returns non-zero exit code"
+    - flag: "--no-title"
+      description: "Suppress the header line"
+
+  preferred_invocations:
+    - invocation: "watch kubectl get pods"
+      use_when: "Monitor pod status during deployment"
+    - invocation: "watch -n 1 -d free -h"
+      use_when: "Watch memory usage, highlight changes"
+    - invocation: "watch -n 5 'df -h | grep /dev'"
+      use_when: "Monitor disk usage"
+    - invocation: "watch -d 'ps aux | grep myapp'"
+      use_when: "Track a specific process"
+
+output_schema:
+  enable_filter: false

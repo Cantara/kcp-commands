@@ -1,0 +1,50 @@
+command: go
+subcommand: test
+platform: all
+description: "Run Go tests"
+
+syntax:
+  usage: "go test [flags] [packages]"
+  key_flags:
+    - flag: "./..."
+      description: "Run all tests in the module"
+      use_when: "Default — run everything"
+    - flag: "-v"
+      description: "Verbose — print each test name and result"
+    - flag: "-run <regexp>"
+      description: "Run tests matching the pattern"
+      use_when: "Run a specific test or subset"
+    - flag: "-count=1"
+      description: "Disable test caching — always re-run"
+    - flag: "-timeout <d>"
+      description: "Fail after duration (e.g. -timeout 60s)"
+    - flag: "-race"
+      description: "Enable race detector"
+    - flag: "-cover"
+      description: "Enable coverage measurement"
+    - flag: "-coverprofile=c.out"
+      description: "Write coverage profile to file"
+    - flag: "-bench <regexp>"
+      description: "Run benchmarks matching pattern"
+    - flag: "-benchmem"
+      description: "Include memory allocations in benchmark output"
+
+  preferred_invocations:
+    - invocation: "go test ./..."
+      use_when: "Run all tests in the module"
+    - invocation: "go test -v -run TestMyFunc ./..."
+      use_when: "Run and display a specific test"
+    - invocation: "go test -count=1 ./..."
+      use_when: "Run without cached results"
+    - invocation: "go test -cover ./..."
+      use_when: "Check test coverage"
+
+output_schema:
+  enable_filter: true
+  noise_patterns:
+    - pattern: "^\\?\\s+\\S+\\s+\\[no test files\\]"
+      reason: "Packages with no tests — usually not interesting"
+    - pattern: "^ok\\s+"
+      reason: "Passing package lines — keep on failure only"
+  max_lines: 80
+  truncation_message: "... {remaining} more test lines. Look for FAIL to identify broken packages."

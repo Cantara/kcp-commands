@@ -1,0 +1,41 @@
+command: make
+platform: all
+description: "Build automation — run targets defined in a Makefile"
+
+syntax:
+  usage: "make [options] [target...]"
+  key_flags:
+    - flag: "<target>"
+      description: "Run a specific target (e.g. make build, make test)"
+      use_when: "Run the target you need — check Makefile for available targets"
+    - flag: "(no target)"
+      description: "Run the default target (first in Makefile)"
+    - flag: "-j <N>"
+      description: "Run N jobs in parallel"
+      use_when: "Speed up builds with multiple CPU cores"
+    - flag: "-n"
+      description: "Dry run — print commands without executing"
+    - flag: "-C <dir>"
+      description: "Change to directory before running"
+    - flag: "clean"
+      description: "Remove build artifacts (convention, not guaranteed)"
+
+  preferred_invocations:
+    - invocation: "make"
+      use_when: "Run the default build target"
+    - invocation: "make test"
+      use_when: "Run tests"
+    - invocation: "make clean && make"
+      use_when: "Clean rebuild"
+    - invocation: "make -j4"
+      use_when: "Parallel build with 4 jobs"
+
+output_schema:
+  enable_filter: true
+  noise_patterns:
+    - pattern: "^make\\[\\d+\\]"
+      reason: "Recursive make depth markers"
+    - pattern: "^Making \\w+ in "
+      reason: "Directory traversal messages"
+  max_lines: 60
+  truncation_message: "... {remaining} more build lines. Look for 'Error' or 'warning:' to diagnose failures."

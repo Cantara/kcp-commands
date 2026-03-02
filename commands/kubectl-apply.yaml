@@ -1,0 +1,36 @@
+command: kubectl
+subcommand: apply
+platform: all
+description: "Apply a configuration to a resource — create or update from manifest files"
+
+syntax:
+  usage: "kubectl apply [flags]"
+  key_flags:
+    - flag: "-f <file.yaml>"
+      description: "Apply a specific manifest file"
+    - flag: "-f <dir/>"
+      description: "Apply all manifests in a directory"
+    - flag: "-f <url>"
+      description: "Apply manifest from URL"
+    - flag: "-k <dir>"
+      description: "Apply Kustomize configuration"
+    - flag: "--dry-run=client"
+      description: "Preview what would be applied without making changes"
+      use_when: "Validate before applying"
+    - flag: "--dry-run=server"
+      description: "Server-side dry run — validates against live cluster"
+    - flag: "-R"
+      description: "Recursively apply all files in directories"
+    - flag: "-n <namespace>"
+      description: "Apply in a specific namespace"
+
+  preferred_invocations:
+    - invocation: "kubectl apply -f deployment.yaml"
+      use_when: "Deploy or update from a manifest"
+    - invocation: "kubectl apply -f ./manifests/"
+      use_when: "Apply all manifests in a directory"
+    - invocation: "kubectl apply --dry-run=client -f manifest.yaml"
+      use_when: "Preview changes before applying"
+
+output_schema:
+  enable_filter: false

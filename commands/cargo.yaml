@@ -1,0 +1,57 @@
+command: cargo
+platform: all
+description: "Rust package manager and build tool"
+
+syntax:
+  usage: "cargo <command> [options]"
+  key_flags:
+    - flag: "build"
+      description: "Compile the project"
+    - flag: "build --release"
+      description: "Optimized release build"
+      use_when: "Benchmarking or producing production binary"
+    - flag: "test"
+      description: "Run all tests"
+    - flag: "test <name>"
+      description: "Run tests matching name pattern"
+    - flag: "run"
+      description: "Build and run the binary"
+    - flag: "run -- <args>"
+      description: "Build and run with arguments"
+    - flag: "check"
+      description: "Type-check without producing binary (fast)"
+      use_when: "Quick check during development"
+    - flag: "clippy"
+      description: "Run the Rust linter"
+    - flag: "fmt"
+      description: "Format source code"
+    - flag: "add <crate>"
+      description: "Add a dependency to Cargo.toml"
+    - flag: "clean"
+      description: "Remove target/ directory"
+
+  preferred_invocations:
+    - invocation: "cargo check"
+      use_when: "Quick type-check without building"
+    - invocation: "cargo test"
+      use_when: "Run all tests"
+    - invocation: "cargo build --release"
+      use_when: "Produce optimized binary"
+    - invocation: "cargo clippy -- -D warnings"
+      use_when: "Lint with warnings as errors"
+
+output_schema:
+  enable_filter: true
+  noise_patterns:
+    - pattern: "^   Compiling "
+      reason: "Individual crate compilation progress"
+    - pattern: "^    Checking "
+      reason: "Individual crate check progress"
+    - pattern: "^   Downloading "
+      reason: "Crate download progress"
+    - pattern: "^    Updating "
+      reason: "Registry update messages"
+    - pattern: "^    Finished "
+      reason: "Build completion — keep if within max_lines"
+  max_lines: 60
+  truncation_message: "... {remaining} more Cargo lines. Look for 'error[' or 'warning:' for issues."

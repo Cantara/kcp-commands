@@ -1,0 +1,31 @@
+command: wc
+platform: all
+description: "Count lines, words, or bytes in files or stdin"
+
+syntax:
+  usage: "wc [options] [file...]"
+  key_flags:
+    - flag: "-l"
+      description: "Count lines only"
+      use_when: "Most common — 'how many lines/results are there?'"
+    - flag: "-w"
+      description: "Count words only"
+    - flag: "-c"
+      description: "Count bytes"
+    - flag: "-m"
+      description: "Count characters (Unicode-aware)"
+    - flag: "(no flags)"
+      description: "Print lines, words, and bytes together"
+
+  preferred_invocations:
+    - invocation: "wc -l file"
+      use_when: "Count lines in a file"
+    - invocation: "cat file | wc -l"
+      use_when: "Count lines from stdin"
+    - invocation: "find . -name '*.java' | wc -l"
+      use_when: "Count matching files"
+    - invocation: "grep -r 'pattern' . | wc -l"
+      use_when: "Count occurrences of a pattern"
+
+output_schema:
+  enable_filter: false

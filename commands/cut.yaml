@@ -1,0 +1,30 @@
+command: cut
+platform: all
+description: "Extract columns or character ranges from lines of text"
+
+syntax:
+  usage: "cut [options] [file...]"
+  key_flags:
+    - flag: "-d <delim> -f <N>"
+      description: "Field N using delimiter (e.g. -d: -f1)"
+      use_when: "Parsing delimiter-separated output"
+    - flag: "-d <delim> -f <N,M>"
+      description: "Multiple fields (e.g. -f1,3)"
+    - flag: "-d <delim> -f <N->"
+      description: "Fields N to end of line"
+    - flag: "-c <N-M>"
+      description: "Characters N through M"
+      use_when: "Fixed-width column extraction"
+    - flag: "-d, -f2"
+      description: "Second CSV field"
+
+  preferred_invocations:
+    - invocation: "cut -d: -f1 /etc/passwd"
+      use_when: "Extract usernames"
+    - invocation: "cut -d, -f2 data.csv"
+      use_when: "Extract second CSV column"
+    - invocation: "echo $PATH | cut -d: -f1"
+      use_when: "Extract first entry from colon list"
+
+output_schema:
+  enable_filter: false

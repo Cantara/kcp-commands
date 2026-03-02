@@ -1,0 +1,36 @@
+command: wget
+platform: all
+description: "Non-interactive network downloader — retrieve files via HTTP, HTTPS, FTP"
+
+syntax:
+  usage: "wget [options] URL"
+  key_flags:
+    - flag: "-O <file>"
+      description: "Save to a specific filename"
+      use_when: "Control output filename"
+    - flag: "-O -"
+      description: "Write to stdout"
+      use_when: "Pipe content to another command"
+    - flag: "-q"
+      description: "Quiet — suppress progress and status output"
+    - flag: "-c"
+      description: "Continue a partial download"
+    - flag: "-r"
+      description: "Recursive download"
+    - flag: "-P <dir>"
+      description: "Save files in a specific directory"
+    - flag: "--no-check-certificate"
+      description: "Skip SSL certificate verification"
+    - flag: "-b"
+      description: "Background download"
+
+  preferred_invocations:
+    - invocation: "wget -O file.tar.gz <url>"
+      use_when: "Download a file with a specific name"
+    - invocation: "wget -q -O - <url> | bash"
+      use_when: "Pipe a script to bash"
+    - invocation: "wget -c <url>"
+      use_when: "Resume a partial download"
+
+output_schema:
+  enable_filter: false

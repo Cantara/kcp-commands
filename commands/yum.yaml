@@ -1,0 +1,46 @@
+command: yum
+platform: linux
+description: "Package manager for RHEL/CentOS/Fedora (use dnf on modern systems)"
+
+syntax:
+  usage: "yum [options] <command> [package...]"
+  key_flags:
+    - flag: "install <pkg>"
+      description: "Install a package"
+    - flag: "install -y <pkg>"
+      description: "Install without confirmation"
+      use_when: "Scripts and automation"
+    - flag: "remove <pkg>"
+      description: "Remove a package"
+    - flag: "update"
+      description: "Update all packages"
+    - flag: "update <pkg>"
+      description: "Update a specific package"
+    - flag: "list installed"
+      description: "List installed packages"
+    - flag: "search <query>"
+      description: "Search for packages"
+    - flag: "info <pkg>"
+      description: "Show package details"
+    - flag: "clean all"
+      description: "Clear package cache"
+
+  preferred_invocations:
+    - invocation: "yum install -y <pkg>"
+      use_when: "Install a package non-interactively"
+    - invocation: "yum update -y"
+      use_when: "Update all packages"
+    - invocation: "yum list installed | grep <name>"
+      use_when: "Check if a package is installed"
+
+output_schema:
+  enable_filter: true
+  noise_patterns:
+    - pattern: "^Loaded plugins:"
+      reason: "Plugin loading messages"
+    - pattern: "^Loading mirror speeds"
+      reason: "Mirror selection progress"
+    - pattern: "^\\s*\\|"
+      reason: "Progress bar characters"
+  max_lines: 50
+  truncation_message: "... {remaining} more yum lines."

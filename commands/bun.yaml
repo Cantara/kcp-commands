@@ -1,0 +1,39 @@
+command: bun
+platform: all
+description: "Fast all-in-one JavaScript runtime, bundler, and package manager"
+
+syntax:
+  usage: "bun <command> [options]"
+  key_flags:
+    - flag: "install"
+      description: "Install all dependencies (fastest available)"
+      use_when: "After clone — replaces npm install"
+    - flag: "add <pkg>"
+      description: "Add a dependency"
+    - flag: "add -d <pkg>"
+      description: "Add as dev dependency"
+    - flag: "remove <pkg>"
+      description: "Remove a package"
+    - flag: "run <script>"
+      description: "Run a package.json script"
+    - flag: "test"
+      description: "Run tests (bun test runner)"
+    - flag: "build <entry>"
+      description: "Bundle an entry point"
+    - flag: "run <file>"
+      description: "Execute a TypeScript/JavaScript file directly"
+    - flag: "x <pkg>"
+      description: "Execute a package without installing (like npx)"
+
+  preferred_invocations:
+    - invocation: "bun install"
+      use_when: "Install dependencies"
+    - invocation: "bun run dev"
+      use_when: "Start development server"
+    - invocation: "bun test"
+      use_when: "Run tests with bun test runner"
+    - invocation: "bun run <file.ts>"
+      use_when: "Execute TypeScript directly"
+
+output_schema:
+  enable_filter: false

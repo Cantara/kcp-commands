@@ -1,0 +1,34 @@
+command: tr
+platform: all
+description: "Translate or delete characters — character-level transformation of stdin"
+
+syntax:
+  usage: "tr [options] SET1 [SET2]"
+  key_flags:
+    - flag: "tr 'a-z' 'A-Z'"
+      description: "Convert lowercase to uppercase"
+    - flag: "tr 'A-Z' 'a-z'"
+      description: "Convert uppercase to lowercase"
+    - flag: "tr ':' '\n'"
+      description: "Replace delimiter with newlines (e.g. split PATH)"
+    - flag: "-d '<chars>'"
+      description: "Delete specified characters"
+      use_when: "Strip characters from output"
+    - flag: "-s '<chars>'"
+      description: "Squeeze repeated characters into one"
+      use_when: "Collapse multiple spaces"
+    - flag: "-d '\\r'"
+      description: "Remove Windows carriage returns"
+
+  preferred_invocations:
+    - invocation: "echo $PATH | tr ':' '\n'"
+      use_when: "List PATH entries one per line"
+    - invocation: "cat file | tr 'a-z' 'A-Z'"
+      use_when: "Uppercase all text"
+    - invocation: "cat file | tr -d '\\r'"
+      use_when: "Fix Windows line endings"
+    - invocation: "cat file | tr -s ' '"
+      use_when: "Collapse multiple spaces to one"
+
+output_schema:
+  enable_filter: false

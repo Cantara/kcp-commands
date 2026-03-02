@@ -1,0 +1,44 @@
+command: az
+platform: all
+description: "Azure CLI — manage Microsoft Azure resources"
+
+syntax:
+  usage: "az <group> <command> [options]"
+  key_flags:
+    - flag: "account list"
+      description: "List subscriptions"
+    - flag: "account set --subscription <id>"
+      description: "Switch active subscription"
+    - flag: "group list"
+      description: "List resource groups"
+    - flag: "vm list"
+      description: "List virtual machines"
+    - flag: "aks list"
+      description: "List AKS clusters"
+    - flag: "aks get-credentials -g <rg> -n <name>"
+      description: "Configure kubectl for an AKS cluster"
+      use_when: "First step before using kubectl with AKS"
+    - flag: "-g <resource-group>"
+      description: "Scope to a resource group"
+    - flag: "--output table|json|tsv"
+      description: "Output format"
+    - flag: "--query '<jmespath>'"
+      description: "Filter with JMESPath"
+
+  preferred_invocations:
+    - invocation: "az account set --subscription <id>"
+      use_when: "Switch to a different Azure subscription"
+    - invocation: "az aks get-credentials -g <rg> -n <cluster>"
+      use_when: "Connect kubectl to an AKS cluster"
+    - invocation: "az vm list -g <rg> --output table"
+      use_when: "List VMs in a resource group"
+    - invocation: "az account show"
+      use_when: "Verify active subscription and tenant"
+
+output_schema:
+  enable_filter: true
+  noise_patterns:
+    - pattern: "^WARNING:"
+      reason: "CLI update and deprecation warnings"
+  max_lines: 80
+  truncation_message: "... {remaining} more lines."

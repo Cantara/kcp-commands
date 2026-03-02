@@ -1,0 +1,59 @@
+command: gradle
+platform: all
+description: "Gradle build tool — build, test, and package Java/Kotlin/Android projects"
+
+syntax:
+  usage: "gradle [options] [tasks...]"
+  key_flags:
+    - flag: "test"
+      description: "Run all tests"
+      use_when: "Verify the build"
+    - flag: "build"
+      description: "Compile, test, and assemble"
+    - flag: "assemble"
+      description: "Assemble without running tests"
+      use_when: "Fast build — skip tests"
+    - flag: "clean"
+      description: "Delete build/ directory"
+    - flag: "clean build"
+      description: "Clean then full build"
+    - flag: ":<module>:test"
+      description: "Test a specific subproject"
+    - flag: "--tests <TestClass>"
+      description: "Run a specific test class"
+    - flag: "--tests <TestClass.method>"
+      description: "Run a specific test method"
+    - flag: "-x test"
+      description: "Exclude test task"
+    - flag: "--parallel"
+      description: "Execute tasks in parallel"
+    - flag: "-q"
+      description: "Quiet output"
+    - flag: "--stacktrace"
+      description: "Print full stack trace on failure"
+
+  preferred_invocations:
+    - invocation: "./gradlew test"
+      use_when: "Run all tests (use wrapper)"
+    - invocation: "./gradlew build -x test"
+      use_when: "Build without tests"
+    - invocation: "./gradlew :module:test --tests MyTest"
+      use_when: "Run a specific test class in a module"
+    - invocation: "./gradlew clean build"
+      use_when: "Clean full build"
+
+output_schema:
+  enable_filter: true
+  noise_patterns:
+    - pattern: "^> Task :"
+      reason: "Task execution progress lines"
+    - pattern: "^BUILD SUCCESSFUL"
+      reason: "Keep — but will be shown if within max_lines"
+    - pattern: "^Deprecated Gradle features"
+      reason: "Deprecation footer"
+    - pattern: "^\\d+ actionable task"
+      reason: "Task count summary"
+    - pattern: "^To honour the JVM settings"
+      reason: "JVM configuration notice"
+  max_lines: 80
+  truncation_message: "... {remaining} more Gradle lines. Look for FAILED or BUILD SUCCESSFUL."

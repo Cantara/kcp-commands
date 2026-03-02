@@ -1,0 +1,46 @@
+command: jq
+platform: all
+description: "Command-line JSON processor — filter, transform, and query JSON"
+
+syntax:
+  usage: "jq [options] <filter> [file...]"
+  key_flags:
+    - flag: "."
+      description: "Pretty-print the entire input"
+      use_when: "Inspect raw JSON from a command"
+    - flag: ".field"
+      description: "Extract a top-level field"
+    - flag: ".field.nested"
+      description: "Extract a nested field"
+    - flag: ".[]"
+      description: "Iterate over array elements or object values"
+    - flag: ".[] | .field"
+      description: "Extract field from each array element"
+    - flag: "select(.field == \"value\")"
+      description: "Filter elements matching a condition"
+    - flag: "[.[] | select(...)]"
+      description: "Filter array to matching elements"
+    - flag: "-r"
+      description: "Raw output — no JSON quoting on strings"
+      use_when: "Extracting string values to use in shell"
+    - flag: "-c"
+      description: "Compact output — one line per result"
+    - flag: "keys"
+      description: "List keys of an object"
+    - flag: "length"
+      description: "Count elements in array or string"
+    - flag: "to_entries"
+      description: "Convert object to [{key, value}] array"
+
+  preferred_invocations:
+    - invocation: "curl -s <url> | jq ."
+      use_when: "Inspect API response"
+    - invocation: "jq -r '.items[] | .name' file.json"
+      use_when: "Extract names from array"
+    - invocation: "jq 'select(.status == \"active\")' file.json"
+      use_when: "Filter records by field value"
+    - invocation: "jq -r 'keys[]' file.json"
+      use_when: "List all top-level keys"
+
+output_schema:
+  enable_filter: false

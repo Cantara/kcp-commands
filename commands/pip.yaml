@@ -1,0 +1,53 @@
+command: pip
+platform: all
+description: "Python package installer — install, upgrade, and manage Python packages"
+
+syntax:
+  usage: "pip <command> [options]"
+  key_flags:
+    - flag: "install <pkg>"
+      description: "Install a package"
+    - flag: "install -r requirements.txt"
+      description: "Install all packages from requirements file"
+      use_when: "After cloning a Python project"
+    - flag: "install -e ."
+      description: "Install package in editable/development mode"
+      use_when: "Working on a local package"
+    - flag: "install --upgrade <pkg>"
+      description: "Upgrade a package to the latest version"
+    - flag: "uninstall <pkg>"
+      description: "Remove a package"
+    - flag: "list"
+      description: "List installed packages"
+    - flag: "list --outdated"
+      description: "Show packages with available upgrades"
+    - flag: "show <pkg>"
+      description: "Show metadata about an installed package"
+    - flag: "freeze"
+      description: "Output installed packages in requirements.txt format"
+    - flag: "freeze > requirements.txt"
+      description: "Generate requirements file from current environment"
+
+  preferred_invocations:
+    - invocation: "pip install -r requirements.txt"
+      use_when: "Install project dependencies"
+    - invocation: "pip install <pkg>"
+      use_when: "Add a new package"
+    - invocation: "pip list --outdated"
+      use_when: "Find packages that need upgrading"
+    - invocation: "pip freeze > requirements.txt"
+      use_when: "Capture current environment as requirements"
+
+output_schema:
+  enable_filter: true
+  noise_patterns:
+    - pattern: "^Collecting "
+      reason: "Download progress for each package"
+    - pattern: "^  Downloading "
+      reason: "File download lines"
+    - pattern: "^Installing collected packages"
+      reason: "Installation summary header"
+    - pattern: "^Requirement already satisfied"
+      reason: "Already-installed package notices"
+  max_lines: 40
+  truncation_message: "... {remaining} more pip lines."

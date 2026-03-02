@@ -1,0 +1,58 @@
+command: terraform
+platform: all
+description: "Infrastructure as Code tool — provision and manage cloud infrastructure"
+
+syntax:
+  usage: "terraform <command> [options]"
+  key_flags:
+    - flag: "init"
+      description: "Initialize working directory — download providers and modules"
+      use_when: "First command in any Terraform directory"
+    - flag: "plan"
+      description: "Preview changes Terraform will make"
+      use_when: "Always run before apply"
+    - flag: "plan -out=tfplan"
+      description: "Save plan to file for apply"
+    - flag: "apply"
+      description: "Apply the changes (prompts for confirmation)"
+    - flag: "apply -auto-approve"
+      description: "Apply without confirmation prompt"
+      use_when: "CI/CD automation"
+    - flag: "apply tfplan"
+      description: "Apply a previously saved plan"
+    - flag: "destroy"
+      description: "Destroy all managed infrastructure"
+    - flag: "destroy -auto-approve"
+      description: "Destroy without confirmation"
+    - flag: "output"
+      description: "Show output values"
+    - flag: "state list"
+      description: "List resources in state"
+    - flag: "fmt"
+      description: "Reformat configuration files"
+    - flag: "validate"
+      description: "Validate configuration syntax"
+
+  preferred_invocations:
+    - invocation: "terraform init"
+      use_when: "First time or after adding providers/modules"
+    - invocation: "terraform plan"
+      use_when: "Preview what will change"
+    - invocation: "terraform apply"
+      use_when: "Apply changes (review plan first)"
+    - invocation: "terraform state list"
+      use_when: "See all managed resources"
+
+output_schema:
+  enable_filter: true
+  noise_patterns:
+    - pattern: "^  # "
+      reason: "Resource diff header lines (preceded by + or ~)"
+    - pattern: "^Terraform will perform"
+      reason: "Summary header"
+    - pattern: "^Terraform used the selected providers"
+      reason: "Provider summary header"
+    - pattern: "^  + resource "
+      reason: "Resource add markers — keep if within max_lines"
+  max_lines: 100
+  truncation_message: "... {remaining} more plan lines. Look for 'Plan:' summary at the end."

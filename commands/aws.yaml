@@ -1,0 +1,43 @@
+command: aws
+platform: all
+description: "AWS CLI — manage Amazon Web Services resources"
+
+syntax:
+  usage: "aws <service> <operation> [options]"
+  key_flags:
+    - flag: "s3 ls"
+      description: "List S3 buckets"
+    - flag: "s3 ls s3://<bucket>"
+      description: "List contents of a bucket"
+    - flag: "s3 cp <src> <dst>"
+      description: "Copy file to/from S3"
+    - flag: "s3 sync <src> <dst>"
+      description: "Sync directory to/from S3"
+    - flag: "ec2 describe-instances"
+      description: "List EC2 instances"
+    - flag: "ec2 describe-instances --query '...'"
+      description: "Filter EC2 instance data with JMESPath query"
+    - flag: "--profile <name>"
+      description: "Use a named AWS profile"
+    - flag: "--region <region>"
+      description: "Override the default region"
+    - flag: "--output json|table|text"
+      description: "Output format"
+    - flag: "--query '<jmespath>'"
+      description: "Filter output with JMESPath expression"
+
+  preferred_invocations:
+    - invocation: "aws s3 ls s3://<bucket>"
+      use_when: "Browse S3 bucket contents"
+    - invocation: "aws ec2 describe-instances --query 'Reservations[].Instances[].{ID:InstanceId,State:State.Name,IP:PublicIpAddress}' --output table"
+      use_when: "List EC2 instances with key fields"
+    - invocation: "aws s3 cp <file> s3://<bucket>/<path>"
+      use_when: "Upload a file to S3"
+    - invocation: "aws sts get-caller-identity"
+      use_when: "Verify which AWS account/role is active"
+
+output_schema:
+  enable_filter: true
+  noise_patterns: []
+  max_lines: 100
+  truncation_message: "... {remaining} more lines. Add --query to filter or --output text for compact output."

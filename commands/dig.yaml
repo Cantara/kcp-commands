@@ -1,0 +1,58 @@
+command: dig
+platform: all
+description: "DNS lookup utility — query DNS servers for records"
+
+syntax:
+  usage: "dig [@server] [name] [type] [options]"
+  key_flags:
+    - flag: "<domain>"
+      description: "Look up A record for domain (default)"
+    - flag: "<domain> <type>"
+      description: "Query specific record type: A, AAAA, MX, NS, TXT, CNAME, SOA"
+    - flag: "+short"
+      description: "Return only the answer, no headers"
+      use_when: "Scripting — get just the IP or value"
+    - flag: "@8.8.8.8 <domain>"
+      description: "Query a specific DNS server (Google's here)"
+    - flag: "+noall +answer"
+      description: "Print only the answer section"
+    - flag: "-x <ip>"
+      description: "Reverse DNS lookup — IP to hostname"
+    - flag: "TXT <domain>"
+      description: "Look up TXT records (SPF, DKIM, domain verification)"
+    - flag: "MX <domain>"
+      description: "Look up mail exchange records"
+
+  preferred_invocations:
+    - invocation: "dig +short <domain>"
+      use_when: "Quick IP lookup"
+    - invocation: "dig <domain> MX +short"
+      use_when: "Check mail server for domain"
+    - invocation: "dig -x <ip> +short"
+      use_when: "Reverse lookup — IP to hostname"
+    - invocation: "dig @8.8.8.8 <domain> +short"
+      use_when: "Query Google DNS to bypass local cache"
+
+output_schema:
+  enable_filter: true
+  noise_patterns:
+    - pattern: "^; <<>>"
+      reason: "dig version header"
+    - pattern: "^;; global options"
+      reason: "Options line"
+    - pattern: "^;; ->>HEADER<<-"
+      reason: "Response header"
+    - pattern: "^;; flags:"
+      reason: "DNS flags line"
+    - pattern: "^;; QUESTION SECTION:"
+      reason: "Question section header"
+    - pattern: "^;; Query time:"
+      reason: "Performance metrics footer"
+    - pattern: "^;; SERVER:"
+      reason: "Server info footer"
+    - pattern: "^;; WHEN:"
+      reason: "Timestamp footer"
+    - pattern: "^;; MSG SIZE"
+      reason: "Message size footer"
+  max_lines: 30
+  truncation_message: "... {remaining} more lines."
