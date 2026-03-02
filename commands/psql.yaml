@@ -1,0 +1,38 @@
+command: psql
+platform: all
+description: "PostgreSQL interactive terminal"
+
+syntax:
+  usage: "psql [options] [dbname [username]]"
+  key_flags:
+    - flag: "-h <host> -U <user> -d <db>"
+      description: "Connect to a remote database"
+    - flag: "-c '<SQL>'"
+      description: "Execute a single SQL statement and exit"
+      use_when: "Non-interactive queries from scripts"
+    - flag: "-f <file.sql>"
+      description: "Execute SQL from a file"
+    - flag: "-l"
+      description: "List all databases"
+    - flag: "-t"
+      description: "Tuples only — no headers or row count"
+      use_when: "Scripting — clean output"
+    - flag: "-A"
+      description: "Unaligned output (no padding)"
+    - flag: "-F <sep>"
+      description: "Field separator (use with -A)"
+    - flag: "\\dt"
+      description: "List tables (inside psql REPL)"
+    - flag: "\\d <table>"
+      description: "Describe table schema (inside psql REPL)"
+
+  preferred_invocations:
+    - invocation: "psql -h <host> -U <user> -d <db>"
+      use_when: "Open interactive session"
+    - invocation: "psql -h <host> -U <user> -d <db> -c 'SELECT ...'"
+      use_when: "Run a single query non-interactively"
+    - invocation: "PGPASSWORD=<pass> psql -h <host> -U <user> -d <db> -f dump.sql"
+      use_when: "Restore from SQL dump"
+
+output_schema:
+  enable_filter: false

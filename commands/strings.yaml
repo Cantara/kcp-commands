@@ -1,0 +1,29 @@
+command: strings
+platform: all
+description: "Extract printable strings from binary files"
+
+syntax:
+  usage: "strings [options] file..."
+  key_flags:
+    - flag: "<file>"
+      description: "Print all printable strings of at least 4 chars"
+    - flag: "-n <N>"
+      description: "Minimum string length (default 4)"
+    - flag: "-a"
+      description: "Scan entire file (not just data sections)"
+    - flag: "-o"
+      description: "Print file offset of each string"
+
+  preferred_invocations:
+    - invocation: "strings <binary> | grep -i <keyword>"
+      use_when: "Find readable text in a binary file"
+    - invocation: "strings <binary> | grep -i version"
+      use_when: "Find version string embedded in a binary"
+    - invocation: "strings /proc/<pid>/exe | grep -i config"
+      use_when: "Inspect what strings a running process contains"
+
+output_schema:
+  enable_filter: true
+  noise_patterns: []
+  max_lines: 60
+  truncation_message: "... {remaining} more strings. Pipe through grep to narrow."

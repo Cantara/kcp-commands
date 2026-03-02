@@ -1,0 +1,42 @@
+command: gh
+subcommand: run
+platform: all
+description: "GitHub CLI — view and manage GitHub Actions workflow runs"
+
+syntax:
+  usage: "gh run <subcommand> [flags]"
+  key_flags:
+    - flag: "list"
+      description: "List recent workflow runs"
+    - flag: "list --workflow=<name>"
+      description: "Runs for a specific workflow"
+    - flag: "view <run-id>"
+      description: "View run details"
+    - flag: "view <run-id> --log"
+      description: "View full run logs"
+    - flag: "view <run-id> --log-failed"
+      description: "View only failed step logs"
+      use_when: "Diagnose a failed run quickly"
+    - flag: "watch <run-id>"
+      description: "Watch a run in progress"
+    - flag: "rerun <run-id>"
+      description: "Re-run a failed run"
+    - flag: "rerun --failed <run-id>"
+      description: "Re-run only failed jobs"
+    - flag: "cancel <run-id>"
+      description: "Cancel a run in progress"
+    - flag: "download <run-id>"
+      description: "Download run artifacts"
+
+  preferred_invocations:
+    - invocation: "gh run list --workflow=<name>"
+      use_when: "See recent runs of a workflow"
+    - invocation: "gh run view <id> --log-failed"
+      use_when: "See what failed in a run"
+    - invocation: "gh run watch <id>"
+      use_when: "Monitor a running workflow"
+    - invocation: "gh run rerun --failed <id>"
+      use_when: "Retry only failed jobs"
+
+output_schema:
+  enable_filter: false

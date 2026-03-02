@@ -1,0 +1,41 @@
+command: vagrant
+platform: all
+description: "Create and manage virtual machine environments"
+
+syntax:
+  usage: "vagrant <command> [options]"
+  key_flags:
+    - flag: "up"
+      description: "Create and start the VM"
+      use_when: "First start or after halt"
+    - flag: "halt"
+      description: "Stop the VM gracefully"
+    - flag: "destroy"
+      description: "Delete the VM entirely"
+    - flag: "ssh"
+      description: "SSH into the VM"
+    - flag: "provision"
+      description: "Re-run provisioners on running VM"
+    - flag: "reload"
+      description: "Restart and re-apply Vagrantfile changes"
+    - flag: "reload --provision"
+      description: "Restart and re-provision"
+    - flag: "status"
+      description: "Show VM status"
+    - flag: "suspend"
+      description: "Suspend VM (save state)"
+    - flag: "resume"
+      description: "Resume suspended VM"
+    - flag: "box list"
+      description: "List downloaded base boxes"
+
+  preferred_invocations:
+    - invocation: "vagrant up"
+      use_when: "Start the VM (creates if new)"
+    - invocation: "vagrant ssh"
+      use_when: "Get shell access to the VM"
+    - invocation: "vagrant reload --provision"
+      use_when: "Apply Vagrantfile and provisioner changes"
+
+output_schema:
+  enable_filter: false

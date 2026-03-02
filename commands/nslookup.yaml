@@ -1,0 +1,30 @@
+command: nslookup
+platform: all
+description: "DNS lookup tool — query DNS records for hostnames and IPs"
+
+syntax:
+  usage: "nslookup [options] <hostname> [server]"
+  key_flags:
+    - flag: "<hostname>"
+      description: "Look up A/AAAA records for a hostname"
+    - flag: "<hostname> <dns-server>"
+      description: "Query a specific DNS server"
+    - flag: "-type=MX <domain>"
+      description: "Look up MX (mail) records"
+    - flag: "-type=TXT <domain>"
+      description: "Look up TXT records (SPF, DKIM, etc.)"
+    - flag: "-type=NS <domain>"
+      description: "Look up nameservers"
+    - flag: "-type=CNAME <domain>"
+      description: "Look up CNAME alias records"
+
+  preferred_invocations:
+    - invocation: "nslookup <hostname>"
+      use_when: "Quick hostname → IP resolution"
+    - invocation: "nslookup -type=MX <domain>"
+      use_when: "Check mail server records"
+    - invocation: "nslookup <hostname> 8.8.8.8"
+      use_when: "Query via Google DNS to bypass local cache"
+
+output_schema:
+  enable_filter: false

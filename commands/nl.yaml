@@ -1,0 +1,24 @@
+command: nl
+platform: all
+description: "Number lines of files"
+
+syntax:
+  usage: "nl [options] [file...]"
+  key_flags:
+    - flag: "(no flags)"
+      description: "Number non-empty lines"
+    - flag: "-b a"
+      description: "Number all lines including blank"
+    - flag: "-n rz"
+      description: "Right-justify with leading zeros"
+    - flag: "-w <N>"
+      description: "Width of line number field"
+
+  preferred_invocations:
+    - invocation: "nl -b a <file>"
+      use_when: "Add line numbers to every line"
+    - invocation: "cat -n <file>"
+      use_when: "Simpler alternative: cat -n numbers all lines"
+
+output_schema:
+  enable_filter: false

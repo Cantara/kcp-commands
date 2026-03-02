@@ -1,0 +1,30 @@
+command: influx
+platform: all
+description: "InfluxDB CLI — query and manage InfluxDB time-series databases"
+
+syntax:
+  usage: "influx <subcommand> [flags]"
+  key_flags:
+    - flag: "query '<flux>'"
+      description: "Execute a Flux query"
+    - flag: "query -f <file.flux>"
+      description: "Execute a Flux query from file"
+    - flag: "bucket list"
+      description: "List all buckets"
+    - flag: "org list"
+      description: "List organizations"
+    - flag: "write -b <bucket> -o <org>"
+      description: "Write line protocol data"
+    - flag: "-host <url>"
+      description: "InfluxDB host URL"
+    - flag: "-token <token>"
+      description: "Authentication token"
+
+  preferred_invocations:
+    - invocation: "influx bucket list"
+      use_when: "List available buckets"
+    - invocation: "influx query 'from(bucket:\"<b>\") |> range(start: -1h)'"
+      use_when: "Query last hour of data from a bucket"
+
+output_schema:
+  enable_filter: false

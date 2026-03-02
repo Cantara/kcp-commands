@@ -1,0 +1,33 @@
+command: bat
+platform: all
+description: "cat with syntax highlighting, line numbers, and git integration"
+
+syntax:
+  usage: "bat [options] [file...]"
+  key_flags:
+    - flag: "<file>"
+      description: "Show file with syntax highlighting and line numbers"
+    - flag: "--plain / -p"
+      description: "Plain output — no decorations (useful in pipes)"
+    - flag: "--language <lang>"
+      description: "Specify language for syntax highlighting"
+    - flag: "--style <style>"
+      description: "Output style: full, plain, numbers, grid, header"
+    - flag: "--diff"
+      description: "Show only lines changed vs git"
+    - flag: "-A"
+      description: "Show non-printable characters"
+    - flag: "--paging never"
+      description: "Disable pager"
+      use_when: "Pipe output to another command"
+
+  preferred_invocations:
+    - invocation: "bat <file>"
+      use_when: "Read a file with highlighting"
+    - invocation: "bat --plain <file>"
+      use_when: "Use in scripts/pipes instead of cat"
+    - invocation: "bat --diff <file>"
+      use_when: "Show only changed lines"
+
+output_schema:
+  enable_filter: false

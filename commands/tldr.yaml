@@ -1,0 +1,28 @@
+command: tldr
+platform: all
+description: "Simplified man pages — practical examples for common commands"
+
+syntax:
+  usage: "tldr <command>"
+  key_flags:
+    - flag: "<command>"
+      description: "Show practical usage examples for a command"
+    - flag: "-u / --update"
+      description: "Update the local tldr page cache"
+    - flag: "-l / --list"
+      description: "List all available tldr pages"
+    - flag: "-p <platform>"
+      description: "Show page for specific platform: linux, osx, windows, common"
+    - flag: "-L <lang>"
+      description: "Show page in a specific language"
+
+  preferred_invocations:
+    - invocation: "tldr <command>"
+      use_when: "Quick practical usage reference"
+    - invocation: "tldr -u"
+      use_when: "Refresh the local page cache"
+    - invocation: "tldr -p linux <command>"
+      use_when: "Force Linux-specific page"
+
+output_schema:
+  enable_filter: false

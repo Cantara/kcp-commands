@@ -1,0 +1,35 @@
+command: docker
+subcommand: system
+platform: all
+description: "Manage Docker system resources — disk usage and cleanup"
+
+syntax:
+  usage: "docker system <subcommand> [options]"
+  key_flags:
+    - flag: "df"
+      description: "Show disk usage by images, containers, volumes, cache"
+      use_when: "Check how much disk Docker is using"
+    - flag: "df -v"
+      description: "Verbose — show individual items"
+    - flag: "prune"
+      description: "Remove all stopped containers, unused networks and images"
+    - flag: "prune -a"
+      description: "Also remove all unused images (not just dangling)"
+      use_when: "Major cleanup — reclaim maximum disk"
+    - flag: "prune -a --volumes"
+      description: "Nuclear cleanup — also remove volumes"
+    - flag: "info"
+      description: "Show system-wide Docker information"
+    - flag: "events"
+      description: "Stream real-time events from the Docker daemon"
+
+  preferred_invocations:
+    - invocation: "docker system df"
+      use_when: "See Docker disk usage"
+    - invocation: "docker system prune -a"
+      use_when: "Reclaim disk space — remove unused images and containers"
+    - invocation: "docker system prune -a --volumes"
+      use_when: "Full cleanup including volumes (destructive)"
+
+output_schema:
+  enable_filter: false

@@ -1,0 +1,37 @@
+command: serverless
+platform: all
+description: "Serverless Framework — deploy functions to AWS Lambda, Azure, GCP, etc."
+
+syntax:
+  usage: "serverless <command> [options]"
+  key_flags:
+    - flag: "deploy"
+      description: "Deploy the service to the cloud"
+    - flag: "deploy --stage <env>"
+      description: "Deploy to a specific stage (dev/prod)"
+    - flag: "deploy function -f <name>"
+      description: "Deploy a single function (faster)"
+      use_when: "Code-only change — skip full stack update"
+    - flag: "invoke -f <name>"
+      description: "Invoke a deployed function"
+    - flag: "invoke local -f <name>"
+      description: "Invoke function locally"
+    - flag: "logs -f <name>"
+      description: "Tail function logs"
+    - flag: "remove"
+      description: "Remove deployed resources"
+    - flag: "info"
+      description: "Show deployed service information"
+    - flag: "package"
+      description: "Package without deploying"
+
+  preferred_invocations:
+    - invocation: "serverless deploy --stage prod"
+      use_when: "Deploy to production"
+    - invocation: "serverless deploy function -f <name>"
+      use_when: "Fast deploy of a single function"
+    - invocation: "serverless logs -f <name> --tail"
+      use_when: "Watch function logs"
+
+output_schema:
+  enable_filter: false

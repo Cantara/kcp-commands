@@ -1,0 +1,38 @@
+command: kubectl
+subcommand: rollout
+platform: all
+description: "Manage rollouts of deployments, daemonsets, and statefulsets"
+
+syntax:
+  usage: "kubectl rollout <subcommand> <resource>"
+  key_flags:
+    - flag: "status deployment/<name>"
+      description: "Watch rollout progress until complete"
+      use_when: "After kubectl apply — confirm deployment finished"
+    - flag: "history deployment/<name>"
+      description: "Show rollout history"
+    - flag: "undo deployment/<name>"
+      description: "Roll back to previous version"
+      use_when: "Emergency rollback on bad deployment"
+    - flag: "undo deployment/<name> --to-revision=<N>"
+      description: "Roll back to a specific revision"
+    - flag: "restart deployment/<name>"
+      description: "Trigger a rolling restart"
+      use_when: "Force pods to restart (e.g. pick up new secret)"
+    - flag: "pause deployment/<name>"
+      description: "Pause a rollout"
+    - flag: "resume deployment/<name>"
+      description: "Resume a paused rollout"
+    - flag: "-n <namespace>"
+      description: "Target a specific namespace"
+
+  preferred_invocations:
+    - invocation: "kubectl rollout status deployment/<name>"
+      use_when: "Wait for a deployment to finish rolling out"
+    - invocation: "kubectl rollout undo deployment/<name>"
+      use_when: "Emergency rollback"
+    - invocation: "kubectl rollout restart deployment/<name>"
+      use_when: "Rolling restart to pick up config changes"
+
+output_schema:
+  enable_filter: false

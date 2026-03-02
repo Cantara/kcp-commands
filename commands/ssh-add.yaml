@@ -1,0 +1,34 @@
+command: ssh-add
+platform: all
+description: "Add SSH private keys to the authentication agent (ssh-agent)"
+
+syntax:
+  usage: "ssh-add [options] [file...]"
+  key_flags:
+    - flag: "(no args)"
+      description: "Add default keys (~/.ssh/id_rsa, id_ed25519, etc.)"
+    - flag: "<keyfile>"
+      description: "Add a specific private key"
+    - flag: "-l"
+      description: "List fingerprints of loaded keys"
+    - flag: "-L"
+      description: "List public keys of loaded identities"
+    - flag: "-d <keyfile>"
+      description: "Remove a key from the agent"
+    - flag: "-D"
+      description: "Remove all keys from the agent"
+    - flag: "-t <seconds>"
+      description: "Set key lifetime (auto-removes after timeout)"
+    - flag: "--apple-use-keychain"
+      description: "Use macOS keychain to remember passphrase"
+
+  preferred_invocations:
+    - invocation: "ssh-add ~/.ssh/id_ed25519"
+      use_when: "Load a specific key into the agent"
+    - invocation: "ssh-add -l"
+      use_when: "Verify which keys are loaded"
+    - invocation: "ssh-add --apple-use-keychain ~/.ssh/id_ed25519"
+      use_when: "Add key and save passphrase to macOS keychain"
+
+output_schema:
+  enable_filter: false

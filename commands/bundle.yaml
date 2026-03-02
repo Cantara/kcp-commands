@@ -1,0 +1,47 @@
+command: bundle
+platform: all
+description: "Bundler — Ruby dependency manager"
+
+syntax:
+  usage: "bundle <command> [options]"
+  key_flags:
+    - flag: "install"
+      description: "Install all gems from Gemfile"
+      use_when: "After clone or when gems are missing"
+    - flag: "add <gem>"
+      description: "Add a gem to Gemfile and install it"
+    - flag: "update"
+      description: "Update all gems to latest compatible versions"
+    - flag: "update <gem>"
+      description: "Update a specific gem"
+    - flag: "exec <cmd>"
+      description: "Run command in the bundler context"
+      use_when: "Ensure correct gem versions are used"
+    - flag: "show"
+      description: "List installed gems and their paths"
+    - flag: "outdated"
+      description: "List gems with newer available versions"
+    - flag: "lock"
+      description: "Update Gemfile.lock without installing"
+
+  preferred_invocations:
+    - invocation: "bundle install"
+      use_when: "Install dependencies"
+    - invocation: "bundle exec rake test"
+      use_when: "Run tests in bundler context"
+    - invocation: "bundle exec rails server"
+      use_when: "Start Rails in bundler context"
+    - invocation: "bundle add <gem>"
+      use_when: "Add a new dependency"
+
+output_schema:
+  enable_filter: true
+  noise_patterns:
+    - pattern: "^Fetching "
+      reason: "Gem download lines"
+    - pattern: "^Installing "
+      reason: "Gem installation lines"
+    - pattern: "^Using "
+      reason: "Existing gem lines"
+  max_lines: 50
+  truncation_message: "... {remaining} more bundle lines."

@@ -1,0 +1,30 @@
+command: k9s
+platform: all
+description: "Terminal UI for Kubernetes — browse, watch, and manage cluster resources"
+
+syntax:
+  usage: "k9s [options]"
+  key_flags:
+    - flag: "(no args)"
+      description: "Open interactive cluster explorer"
+    - flag: "-n <namespace>"
+      description: "Start in a specific namespace"
+    - flag: "--context <name>"
+      description: "Use a specific kubeconfig context"
+    - flag: "--readonly"
+      description: "Disable all mutating operations (safe exploration)"
+    - flag: "-c <resource>"
+      description: "Start on a specific resource view (e.g. pods, deployments)"
+    - flag: "--kubeconfig <file>"
+      description: "Use a custom kubeconfig file"
+
+  preferred_invocations:
+    - invocation: "k9s"
+      use_when: "Interactive Kubernetes cluster explorer"
+    - invocation: "k9s -n <namespace>"
+      use_when: "Open directly in a specific namespace"
+    - invocation: "k9s --readonly"
+      use_when: "Browse cluster safely without risk of accidental changes"
+
+output_schema:
+  enable_filter: false

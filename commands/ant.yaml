@@ -1,0 +1,47 @@
+command: ant
+platform: all
+description: "Apache Ant build tool for Java projects"
+
+syntax:
+  usage: "ant [options] [target...]"
+  key_flags:
+    - flag: "(no target)"
+      description: "Run the default target from build.xml"
+    - flag: "<target>"
+      description: "Run a specific target"
+    - flag: "clean"
+      description: "Delete build artifacts (convention)"
+    - flag: "compile"
+      description: "Compile source files"
+    - flag: "test"
+      description: "Run tests"
+    - flag: "jar"
+      description: "Package as JAR"
+    - flag: "-f <buildfile>"
+      description: "Use a specific build file (default: build.xml)"
+    - flag: "-p"
+      description: "List available targets with descriptions"
+    - flag: "-v"
+      description: "Verbose output"
+    - flag: "-D<prop>=<value>"
+      description: "Set a property"
+
+  preferred_invocations:
+    - invocation: "ant -p"
+      use_when: "See available targets"
+    - invocation: "ant clean jar"
+      use_when: "Clean build and produce JAR"
+    - invocation: "ant test"
+      use_when: "Run tests"
+
+output_schema:
+  enable_filter: true
+  noise_patterns:
+    - pattern: "^Buildfile:"
+      reason: "Build file location header"
+    - pattern: "^BUILD SUCCESSFUL"
+      reason: "Success footer — visible at truncation limit"
+    - pattern: "^Total time:"
+      reason: "Timing summary"
+  max_lines: 80
+  truncation_message: "... {remaining} more Ant lines. Look for BUILD FAILED or BUILD SUCCESSFUL."

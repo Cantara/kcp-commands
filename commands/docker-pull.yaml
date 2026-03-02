@@ -1,0 +1,27 @@
+command: docker
+subcommand: pull
+platform: all
+description: "Pull an image from a container registry"
+
+syntax:
+  usage: "docker pull [options] NAME[:TAG|@DIGEST]"
+  key_flags:
+    - flag: "<image>"
+      description: "Pull the latest tag of an image"
+    - flag: "<image>:<tag>"
+      description: "Pull a specific tag"
+    - flag: "<image>@<digest>"
+      description: "Pull by digest (immutable, pinned)"
+    - flag: "--platform linux/amd64"
+      description: "Pull for a specific platform"
+    - flag: "-a"
+      description: "Pull all tags"
+
+  preferred_invocations:
+    - invocation: "docker pull <image>:<tag>"
+      use_when: "Fetch a specific image version"
+    - invocation: "docker pull --platform linux/amd64 <image>"
+      use_when: "Pull amd64 image on Apple Silicon"
+
+output_schema:
+  enable_filter: false

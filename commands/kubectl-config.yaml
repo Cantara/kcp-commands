@@ -1,0 +1,34 @@
+command: kubectl
+subcommand: config
+platform: all
+description: "Manage kubeconfig — contexts, clusters, and credentials"
+
+syntax:
+  usage: "kubectl config <subcommand>"
+  key_flags:
+    - flag: "get-contexts"
+      description: "List all available contexts"
+      use_when: "See what clusters you can connect to"
+    - flag: "current-context"
+      description: "Show the active context"
+    - flag: "use-context <name>"
+      description: "Switch to a different context"
+      use_when: "Switch clusters"
+    - flag: "view"
+      description: "Display the full kubeconfig"
+    - flag: "set-context --current --namespace=<ns>"
+      description: "Set default namespace for current context"
+      use_when: "Avoid typing -n namespace on every command"
+    - flag: "delete-context <name>"
+      description: "Remove a context"
+
+  preferred_invocations:
+    - invocation: "kubectl config get-contexts"
+      use_when: "See available clusters"
+    - invocation: "kubectl config use-context <name>"
+      use_when: "Switch to a different cluster"
+    - invocation: "kubectl config set-context --current --namespace=<ns>"
+      use_when: "Set default namespace"
+
+output_schema:
+  enable_filter: false

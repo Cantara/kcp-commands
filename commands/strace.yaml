@@ -1,0 +1,46 @@
+command: strace
+platform: linux
+description: "Trace system calls and signals made by a process"
+
+syntax:
+  usage: "strace [options] command"
+  key_flags:
+    - flag: "<cmd>"
+      description: "Run command and trace all system calls"
+    - flag: "-p <pid>"
+      description: "Attach to a running process"
+    - flag: "-e trace=<set>"
+      description: "Trace only specific syscalls (e.g. -e trace=open,read)"
+    - flag: "-e trace=file"
+      description: "Trace all file-related syscalls"
+    - flag: "-e trace=network"
+      description: "Trace network syscalls"
+    - flag: "-o <file>"
+      description: "Write output to file instead of stderr"
+    - flag: "-f"
+      description: "Follow forked child processes"
+    - flag: "-c"
+      description: "Count syscalls — show summary table"
+      use_when: "Profile which syscalls are used most"
+    - flag: "-s <N>"
+      description: "Show first N bytes of string arguments (default 32)"
+
+  preferred_invocations:
+    - invocation: "strace -e trace=file <cmd>"
+      use_when: "See what files a command opens"
+    - invocation: "strace -p <pid> -e trace=network"
+      use_when: "Watch network activity of a running process"
+    - invocation: "strace -c <cmd>"
+      use_when: "Profile syscall usage"
+
+output_schema:
+  enable_filter: true
+  noise_patterns:
+    - pattern: "^mmap\\("
+      reason: "Memory mapping calls — usually not interesting"
+    - pattern: "^mprotect\\("
+      reason: "Memory protection calls"
+    - pattern: "^brk\\("
+      reason: "Heap allocation calls"
+  max_lines: 100
+  truncation_message: "... {remaining} more syscalls."

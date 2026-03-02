@@ -1,0 +1,30 @@
+command: docker
+subcommand: volume
+platform: all
+description: "Manage Docker volumes — persistent storage for containers"
+
+syntax:
+  usage: "docker volume <subcommand> [options]"
+  key_flags:
+    - flag: "ls"
+      description: "List volumes"
+    - flag: "create <name>"
+      description: "Create a named volume"
+    - flag: "inspect <name>"
+      description: "Show volume details and mount point"
+    - flag: "rm <name>"
+      description: "Remove a volume"
+    - flag: "prune"
+      description: "Remove all unused volumes"
+      use_when: "Free disk space from dangling volumes"
+
+  preferred_invocations:
+    - invocation: "docker volume ls"
+      use_when: "List all volumes"
+    - invocation: "docker volume inspect <name>"
+      use_when: "Find where a volume is stored on disk"
+    - invocation: "docker volume prune"
+      use_when: "Clean up volumes not used by any container"
+
+output_schema:
+  enable_filter: false

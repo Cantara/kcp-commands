@@ -1,0 +1,37 @@
+command: ssh-keygen
+platform: all
+description: "Generate, manage, and convert SSH keys"
+
+syntax:
+  usage: "ssh-keygen [options]"
+  key_flags:
+    - flag: "-t ed25519"
+      description: "Generate Ed25519 key (recommended)"
+      use_when: "New keys — Ed25519 is faster and more secure than RSA"
+    - flag: "-t rsa -b 4096"
+      description: "Generate 4096-bit RSA key"
+      use_when: "When Ed25519 is not supported"
+    - flag: "-C '<comment>'"
+      description: "Add a comment (email or description)"
+    - flag: "-f <filename>"
+      description: "Output key to specific file"
+    - flag: "-p -f <keyfile>"
+      description: "Change passphrase on existing key"
+    - flag: "-l -f <keyfile>"
+      description: "Show fingerprint of a key"
+    - flag: "-R <hostname>"
+      description: "Remove a host from known_hosts"
+      use_when: "After server IP change or rebuild"
+
+  preferred_invocations:
+    - invocation: "ssh-keygen -t ed25519 -C 'user@host'"
+      use_when: "Generate a new SSH key pair"
+    - invocation: "ssh-keygen -t ed25519 -f ~/.ssh/deploy_key -N ''"
+      use_when: "Generate passwordless deploy key"
+    - invocation: "ssh-keygen -l -f ~/.ssh/id_ed25519.pub"
+      use_when: "Verify key fingerprint"
+    - invocation: "ssh-keygen -R <hostname>"
+      use_when: "Clear stale known_hosts entry"
+
+output_schema:
+  enable_filter: false

@@ -1,0 +1,46 @@
+command: composer
+platform: all
+description: "PHP dependency manager"
+
+syntax:
+  usage: "composer <command> [options]"
+  key_flags:
+    - flag: "install"
+      description: "Install dependencies from composer.lock"
+      use_when: "After clone or when vendor/ is missing"
+    - flag: "require <pkg>"
+      description: "Add a dependency and install it"
+    - flag: "require --dev <pkg>"
+      description: "Add a dev dependency"
+    - flag: "update"
+      description: "Update all dependencies to latest allowed versions"
+    - flag: "update <pkg>"
+      description: "Update a specific package"
+    - flag: "remove <pkg>"
+      description: "Remove a package"
+    - flag: "show"
+      description: "List installed packages"
+    - flag: "dump-autoload"
+      description: "Regenerate autoload files"
+    - flag: "run-script <name>"
+      description: "Run a composer script"
+
+  preferred_invocations:
+    - invocation: "composer install"
+      use_when: "Install dependencies"
+    - invocation: "composer require <pkg>"
+      use_when: "Add a new package"
+    - invocation: "composer update"
+      use_when: "Update all packages"
+
+output_schema:
+  enable_filter: true
+  noise_patterns:
+    - pattern: "^  - Downloading "
+      reason: "Download progress"
+    - pattern: "^  - Installing "
+      reason: "Installation progress"
+    - pattern: "^Loading composer"
+      reason: "Startup header"
+  max_lines: 50
+  truncation_message: "... {remaining} more composer lines."

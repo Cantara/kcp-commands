@@ -1,0 +1,25 @@
+command: crontab
+platform: linux
+description: "Schedule recurring tasks using cron expressions"
+
+syntax:
+  usage: "crontab [options]"
+  key_flags:
+    - flag: "-e"
+      description: "Edit the current user's crontab"
+      use_when: "Add or modify scheduled jobs"
+    - flag: "-l"
+      description: "List the current user's crontab"
+    - flag: "-r"
+      description: "Remove the current user's crontab"
+    - flag: "-u <user> -e"
+      description: "Edit another user's crontab (root only)"
+
+  preferred_invocations:
+    - invocation: "crontab -e"
+      use_when: "Add a new scheduled task"
+    - invocation: "crontab -l"
+      use_when: "See what's scheduled"
+
+output_schema:
+  enable_filter: false

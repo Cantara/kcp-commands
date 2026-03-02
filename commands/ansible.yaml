@@ -1,0 +1,40 @@
+command: ansible
+platform: all
+description: "Run ad-hoc Ansible commands against managed hosts"
+
+syntax:
+  usage: "ansible <pattern> -m <module> [options]"
+  key_flags:
+    - flag: "all -m ping"
+      description: "Test connectivity to all hosts"
+      use_when: "Verify inventory is reachable"
+    - flag: "<host> -m shell -a '<cmd>'"
+      description: "Run a shell command on hosts"
+    - flag: "<host> -m copy -a 'src=<file> dest=<path>'"
+      description: "Copy a file to hosts"
+    - flag: "<host> -m service -a 'name=<svc> state=restarted'"
+      description: "Restart a service"
+    - flag: "-i <inventory>"
+      description: "Specify inventory file"
+    - flag: "-u <user>"
+      description: "SSH user"
+    - flag: "--become"
+      description: "Escalate to root (sudo)"
+    - flag: "-k"
+      description: "Prompt for SSH password"
+    - flag: "--list-hosts"
+      description: "List matching hosts without running"
+
+  preferred_invocations:
+    - invocation: "ansible all -m ping -i inventory.ini"
+      use_when: "Test connectivity to all hosts"
+    - invocation: "ansible <host> -m shell -a 'df -h' --become"
+      use_when: "Run a quick command on a host"
+
+output_schema:
+  enable_filter: true
+  noise_patterns:
+    - pattern: "^\\[WARNING\\]"
+      reason: "Deprecation and config warnings"
+  max_lines: 80
+  truncation_message: "... {remaining} more ansible lines."

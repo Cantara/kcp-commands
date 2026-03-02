@@ -1,0 +1,36 @@
+command: certbot
+platform: linux
+description: "Automatically obtain and renew Let's Encrypt TLS certificates"
+
+syntax:
+  usage: "certbot <subcommand> [options]"
+  key_flags:
+    - flag: "certonly --standalone -d <domain>"
+      description: "Obtain certificate using standalone HTTP server"
+      use_when: "No web server running, or one-time cert"
+    - flag: "certonly --nginx -d <domain>"
+      description: "Obtain and configure certificate with nginx"
+    - flag: "certonly --apache -d <domain>"
+      description: "Obtain and configure certificate with Apache"
+    - flag: "certonly --dns-<provider> -d <domain>"
+      description: "DNS-based challenge (wildcards, internal servers)"
+    - flag: "renew"
+      description: "Renew all certificates near expiry"
+      use_when: "Run as cron/timer: certbot renew --quiet"
+    - flag: "renew --dry-run"
+      description: "Test renewal without making changes"
+    - flag: "certificates"
+      description: "List installed certificates and expiry dates"
+    - flag: "delete --cert-name <domain>"
+      description: "Delete a certificate"
+
+  preferred_invocations:
+    - invocation: "certbot certonly --standalone -d example.com"
+      use_when: "Get a cert with no web server"
+    - invocation: "certbot renew --quiet"
+      use_when: "Auto-renew from cron (run twice daily)"
+    - invocation: "certbot certificates"
+      use_when: "Check cert expiry dates"
+
+output_schema:
+  enable_filter: false

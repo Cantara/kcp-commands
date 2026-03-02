@@ -1,0 +1,24 @@
+command: envsubst
+platform: all
+description: "Substitute environment variable references in text — template substitution"
+
+syntax:
+  usage: "envsubst [variables] < template > output"
+  key_flags:
+    - flag: "< template.yaml > output.yaml"
+      description: "Substitute all $VAR and ${VAR} in template"
+      use_when: "Generate config files from templates"
+    - flag: "'${VAR1} ${VAR2}'"
+      description: "Substitute only the listed variables"
+      use_when: "Avoid replacing unrelated dollar signs"
+
+  preferred_invocations:
+    - invocation: "envsubst < config.template.yaml > config.yaml"
+      use_when: "Generate config from template using env vars"
+    - invocation: "export DB_HOST=localhost && envsubst < app.conf.tmpl > app.conf"
+      use_when: "Set vars and apply template"
+    - invocation: "cat template.yaml | envsubst '${IMAGE_TAG} ${NAMESPACE}'"
+      use_when: "Only substitute specific variables"
+
+output_schema:
+  enable_filter: false

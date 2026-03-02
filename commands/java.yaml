@@ -1,0 +1,39 @@
+command: java
+platform: all
+description: "Java runtime — run JARs, class files, and Java applications"
+
+syntax:
+  usage: "java [options] <mainclass|jarfile> [args...]"
+  key_flags:
+    - flag: "-jar <file.jar>"
+      description: "Run an executable JAR"
+      use_when: "Running packaged Java applications"
+    - flag: "-cp <classpath> <MainClass>"
+      description: "Run with explicit classpath"
+    - flag: "-Xmx<size>"
+      description: "Maximum heap size (e.g. -Xmx2g)"
+      use_when: "Memory-intensive applications"
+    - flag: "-Xms<size>"
+      description: "Initial heap size"
+    - flag: "-D<key>=<value>"
+      description: "Set system property"
+    - flag: "-version"
+      description: "Show Java version"
+    - flag: "--enable-preview"
+      description: "Enable preview language features"
+    - flag: "-verbose:gc"
+      description: "Print garbage collection events"
+      use_when: "Diagnosing memory issues"
+
+  preferred_invocations:
+    - invocation: "java -jar app.jar"
+      use_when: "Run a JAR file"
+    - invocation: "java -version"
+      use_when: "Check Java version"
+    - invocation: "java -Xmx4g -jar app.jar"
+      use_when: "Run with increased heap"
+    - invocation: "java -Dspring.profiles.active=prod -jar app.jar"
+      use_when: "Run with system properties"
+
+output_schema:
+  enable_filter: false

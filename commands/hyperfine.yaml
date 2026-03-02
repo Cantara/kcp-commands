@@ -1,0 +1,35 @@
+command: hyperfine
+platform: all
+description: "Command-line benchmarking tool — measure and compare command performance"
+
+syntax:
+  usage: "hyperfine [options] 'command'"
+  key_flags:
+    - flag: "'<cmd>'"
+      description: "Benchmark a single command"
+    - flag: "'<cmd1>' '<cmd2>'"
+      description: "Compare two commands"
+    - flag: "--warmup <N>"
+      description: "Warmup runs before measuring"
+      use_when: "Eliminate cold-start effects"
+    - flag: "--min-runs <N>"
+      description: "Minimum number of benchmark runs"
+    - flag: "--export-json <file>"
+      description: "Export results to JSON"
+    - flag: "--export-markdown <file>"
+      description: "Export results as Markdown table"
+    - flag: "--prepare '<cmd>'"
+      description: "Run before each benchmark (e.g. clear caches)"
+    - flag: "--shell none"
+      description: "Execute command directly (faster, no shell overhead)"
+
+  preferred_invocations:
+    - invocation: "hyperfine 'cmd1' 'cmd2'"
+      use_when: "Compare two commands"
+    - invocation: "hyperfine --warmup 3 '<cmd>'"
+      use_when: "Benchmark with warmup runs"
+    - invocation: "hyperfine --export-markdown bench.md 'cmd1' 'cmd2'"
+      use_when: "Export comparison table for docs"
+
+output_schema:
+  enable_filter: false

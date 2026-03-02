@@ -1,0 +1,26 @@
+command: who
+platform: linux
+description: "Show who is logged in to the system"
+
+syntax:
+  usage: "who [options]"
+  key_flags:
+    - flag: "(no flags)"
+      description: "List logged-in users with terminal and login time"
+    - flag: "-a"
+      description: "All information"
+    - flag: "-b"
+      description: "Time of last system boot"
+    - flag: "-q"
+      description: "Quick: usernames and count only"
+    - flag: "am i"
+      description: "Show who you are logged in as"
+
+  preferred_invocations:
+    - invocation: "who"
+      use_when: "See who is logged in"
+    - invocation: "who -b"
+      use_when: "Check last boot time"
+
+output_schema:
+  enable_filter: false

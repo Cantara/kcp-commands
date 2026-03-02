@@ -6,7 +6,7 @@ kcp-commands is a [Claude Code hook](https://docs.anthropic.com/en/docs/claude-c
 
 Measured across a typical agentic coding session: **67,352 tokens saved -- 33.7% of a 200K context window recovered**, equivalent to 33 additional tool call results fitting in the same context.
 
-114 bundled manifests. Part of the [Knowledge Context Protocol](https://cantara.github.io/knowledge-context-protocol/) ecosystem.
+214 bundled manifests. Part of the [Knowledge Context Protocol](https://cantara.github.io/knowledge-context-protocol/) ecosystem.
 Read the [release post](https://wiki.totto.org/blog/2026/03/02/kcp-commands/) for the full benchmark methodology and design rationale.
 
 ---
@@ -91,27 +91,45 @@ Full methodology and raw numbers: [docs/benchmark-results.md](docs/benchmark-res
 
 ## Supported commands
 
-### Bundled manifests (114 primed)
+### Bundled manifests (214 primed)
 
 **Git** — `git log` · `git diff` · `git status` · `git add` · `git commit` · `git push` · `git pull` · `git fetch` · `git branch` · `git checkout` · `git stash` · `git merge` · `git rebase` · `git clone` · `git reset` · `git tag` · `git remote` · `git show` · `git cherry-pick` · `git bisect` · `git worktree` · `git submodule`
 
 **Linux / macOS** — `ls` · `ps` · `find` · `cp` · `mv` · `rm` · `mkdir` · `cat` · `head` · `tail` · `grep` · `chmod` · `df` · `du` · `tar` · `ln` · `rsync` · `top` · `kill` · `systemctl` · `journalctl` · `lsof` · `netstat` · `ss` · `ping` · `free` · `watch` · `wget` · `dig` · `openssl` · `scp`
 
-**Text processing** — `jq` · `sed` · `awk` · `sort` · `uniq` · `wc` · `cut` · `xargs` · `tee` · `tr` · `diff` · `make`
+**Text processing** — `jq` · `sed` · `awk` · `sort` · `uniq` · `wc` · `cut` · `xargs` · `tee` · `tr` · `diff` · `make` · `yq` · `base64` · `sha256sum` · `envsubst` · `nl` · `xxd` · `strings` · `xmllint` · `column`
 
-**Build tools** — `mvn` · `gradle` · `cargo` · `go build` · `go test` · `go mod`
+**Build tools** — `mvn` · `gradle` · `cargo` · `go build` · `go test` · `go mod` · `ant` · `sbt` · `dotnet`
 
-**Package managers** — `npm` · `yarn` · `pnpm` · `bun` · `pip` · `brew` · `apt` · `yum`
+**Package managers** — `npm` · `yarn` · `pnpm` · `bun` · `pip` · `brew` · `apt` · `yum` · `gem` · `conda` · `snap` · `pacman` · `composer` · `poetry` · `bundle`
 
-**GitHub CLI** — `gh pr` · `gh issue` · `gh repo` · `gh workflow`
+**Runtimes** — `node` · `python3` · `ruby` · `java` · `npx` · `mix`
 
-**Cross-platform** — `curl` · `node` · `ssh` · `docker ps` · `docker images` · `docker logs` · `docker build` · `docker run` · `docker exec` · `docker compose` · `kubectl get` · `kubectl logs` · `kubectl describe` · `kubectl apply` · `kubectl exec` · `kubectl port-forward` · `kubectl delete`
+**GitHub CLI** — `gh pr` · `gh issue` · `gh repo` · `gh workflow` · `gh run` · `gh release` · `gh auth` · `gh api` · `gh gist`
 
-**Cloud / IaC** — `aws` · `gcloud` · `az` · `terraform` · `helm`
+**Docker** — `docker ps` · `docker images` · `docker logs` · `docker build` · `docker run` · `docker exec` · `docker compose` · `docker network` · `docker volume` · `docker system` · `docker inspect` · `docker pull` · `docker push` · `docker tag`
+
+**Kubernetes** — `kubectl get` · `kubectl logs` · `kubectl describe` · `kubectl apply` · `kubectl exec` · `kubectl port-forward` · `kubectl delete` · `kubectl rollout` · `kubectl scale` · `kubectl top` · `kubectl config` · `kubectl create`
+
+**Cloud / IaC** — `aws` · `gcloud` · `az` · `terraform` · `helm` · `ansible` · `ansible-playbook` · `vagrant` · `pulumi` · `serverless` · `minikube` · `kind`
+
+**Database CLIs** — `psql` · `mysql` · `redis-cli` · `sqlite3` · `mongosh` · `influx`
+
+**Security** — `gpg` · `ssh-keygen` · `ssh-add` · `certbot` · `keytool` · `age`
+
+**System diagnostics** — `top` · `htop` · `vmstat` · `dstat` · `iotop` · `strace` · `dmesg` · `lsblk` · `iostat` · `uptime` · `id` · `who` · `crontab` · `tmux`
+
+**Networking** — `nmap` · `nc` · `traceroute` · `ip` · `mtr` · `nslookup` · `whois`
+
+**Modern CLI** — `fzf` · `rg` · `fd` · `bat` · `delta` · `eza` · `hyperfine` · `tldr` · `jless` · `parallel`
+
+**Linters / CI** — `shellcheck` · `hadolint` · `act` · `k9s`
+
+**System tools** — `zip` · `unzip` · `gzip` · `date` · `env` · `chown`
 
 **Windows** — `dir` · `tasklist` · `taskkill` · `ipconfig` · `netstat` · `where` · `robocopy` · `type` · `xcopy` (all include PowerShell equivalents)
 
-Phase B output filtering is enabled on the high-noise commands: `ps`, `find`, `top`, `df`, `du`, `grep`, `journalctl`, `systemctl`, `lsof`, `netstat`, `ss`, `rsync`, `npm`, `yarn`, `pnpm`, `pip`, `brew`, `apt`, `yum`, `mvn`, `gradle`, `cargo`, `go test`, `make`, `docker ps`, `docker images`, `docker logs`, `docker build`, `docker compose`, `kubectl get`, `kubectl logs`, `kubectl describe`, `aws`, `gcloud`, `az`, `terraform`, `dig`, `openssl`, `dir`, `tasklist`.
+Phase B output filtering is enabled on the high-noise commands: `ps`, `find`, `top`, `df`, `du`, `grep`, `journalctl`, `systemctl`, `lsof`, `netstat`, `ss`, `rsync`, `npm`, `yarn`, `pnpm`, `pip`, `brew`, `apt`, `yum`, `mvn`, `gradle`, `cargo`, `go test`, `make`, `docker ps`, `docker images`, `docker logs`, `docker build`, `docker compose`, `kubectl get` · `kubectl logs` · `kubectl describe`, `aws`, `gcloud`, `az`, `terraform`, `dig`, `openssl`, `dir`, `tasklist`, `nmap`, `ansible-playbook`, `conda`, `sbt`, `vmstat`, `dstat`, `iotop`, `strace`, `iostat`, `psql`, `mysql`.
 
 ### Auto-generated manifests
 

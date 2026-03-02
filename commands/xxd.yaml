@@ -1,0 +1,33 @@
+command: xxd
+platform: all
+description: "Hex dump — display binary files as hex, or convert hex back to binary"
+
+syntax:
+  usage: "xxd [options] [file]"
+  key_flags:
+    - flag: "<file>"
+      description: "Show hex dump of file"
+    - flag: "-l <N>"
+      description: "Dump only N bytes"
+    - flag: "-s <offset>"
+      description: "Start at byte offset"
+    - flag: "-c <N>"
+      description: "Bytes per row (default 16)"
+    - flag: "-p"
+      description: "Plain hex output — no address or ASCII column"
+      use_when: "Scripting — pipe hex data"
+    - flag: "-r"
+      description: "Reverse: convert hex dump back to binary"
+    - flag: "-e"
+      description: "Little-endian mode"
+
+  preferred_invocations:
+    - invocation: "xxd <file> | head -20"
+      use_when: "Inspect first bytes of a binary file"
+    - invocation: "xxd -p <file>"
+      use_when: "Plain hex for scripting or comparison"
+    - invocation: "echo -n 'hello' | xxd"
+      use_when: "See hex representation of a string"
+
+output_schema:
+  enable_filter: false

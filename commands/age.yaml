@@ -1,0 +1,28 @@
+command: age
+platform: all
+description: "Simple, modern file encryption — alternative to GPG for secrets"
+
+syntax:
+  usage: "age [options] [file]"
+  key_flags:
+    - flag: "-r <pubkey>"
+      description: "Encrypt for a recipient's public key"
+    - flag: "-i <keyfile>"
+      description: "Decrypt with a private key"
+    - flag: "-d"
+      description: "Decrypt mode"
+    - flag: "-o <outfile>"
+      description: "Write output to file"
+    - flag: "-p"
+      description: "Encrypt with a passphrase"
+
+  preferred_invocations:
+    - invocation: "age -r <pubkey> -o secret.txt.age secret.txt"
+      use_when: "Encrypt a file for a recipient"
+    - invocation: "age -d -i ~/.age/key.txt -o secret.txt secret.txt.age"
+      use_when: "Decrypt a file"
+    - invocation: "age -p -o secret.txt.age secret.txt"
+      use_when: "Encrypt with passphrase (no key management)"
+
+output_schema:
+  enable_filter: false

@@ -1,0 +1,32 @@
+command: xmllint
+platform: all
+description: "Parse, validate, and format XML documents"
+
+syntax:
+  usage: "xmllint [options] file"
+  key_flags:
+    - flag: "--format <file>"
+      description: "Pretty-print XML with indentation"
+      use_when: "Format minified or ugly XML"
+    - flag: "--xpath '<expr>' <file>"
+      description: "Extract nodes with XPath expression"
+    - flag: "--schema <xsd> <file>"
+      description: "Validate against an XML schema"
+    - flag: "--valid <file>"
+      description: "Validate against embedded DTD"
+    - flag: "--noout"
+      description: "Suppress output — only report errors"
+      use_when: "Validation-only checks"
+    - flag: "-"
+      description: "Read from stdin"
+
+  preferred_invocations:
+    - invocation: "xmllint --format response.xml"
+      use_when: "Pretty-print XML"
+    - invocation: "curl -s <url> | xmllint --format -"
+      use_when: "Format XML from an API response"
+    - invocation: "xmllint --xpath '//element/text()' file.xml"
+      use_when: "Extract specific values with XPath"
+
+output_schema:
+  enable_filter: false

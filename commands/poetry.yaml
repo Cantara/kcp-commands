@@ -1,0 +1,52 @@
+command: poetry
+platform: all
+description: "Python dependency management and packaging tool"
+
+syntax:
+  usage: "poetry <command> [options]"
+  key_flags:
+    - flag: "install"
+      description: "Install all dependencies from pyproject.toml"
+      use_when: "After clone or when .venv is missing"
+    - flag: "add <pkg>"
+      description: "Add a dependency"
+    - flag: "add -D <pkg>"
+      description: "Add as dev dependency"
+    - flag: "remove <pkg>"
+      description: "Remove a package"
+    - flag: "update"
+      description: "Update all packages to latest compatible versions"
+    - flag: "run <cmd>"
+      description: "Run a command inside the virtual environment"
+    - flag: "shell"
+      description: "Spawn a shell inside the virtual environment"
+    - flag: "show"
+      description: "List installed packages"
+    - flag: "build"
+      description: "Build source and wheel distributions"
+    - flag: "publish"
+      description: "Publish to PyPI"
+    - flag: "env info"
+      description: "Show virtual environment information"
+
+  preferred_invocations:
+    - invocation: "poetry install"
+      use_when: "Install all dependencies"
+    - invocation: "poetry run pytest"
+      use_when: "Run tests inside the venv"
+    - invocation: "poetry add <pkg>"
+      use_when: "Add a new package"
+    - invocation: "poetry shell"
+      use_when: "Activate the virtual environment"
+
+output_schema:
+  enable_filter: true
+  noise_patterns:
+    - pattern: "^Creating virtualenv"
+      reason: "Venv creation message"
+    - pattern: "^Resolving dependencies"
+      reason: "Dependency resolution header"
+    - pattern: "^  - Installing "
+      reason: "Package installation lines"
+  max_lines: 50
+  truncation_message: "... {remaining} more poetry lines."

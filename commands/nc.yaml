@@ -1,0 +1,32 @@
+command: nc
+platform: all
+description: "Netcat — TCP/UDP networking Swiss Army knife: connect, listen, transfer"
+
+syntax:
+  usage: "nc [options] host port"
+  key_flags:
+    - flag: "<host> <port>"
+      description: "Connect to host:port"
+      use_when: "Test if a port is open and responsive"
+    - flag: "-l -p <port>"
+      description: "Listen on a port"
+    - flag: "-zv <host> <port>"
+      description: "Port scan — check if port is open (-z) with verbose (-v)"
+      use_when: "Quick connectivity check without nmap"
+    - flag: "-zv <host> <start>-<end>"
+      description: "Scan a port range"
+    - flag: "-u"
+      description: "Use UDP instead of TCP"
+    - flag: "-w <seconds>"
+      description: "Timeout for connections"
+
+  preferred_invocations:
+    - invocation: "nc -zv <host> <port>"
+      use_when: "Test if a specific port is open"
+    - invocation: "nc -zv <host> 80 443 8080"
+      use_when: "Test multiple ports"
+    - invocation: "echo 'PING' | nc -w 2 <host> <port>"
+      use_when: "Send data and check response"
+
+output_schema:
+  enable_filter: false

@@ -1,0 +1,28 @@
+command: kubectl
+subcommand: scale
+platform: all
+description: "Scale a deployment, replicaset, or statefulset"
+
+syntax:
+  usage: "kubectl scale [options] --replicas=N TYPE/NAME"
+  key_flags:
+    - flag: "--replicas=<N> deployment/<name>"
+      description: "Set replica count for a deployment"
+    - flag: "--replicas=0 deployment/<name>"
+      description: "Scale to zero — stop all pods"
+      use_when: "Pause a service without deleting it"
+    - flag: "-n <namespace>"
+      description: "Target a specific namespace"
+    - flag: "--current-replicas=<N>"
+      description: "Only scale if current replicas matches (safe update)"
+
+  preferred_invocations:
+    - invocation: "kubectl scale deployment/<name> --replicas=3"
+      use_when: "Scale a deployment to N replicas"
+    - invocation: "kubectl scale deployment/<name> --replicas=0"
+      use_when: "Stop all pods in a deployment"
+    - invocation: "kubectl scale -n <ns> deployment/<name> --replicas=5"
+      use_when: "Scale in a specific namespace"
+
+output_schema:
+  enable_filter: false

@@ -1,0 +1,40 @@
+command: gh
+subcommand: release
+platform: all
+description: "GitHub CLI — manage GitHub releases"
+
+syntax:
+  usage: "gh release <subcommand> [flags]"
+  key_flags:
+    - flag: "list"
+      description: "List releases"
+    - flag: "view <tag>"
+      description: "View a specific release"
+    - flag: "create <tag>"
+      description: "Create a new release (interactive)"
+    - flag: "create <tag> --title '...' --notes '...'"
+      description: "Create release non-interactively"
+    - flag: "create <tag> --generate-notes"
+      description: "Auto-generate release notes from commits"
+      use_when: "Quick releases with changelog from PRs"
+    - flag: "upload <tag> <files...>"
+      description: "Upload assets to a release"
+    - flag: "download <tag>"
+      description: "Download release assets"
+    - flag: "delete <tag>"
+      description: "Delete a release"
+    - flag: "--draft"
+      description: "Create as draft release"
+    - flag: "--prerelease"
+      description: "Mark as pre-release"
+
+  preferred_invocations:
+    - invocation: "gh release create v1.2.3 --generate-notes"
+      use_when: "Create a release with auto-generated notes"
+    - invocation: "gh release list"
+      use_when: "See all releases"
+    - invocation: "gh release upload v1.2.3 ./dist/*"
+      use_when: "Attach build artifacts to a release"
+
+output_schema:
+  enable_filter: false

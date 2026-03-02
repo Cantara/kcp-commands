@@ -1,0 +1,35 @@
+command: dmesg
+platform: linux
+description: "Print kernel ring buffer messages — hardware, boot, driver events"
+
+syntax:
+  usage: "dmesg [options]"
+  key_flags:
+    - flag: "-H"
+      description: "Human-readable with color and relative timestamps"
+      use_when: "Interactive reading"
+    - flag: "-T"
+      description: "Human-readable timestamps instead of uptime offset"
+    - flag: "--level err,warn"
+      description: "Show only errors and warnings"
+      use_when: "Diagnose hardware or driver issues"
+    - flag: "-w"
+      description: "Follow — print new messages as they arrive"
+    - flag: "-n <level>"
+      description: "Set console log level"
+
+  preferred_invocations:
+    - invocation: "dmesg -T --level err,warn"
+      use_when: "Find hardware errors and warnings"
+    - invocation: "dmesg -T | tail -50"
+      use_when: "Recent kernel messages"
+    - invocation: "dmesg -T | grep -i <keyword>"
+      use_when: "Search for specific device or event"
+
+output_schema:
+  enable_filter: true
+  noise_patterns:
+    - pattern: "^\\[.*\\] audit:"
+      reason: "Audit subsystem noise"
+  max_lines: 80
+  truncation_message: "... {remaining} more kernel messages."

@@ -1,0 +1,34 @@
+command: parallel
+platform: all
+description: "GNU Parallel — run jobs concurrently across CPU cores or remote hosts"
+
+syntax:
+  usage: "parallel [options] <command> ::: <args>"
+  key_flags:
+    - flag: "<cmd> ::: <arg1> <arg2>"
+      description: "Run command once per argument in parallel"
+    - flag: "-j <N>"
+      description: "Number of parallel jobs (default: # of CPU cores)"
+    - flag: "--bar"
+      description: "Show progress bar"
+    - flag: "--eta"
+      description: "Show ETA and progress"
+    - flag: "--dry-run"
+      description: "Print commands without executing"
+    - flag: "-k"
+      description: "Keep output in order (default: as-completed)"
+    - flag: "--pipe"
+      description: "Pipe stdin to each job (split by lines)"
+    - flag: "--retries <N>"
+      description: "Retry failed jobs up to N times"
+
+  preferred_invocations:
+    - invocation: "parallel gzip ::: *.log"
+      use_when: "Compress all .log files in parallel"
+    - invocation: "cat urls.txt | parallel -j4 curl -O"
+      use_when: "Download 4 URLs at a time"
+    - invocation: "parallel --bar convert {} {.}.jpg ::: *.png"
+      use_when: "Batch convert images with progress"
+
+output_schema:
+  enable_filter: false

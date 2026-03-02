@@ -1,0 +1,35 @@
+command: kind
+platform: all
+description: "Kubernetes IN Docker — run local Kubernetes clusters using Docker containers"
+
+syntax:
+  usage: "kind <command> [options]"
+  key_flags:
+    - flag: "create cluster"
+      description: "Create a new cluster"
+    - flag: "create cluster --name <name>"
+      description: "Create a named cluster"
+    - flag: "create cluster --config <file>"
+      description: "Create cluster with custom config (multi-node, etc.)"
+    - flag: "delete cluster"
+      description: "Delete the default cluster"
+    - flag: "delete cluster --name <name>"
+      description: "Delete a named cluster"
+    - flag: "get clusters"
+      description: "List all kind clusters"
+    - flag: "load docker-image <image>"
+      description: "Load a local Docker image into the cluster"
+      use_when: "Use locally built images without a registry"
+    - flag: "export kubeconfig --name <name>"
+      description: "Export kubeconfig for a cluster"
+
+  preferred_invocations:
+    - invocation: "kind create cluster --name dev"
+      use_when: "Create a local Kubernetes cluster for testing"
+    - invocation: "kind load docker-image <image> --name dev"
+      use_when: "Load local image into kind cluster"
+    - invocation: "kind delete cluster --name dev"
+      use_when: "Clean up the cluster"
+
+output_schema:
+  enable_filter: false

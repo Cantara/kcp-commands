@@ -1,0 +1,49 @@
+command: dotnet
+platform: all
+description: ".NET CLI — build, run, test, and publish .NET applications"
+
+syntax:
+  usage: "dotnet <command> [options]"
+  key_flags:
+    - flag: "build"
+      description: "Build the project"
+    - flag: "build -c Release"
+      description: "Release build"
+    - flag: "run"
+      description: "Build and run the application"
+    - flag: "test"
+      description: "Run tests"
+    - flag: "test --filter '<expr>'"
+      description: "Run tests matching a filter"
+    - flag: "publish -c Release -r linux-x64"
+      description: "Publish self-contained for Linux"
+    - flag: "restore"
+      description: "Restore NuGet packages"
+    - flag: "add package <name>"
+      description: "Add a NuGet package"
+    - flag: "new <template>"
+      description: "Create a new project from template (e.g. webapi, console)"
+    - flag: "ef migrations add <name>"
+      description: "Add an Entity Framework migration"
+    - flag: "ef database update"
+      description: "Apply pending EF migrations"
+
+  preferred_invocations:
+    - invocation: "dotnet test"
+      use_when: "Run all tests"
+    - invocation: "dotnet build -c Release"
+      use_when: "Release build"
+    - invocation: "dotnet run"
+      use_when: "Build and run for development"
+    - invocation: "dotnet publish -c Release -o ./publish"
+      use_when: "Publish for deployment"
+
+output_schema:
+  enable_filter: true
+  noise_patterns:
+    - pattern: "^  Determining projects to restore"
+      reason: "Restore preamble"
+    - pattern: "^  Restored "
+      reason: "Package restore lines"
+  max_lines: 60
+  truncation_message: "... {remaining} more dotnet lines."

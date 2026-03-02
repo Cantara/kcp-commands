@@ -1,0 +1,27 @@
+command: sha256sum
+platform: all
+description: "Compute and verify SHA-256 checksums"
+
+syntax:
+  usage: "sha256sum [options] [file...]"
+  key_flags:
+    - flag: "<file>"
+      description: "Print SHA-256 hash of file"
+    - flag: "-c <checksums.txt>"
+      description: "Verify checksums listed in file"
+      use_when: "Verify downloaded files against published checksums"
+    - flag: "--tag"
+      description: "BSD-style output format"
+    - flag: "(pipe from stdin)"
+      description: "Hash piped data: echo -n 'text' | sha256sum"
+
+  preferred_invocations:
+    - invocation: "sha256sum <file>"
+      use_when: "Get the hash of a file"
+    - invocation: "sha256sum -c checksums.txt"
+      use_when: "Verify downloads match expected hashes"
+    - invocation: "echo -n 'text' | sha256sum"
+      use_when: "Hash a string"
+
+output_schema:
+  enable_filter: false

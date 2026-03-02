@@ -1,0 +1,29 @@
+command: chown
+platform: linux
+description: "Change file or directory owner and group"
+
+syntax:
+  usage: "chown [options] owner[:group] file..."
+  key_flags:
+    - flag: "<user> <file>"
+      description: "Change owner"
+    - flag: "<user>:<group> <file>"
+      description: "Change owner and group"
+    - flag: ":<group> <file>"
+      description: "Change group only"
+    - flag: "-R <user>:<group> <dir>"
+      description: "Recursively change ownership"
+      use_when: "Fix permissions on a directory tree"
+    - flag: "--reference=<ref> <file>"
+      description: "Use same owner/group as reference file"
+
+  preferred_invocations:
+    - invocation: "chown -R www-data:www-data /var/www/app"
+      use_when: "Set web server ownership on a directory"
+    - invocation: "chown $USER:$USER <file>"
+      use_when: "Take ownership of a file created by root"
+    - invocation: "chown -R $(id -u):$(id -g) ."
+      use_when: "Reclaim ownership of current directory"
+
+output_schema:
+  enable_filter: false

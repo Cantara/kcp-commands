@@ -1,0 +1,33 @@
+command: traceroute
+platform: all
+description: "Trace the network path to a host — show each router hop"
+
+syntax:
+  usage: "traceroute [options] host"
+  key_flags:
+    - flag: "<host>"
+      description: "Trace route to host"
+    - flag: "-n"
+      description: "No DNS resolution — show IPs only (faster)"
+    - flag: "-m <hops>"
+      description: "Maximum hops (default 30)"
+    - flag: "-w <seconds>"
+      description: "Wait time per probe"
+    - flag: "-T"
+      description: "Use TCP SYN probes (better through firewalls)"
+    - flag: "-I"
+      description: "Use ICMP echo probes"
+
+  preferred_invocations:
+    - invocation: "traceroute -n <host>"
+      use_when: "Diagnose routing — skip DNS for speed"
+    - invocation: "traceroute <host>"
+      use_when: "Trace path with hostnames"
+
+output_schema:
+  enable_filter: true
+  noise_patterns:
+    - pattern: "^traceroute to "
+      reason: "Header line"
+  max_lines: 35
+  truncation_message: "... {remaining} more hops."

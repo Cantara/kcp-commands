@@ -1,0 +1,41 @@
+command: pulumi
+platform: all
+description: "Infrastructure as Code using general-purpose languages (Python, TypeScript, Go, etc.)"
+
+syntax:
+  usage: "pulumi <command> [options]"
+  key_flags:
+    - flag: "up"
+      description: "Create or update infrastructure (preview → confirm → apply)"
+      use_when: "Deploy changes"
+    - flag: "up --yes"
+      description: "Apply without confirmation prompt"
+      use_when: "CI/CD automation"
+    - flag: "preview"
+      description: "Show planned changes without applying"
+      use_when: "Review before deploying"
+    - flag: "destroy"
+      description: "Destroy all managed resources"
+    - flag: "stack"
+      description: "Show current stack info"
+    - flag: "stack ls"
+      description: "List all stacks"
+    - flag: "stack select <name>"
+      description: "Switch to a different stack"
+    - flag: "config set <key> <value>"
+      description: "Set a stack configuration value"
+    - flag: "config set --secret <key> <value>"
+      description: "Set an encrypted secret"
+    - flag: "refresh"
+      description: "Sync state with actual cloud resources"
+
+  preferred_invocations:
+    - invocation: "pulumi preview"
+      use_when: "Preview changes before deploying"
+    - invocation: "pulumi up"
+      use_when: "Deploy infrastructure changes"
+    - invocation: "pulumi stack ls"
+      use_when: "List environments (dev, staging, prod)"
+
+output_schema:
+  enable_filter: false

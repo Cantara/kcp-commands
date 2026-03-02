@@ -1,0 +1,45 @@
+command: gem
+platform: all
+description: "RubyGems package manager — install, update, and manage Ruby gems"
+
+syntax:
+  usage: "gem <command> [options]"
+  key_flags:
+    - flag: "install <name>"
+      description: "Install a gem"
+    - flag: "install <name> -v <version>"
+      description: "Install a specific version"
+    - flag: "uninstall <name>"
+      description: "Remove a gem"
+    - flag: "list"
+      description: "List installed gems"
+    - flag: "update"
+      description: "Update all installed gems"
+    - flag: "update <name>"
+      description: "Update a specific gem"
+    - flag: "search <query>"
+      description: "Search RubyGems.org"
+    - flag: "info <name>"
+      description: "Show gem details"
+    - flag: "outdated"
+      description: "List gems with newer versions available"
+
+  preferred_invocations:
+    - invocation: "gem install <name>"
+      use_when: "Install a gem globally"
+    - invocation: "gem list"
+      use_when: "See installed gems"
+    - invocation: "gem update --system"
+      use_when: "Update RubyGems itself"
+
+output_schema:
+  enable_filter: true
+  noise_patterns:
+    - pattern: "^Fetching "
+      reason: "Download progress"
+    - pattern: "^Installing "
+      reason: "Installation progress"
+    - pattern: "^Successfully installed"
+      reason: "Success message — visible at line limit"
+  max_lines: 40
+  truncation_message: "... {remaining} more gem lines."

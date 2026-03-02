@@ -1,0 +1,43 @@
+command: fd
+platform: all
+description: "Fast file finder — modern replacement for find, respects .gitignore"
+
+syntax:
+  usage: "fd [options] [pattern] [path]"
+  key_flags:
+    - flag: "<pattern>"
+      description: "Find files matching pattern (fuzzy, case-insensitive)"
+    - flag: "-e <ext>"
+      description: "Filter by file extension"
+    - flag: "-t f"
+      description: "Files only"
+    - flag: "-t d"
+      description: "Directories only"
+    - flag: "-t l"
+      description: "Symlinks only"
+    - flag: "-H"
+      description: "Include hidden files"
+    - flag: "-I"
+      description: "Include files ignored by .gitignore"
+    - flag: "-x <cmd>"
+      description: "Execute command for each result"
+    - flag: "-X <cmd>"
+      description: "Execute command with all results as arguments"
+    - flag: "--max-depth <N>"
+      description: "Limit search depth"
+
+  preferred_invocations:
+    - invocation: "fd <name>"
+      use_when: "Find files by name"
+    - invocation: "fd -e java"
+      use_when: "Find all Java files"
+    - invocation: "fd -t d <name>"
+      use_when: "Find directories by name"
+    - invocation: "fd -e log -x rm"
+      use_when: "Delete all .log files"
+
+output_schema:
+  enable_filter: true
+  noise_patterns: []
+  max_lines: 100
+  truncation_message: "... {remaining} more results. Add --max-depth to narrow scope."

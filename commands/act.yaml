@@ -1,0 +1,36 @@
+command: act
+platform: all
+description: "Run GitHub Actions locally — test workflows without pushing to GitHub"
+
+syntax:
+  usage: "act [event] [options]"
+  key_flags:
+    - flag: "(no args)"
+      description: "Run all push-triggered workflows"
+    - flag: "push"
+      description: "Simulate a push event"
+    - flag: "pull_request"
+      description: "Simulate a pull request event"
+    - flag: "-j <job>"
+      description: "Run a specific job only"
+    - flag: "-W <workflow-file>"
+      description: "Run a specific workflow file"
+    - flag: "--list / -l"
+      description: "List all available workflows and jobs"
+    - flag: "--secret-file <file>"
+      description: "Load secrets from a .env-style file"
+    - flag: "--dry-run"
+      description: "Print the plan without running containers"
+    - flag: "-P ubuntu-latest=<image>"
+      description: "Override runner image"
+
+  preferred_invocations:
+    - invocation: "act --list"
+      use_when: "See available workflows before running"
+    - invocation: "act push"
+      use_when: "Test push-triggered CI workflow locally"
+    - invocation: "act -j test"
+      use_when: "Run only the test job"
+
+output_schema:
+  enable_filter: false

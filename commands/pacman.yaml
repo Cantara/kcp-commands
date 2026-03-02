@@ -1,0 +1,46 @@
+command: pacman
+platform: linux
+description: "Arch Linux package manager"
+
+syntax:
+  usage: "pacman [options] [package...]"
+  key_flags:
+    - flag: "-S <pkg>"
+      description: "Install a package"
+    - flag: "-Syu"
+      description: "Sync, update package database, and upgrade all packages"
+      use_when: "Full system update (do this before installing)"
+    - flag: "-R <pkg>"
+      description: "Remove a package"
+    - flag: "-Rs <pkg>"
+      description: "Remove package and unused dependencies"
+    - flag: "-Q"
+      description: "List all installed packages"
+    - flag: "-Qs <query>"
+      description: "Search installed packages"
+    - flag: "-Ss <query>"
+      description: "Search package database"
+    - flag: "-Si <pkg>"
+      description: "Show package information"
+    - flag: "-Qi <pkg>"
+      description: "Show installed package information"
+    - flag: "-Ql <pkg>"
+      description: "List files installed by a package"
+
+  preferred_invocations:
+    - invocation: "pacman -Syu"
+      use_when: "Update system before installing"
+    - invocation: "pacman -S <pkg>"
+      use_when: "Install a package"
+    - invocation: "pacman -Rs <pkg>"
+      use_when: "Remove a package and its unused deps"
+
+output_schema:
+  enable_filter: true
+  noise_patterns:
+    - pattern: "^:: Synchronizing package databases"
+      reason: "Sync header"
+    - pattern: "^:: Starting full system upgrade"
+      reason: "Upgrade header"
+  max_lines: 60
+  truncation_message: "... {remaining} more pacman lines."

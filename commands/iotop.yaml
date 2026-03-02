@@ -1,0 +1,32 @@
+command: iotop
+platform: linux
+description: "I/O usage by process — top-like view of disk read/write per process"
+
+syntax:
+  usage: "iotop [options]"
+  key_flags:
+    - flag: "-o / --only"
+      description: "Show only processes doing actual I/O"
+    - flag: "-a / --accumulated"
+      description: "Show accumulated I/O (not instantaneous)"
+    - flag: "-u <user>"
+      description: "Filter by user"
+    - flag: "-p <pid>"
+      description: "Monitor specific PID"
+    - flag: "-k"
+      description: "Use kilobytes instead of human-readable"
+    - flag: "-b / --batch"
+      description: "Non-interactive batch mode (for scripts)"
+    - flag: "-n <count>"
+      description: "Number of iterations in batch mode"
+
+  preferred_invocations:
+    - invocation: "sudo iotop -o"
+      use_when: "Show only active I/O processes"
+    - invocation: "sudo iotop -b -o -n 5"
+      use_when: "Capture 5 snapshots of active I/O in batch mode"
+    - invocation: "sudo iotop -p <pid>"
+      use_when: "Monitor I/O for a specific process"
+
+output_schema:
+  enable_filter: false

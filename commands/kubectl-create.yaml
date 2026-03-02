@@ -1,0 +1,36 @@
+command: kubectl
+subcommand: create
+platform: all
+description: "Create Kubernetes resources from flags or files"
+
+syntax:
+  usage: "kubectl create <resource> [options]"
+  key_flags:
+    - flag: "-f <file.yaml>"
+      description: "Create from manifest file"
+    - flag: "namespace <name>"
+      description: "Create a namespace"
+    - flag: "secret generic <name> --from-literal=<key>=<value>"
+      description: "Create a generic secret"
+    - flag: "secret docker-registry <name> --docker-server=... --docker-username=..."
+      description: "Create Docker registry credentials secret"
+    - flag: "configmap <name> --from-file=<file>"
+      description: "Create ConfigMap from file"
+    - flag: "configmap <name> --from-literal=<key>=<value>"
+      description: "Create ConfigMap from literal"
+    - flag: "deployment <name> --image=<img>"
+      description: "Create a simple deployment"
+    - flag: "--dry-run=client -o yaml"
+      description: "Generate YAML template without creating"
+      use_when: "Scaffold a manifest to start from"
+
+  preferred_invocations:
+    - invocation: "kubectl create secret generic <name> --from-literal=key=value"
+      use_when: "Create a secret from a literal value"
+    - invocation: "kubectl create namespace <name>"
+      use_when: "Create a new namespace"
+    - invocation: "kubectl create deployment <name> --image=<img> --dry-run=client -o yaml"
+      use_when: "Generate a deployment manifest scaffold"
+
+output_schema:
+  enable_filter: false

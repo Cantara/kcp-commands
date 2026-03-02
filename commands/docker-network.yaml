@@ -1,0 +1,37 @@
+command: docker
+subcommand: network
+platform: all
+description: "Manage Docker networks"
+
+syntax:
+  usage: "docker network <subcommand> [options]"
+  key_flags:
+    - flag: "ls"
+      description: "List networks"
+    - flag: "create <name>"
+      description: "Create a network"
+    - flag: "create --driver bridge <name>"
+      description: "Create a bridge network (default)"
+    - flag: "inspect <name>"
+      description: "Show network details"
+    - flag: "connect <network> <container>"
+      description: "Connect a container to a network"
+    - flag: "disconnect <network> <container>"
+      description: "Disconnect a container"
+    - flag: "rm <name>"
+      description: "Remove a network"
+    - flag: "prune"
+      description: "Remove all unused networks"
+
+  preferred_invocations:
+    - invocation: "docker network ls"
+      use_when: "List all networks"
+    - invocation: "docker network create <name>"
+      use_when: "Create a network for containers to share"
+    - invocation: "docker network inspect <name>"
+      use_when: "See which containers are on a network"
+    - invocation: "docker network prune"
+      use_when: "Clean up unused networks"
+
+output_schema:
+  enable_filter: false

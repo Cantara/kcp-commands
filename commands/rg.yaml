@@ -1,0 +1,49 @@
+command: rg
+platform: all
+description: "ripgrep — fast recursive text search (better grep)"
+
+syntax:
+  usage: "rg [options] PATTERN [path...]"
+  key_flags:
+    - flag: "<pattern>"
+      description: "Search recursively in current directory"
+    - flag: "-i"
+      description: "Case-insensitive search"
+    - flag: "-l"
+      description: "Print only filenames with matches"
+    - flag: "-c"
+      description: "Print match count per file"
+    - flag: "-n"
+      description: "Show line numbers (default on)"
+    - flag: "-t <type>"
+      description: "Search only files of type (e.g. -t py, -t js, -t java)"
+    - flag: "-g '<glob>'"
+      description: "Include/exclude files by glob pattern"
+    - flag: "-A <N>"
+      description: "N lines after match"
+    - flag: "-B <N>"
+      description: "N lines before match"
+    - flag: "-C <N>"
+      description: "N lines of context around match"
+    - flag: "--no-ignore"
+      description: "Search files ignored by .gitignore"
+    - flag: "-F"
+      description: "Treat pattern as fixed string (no regex)"
+    - flag: "-e <pat>"
+      description: "Add a pattern (multiple allowed)"
+
+  preferred_invocations:
+    - invocation: "rg <pattern>"
+      use_when: "Search all files recursively"
+    - invocation: "rg -t java <pattern>"
+      use_when: "Search only Java files"
+    - invocation: "rg -l <pattern>"
+      use_when: "List files containing pattern"
+    - invocation: "rg -i -C 3 <pattern>"
+      use_when: "Case-insensitive with 3 lines of context"
+
+output_schema:
+  enable_filter: true
+  noise_patterns: []
+  max_lines: 100
+  truncation_message: "... {remaining} more matches. Add -l to list files only."

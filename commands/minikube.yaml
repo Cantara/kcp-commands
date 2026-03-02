@@ -1,0 +1,38 @@
+command: minikube
+platform: all
+description: "Local Kubernetes cluster for development and testing"
+
+syntax:
+  usage: "minikube <command> [options]"
+  key_flags:
+    - flag: "start"
+      description: "Start a local Kubernetes cluster"
+    - flag: "start --driver=docker"
+      description: "Use Docker as the VM driver"
+    - flag: "stop"
+      description: "Stop the cluster (preserves state)"
+    - flag: "delete"
+      description: "Delete the cluster"
+    - flag: "status"
+      description: "Show cluster status"
+    - flag: "dashboard"
+      description: "Open the Kubernetes dashboard in browser"
+    - flag: "tunnel"
+      description: "Expose LoadBalancer services locally"
+      use_when: "Access services of type LoadBalancer"
+    - flag: "image load <image>"
+      description: "Load a local Docker image into minikube"
+      use_when: "Use locally built images without a registry"
+    - flag: "addons enable <name>"
+      description: "Enable an addon (e.g. ingress, metrics-server)"
+
+  preferred_invocations:
+    - invocation: "minikube start --driver=docker"
+      use_when: "Start local Kubernetes cluster"
+    - invocation: "minikube tunnel"
+      use_when: "Expose LoadBalancer services to localhost"
+    - invocation: "minikube image load <image>"
+      use_when: "Use a locally built image in minikube"
+
+output_schema:
+  enable_filter: false

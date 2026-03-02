@@ -1,0 +1,42 @@
+command: gpg
+platform: all
+description: "GNU Privacy Guard — encrypt, decrypt, sign, and manage keys"
+
+syntax:
+  usage: "gpg [options] [file]"
+  key_flags:
+    - flag: "--encrypt -r <recipient> <file>"
+      description: "Encrypt a file for a recipient"
+    - flag: "--decrypt <file.gpg>"
+      description: "Decrypt a file"
+    - flag: "--sign <file>"
+      description: "Sign a file"
+    - flag: "--verify <sig> <file>"
+      description: "Verify a signature"
+    - flag: "--list-keys"
+      description: "List public keys in keyring"
+    - flag: "--list-secret-keys"
+      description: "List private keys"
+    - flag: "--import <keyfile>"
+      description: "Import a key"
+    - flag: "--export -a <keyid>"
+      description: "Export a public key as ASCII"
+    - flag: "--gen-key"
+      description: "Generate a new key pair (interactive)"
+    - flag: "--fingerprint <keyid>"
+      description: "Show key fingerprint"
+    - flag: "-d"
+      description: "Decrypt to stdout"
+
+  preferred_invocations:
+    - invocation: "gpg --decrypt <file.gpg>"
+      use_when: "Decrypt a file"
+    - invocation: "gpg --encrypt -r <email> <file>"
+      use_when: "Encrypt a file for someone"
+    - invocation: "gpg --import <keyfile>"
+      use_when: "Add a public key to keyring"
+    - invocation: "gpg --list-keys"
+      use_when: "See available keys"
+
+output_schema:
+  enable_filter: false

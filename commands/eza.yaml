@@ -1,0 +1,34 @@
+command: eza
+platform: all
+description: "Modern ls replacement — colors, icons, git status, tree view"
+
+syntax:
+  usage: "eza [options] [files...]"
+  key_flags:
+    - flag: "-l"
+      description: "Long format with permissions, size, date"
+    - flag: "-la"
+      description: "Long format including hidden files"
+    - flag: "--git"
+      description: "Show git status per file"
+    - flag: "--icons"
+      description: "Show file type icons"
+    - flag: "-T"
+      description: "Tree view"
+    - flag: "-T -L <N>"
+      description: "Tree view limited to N levels deep"
+    - flag: "--sort=<field>"
+      description: "Sort by: name, size, date, ext, type"
+    - flag: "--reverse"
+      description: "Reverse sort order"
+
+  preferred_invocations:
+    - invocation: "eza -la --git"
+      use_when: "Detailed listing with git status"
+    - invocation: "eza -T -L 2"
+      use_when: "Tree view 2 levels deep"
+    - invocation: "eza -la --sort=size --reverse"
+      use_when: "Largest files first"
+
+output_schema:
+  enable_filter: false

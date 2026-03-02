@@ -1,0 +1,32 @@
+command: docker
+subcommand: inspect
+platform: all
+description: "Return low-level information about containers, images, or volumes"
+
+syntax:
+  usage: "docker inspect [options] NAME|ID [NAME|ID...]"
+  key_flags:
+    - flag: "<container>"
+      description: "Inspect a container"
+    - flag: "<image>"
+      description: "Inspect an image"
+    - flag: "-f '{{.Field}}'"
+      description: "Format output with Go template"
+      use_when: "Extract a specific field"
+    - flag: "-f '{{.NetworkSettings.IPAddress}}'"
+      description: "Get container IP address"
+    - flag: "-f '{{.Mounts}}'"
+      description: "Show mount points"
+    - flag: "-f '{{json .Config.Env}}'"
+      description: "Show environment variables as JSON"
+
+  preferred_invocations:
+    - invocation: "docker inspect <container>"
+      use_when: "Full container details"
+    - invocation: "docker inspect -f '{{.NetworkSettings.IPAddress}}' <container>"
+      use_when: "Get the container's IP address"
+    - invocation: "docker inspect -f '{{json .Config.Env}}' <container> | jq ."
+      use_when: "See environment variables"
+
+output_schema:
+  enable_filter: false

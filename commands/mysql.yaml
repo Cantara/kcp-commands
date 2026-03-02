@@ -1,0 +1,32 @@
+command: mysql
+platform: all
+description: "MySQL/MariaDB command-line client"
+
+syntax:
+  usage: "mysql [options] [database]"
+  key_flags:
+    - flag: "-h <host> -u <user> -p <db>"
+      description: "Connect to a remote database (prompts for password)"
+    - flag: "-h <host> -u <user> -p<pass> <db>"
+      description: "Connect with password inline (no space)"
+    - flag: "-e '<SQL>'"
+      description: "Execute SQL and exit"
+      use_when: "Non-interactive queries"
+    - flag: "-B"
+      description: "Batch mode — tab-separated output, no table borders"
+      use_when: "Scripting — parseable output"
+    - flag: "--skip-column-names"
+      description: "Suppress column headers"
+    - flag: "-N"
+      description: "Alias for --skip-column-names"
+
+  preferred_invocations:
+    - invocation: "mysql -h <host> -u <user> -p <database>"
+      use_when: "Open interactive MySQL session"
+    - invocation: "mysql -h <host> -u <user> -p<pass> <db> -e 'SHOW TABLES;'"
+      use_when: "List tables non-interactively"
+    - invocation: "mysql -h <host> -u <user> -p<pass> <db> < dump.sql"
+      use_when: "Restore from SQL dump"
+
+output_schema:
+  enable_filter: false

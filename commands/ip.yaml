@@ -1,0 +1,39 @@
+command: ip
+platform: linux
+description: "Show and manage network interfaces, routes, and addresses"
+
+syntax:
+  usage: "ip [options] OBJECT COMMAND"
+  key_flags:
+    - flag: "addr"
+      description: "Show all network interfaces and IP addresses"
+      use_when: "See IPs — replaces ifconfig"
+    - flag: "addr show <iface>"
+      description: "Show address for a specific interface"
+    - flag: "addr add <ip/mask> dev <iface>"
+      description: "Add an IP address to an interface"
+    - flag: "route"
+      description: "Show routing table"
+    - flag: "route add default via <gateway>"
+      description: "Add a default gateway"
+    - flag: "link"
+      description: "Show all network links and their state"
+    - flag: "link set <iface> up/down"
+      description: "Bring interface up or down"
+    - flag: "-brief addr"
+      description: "Compact one-line-per-interface output"
+    - flag: "-j addr"
+      description: "JSON output"
+
+  preferred_invocations:
+    - invocation: "ip -brief addr"
+      use_when: "Quick view of interfaces and IPs"
+    - invocation: "ip addr show"
+      use_when: "Full interface details"
+    - invocation: "ip route"
+      use_when: "Show routing table"
+    - invocation: "ip link"
+      use_when: "Show link state of all interfaces"
+
+output_schema:
+  enable_filter: false

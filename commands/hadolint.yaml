@@ -1,0 +1,30 @@
+command: hadolint
+platform: all
+description: "Dockerfile linter — validates best practices and detects common mistakes"
+
+syntax:
+  usage: "hadolint [options] <Dockerfile>"
+  key_flags:
+    - flag: "<Dockerfile>"
+      description: "Lint a Dockerfile for best practice violations"
+    - flag: "--ignore <DL####>"
+      description: "Ignore specific rule codes"
+    - flag: "-f <format>"
+      description: "Output format: tty, json, sarif, codeclimate, gitlab_codeclimate, sonarqube"
+    - flag: "--failure-threshold <severity>"
+      description: "Exit non-zero only for: error, warning, info, style, ignore, none"
+    - flag: "--no-fail"
+      description: "Always exit 0 (for advisory-only use in CI)"
+    - flag: "--config <file>"
+      description: "Use .hadolint.yaml config file"
+
+  preferred_invocations:
+    - invocation: "hadolint Dockerfile"
+      use_when: "Lint a Dockerfile before building"
+    - invocation: "hadolint --ignore DL3008 Dockerfile"
+      use_when: "Suppress apt version-pinning warning"
+    - invocation: "hadolint -f json Dockerfile | jq"
+      use_when: "Parse results in CI pipeline"
+
+output_schema:
+  enable_filter: false

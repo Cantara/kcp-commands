@@ -1,0 +1,34 @@
+command: unzip
+platform: all
+description: "Extract files from ZIP archives"
+
+syntax:
+  usage: "unzip [options] archive.zip"
+  key_flags:
+    - flag: "<archive>"
+      description: "Extract all files to current directory"
+    - flag: "-d <dir>"
+      description: "Extract into a specific directory"
+      use_when: "Avoid polluting current directory"
+    - flag: "-l <archive>"
+      description: "List contents without extracting"
+      use_when: "Inspect archive before extracting"
+    - flag: "-o"
+      description: "Overwrite existing files without prompting"
+    - flag: "-n"
+      description: "Never overwrite existing files"
+    - flag: "-j"
+      description: "Junk paths — extract all to flat directory"
+    - flag: "-q"
+      description: "Quiet mode"
+
+  preferred_invocations:
+    - invocation: "unzip -d ./dest archive.zip"
+      use_when: "Extract into a specific directory"
+    - invocation: "unzip -l archive.zip"
+      use_when: "List contents"
+    - invocation: "unzip -o archive.zip"
+      use_when: "Extract, overwriting without prompts"
+
+output_schema:
+  enable_filter: false

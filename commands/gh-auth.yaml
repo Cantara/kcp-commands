@@ -1,0 +1,35 @@
+command: gh
+subcommand: auth
+platform: all
+description: "GitHub CLI — manage authentication"
+
+syntax:
+  usage: "gh auth <subcommand> [flags]"
+  key_flags:
+    - flag: "login"
+      description: "Authenticate with GitHub"
+      use_when: "First setup or re-authenticating"
+    - flag: "login --with-token"
+      description: "Authenticate using a token from stdin"
+      use_when: "CI/CD — non-interactive login"
+    - flag: "logout"
+      description: "Remove stored credentials"
+    - flag: "status"
+      description: "Show authentication status"
+      use_when: "Verify gh is authenticated before running commands"
+    - flag: "token"
+      description: "Print the current auth token"
+      use_when: "Pass token to other tools"
+    - flag: "refresh"
+      description: "Refresh stored credentials"
+
+  preferred_invocations:
+    - invocation: "gh auth status"
+      use_when: "Check if gh is authenticated"
+    - invocation: "gh auth login"
+      use_when: "Authenticate interactively"
+    - invocation: "echo $GITHUB_TOKEN | gh auth login --with-token"
+      use_when: "Authenticate in CI/CD"
+
+output_schema:
+  enable_filter: false

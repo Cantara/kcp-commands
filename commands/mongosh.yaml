@@ -1,0 +1,29 @@
+command: mongosh
+platform: all
+description: "MongoDB Shell — query and manage MongoDB databases"
+
+syntax:
+  usage: "mongosh [connection-string] [options]"
+  key_flags:
+    - flag: "'mongodb://<host>:<port>/<db>'"
+      description: "Connect with connection string"
+    - flag: "--host <host> --port <port>"
+      description: "Connect with host/port flags"
+    - flag: "--username <user> --password <pass>"
+      description: "Authenticate"
+    - flag: "--eval '<js>'"
+      description: "Execute JavaScript and exit"
+      use_when: "Non-interactive queries from scripts"
+    - flag: "--quiet"
+      description: "Suppress startup messages"
+
+  preferred_invocations:
+    - invocation: "mongosh 'mongodb://<host>:27017/<db>'"
+      use_when: "Open interactive MongoDB session"
+    - invocation: "mongosh --eval 'db.collection.find().limit(5)'"
+      use_when: "Quick non-interactive query"
+    - invocation: "mongosh --quiet --eval 'db.stats()'"
+      use_when: "Get database stats without noise"
+
+output_schema:
+  enable_filter: false

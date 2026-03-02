@@ -1,0 +1,26 @@
+command: jless
+platform: all
+description: "Interactive JSON viewer — navigate, search, and collapse JSON in the terminal"
+
+syntax:
+  usage: "jless [options] [file]"
+  key_flags:
+    - flag: "<file>"
+      description: "Open and navigate a JSON file interactively"
+    - flag: "(stdin)"
+      description: "Pipe JSON from another command"
+    - flag: "--mode line"
+      description: "Start in line mode (all expanded)"
+    - flag: "--mode data"
+      description: "Start in data mode (arrays/objects collapsed)"
+
+  preferred_invocations:
+    - invocation: "jless <file.json>"
+      use_when: "Interactively explore a JSON file"
+    - invocation: "curl -s <url> | jless"
+      use_when: "Inspect API response interactively"
+    - invocation: "cat <file.json> | jless --mode line"
+      use_when: "Browse fully expanded JSON"
+
+output_schema:
+  enable_filter: false

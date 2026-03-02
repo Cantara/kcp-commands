@@ -1,0 +1,31 @@
+command: npx
+platform: all
+description: "Execute npm packages without installing them globally"
+
+syntax:
+  usage: "npx [options] <command> [args...]"
+  key_flags:
+    - flag: "<package>"
+      description: "Run package command — downloads if not installed"
+      use_when: "One-off tools without global install"
+    - flag: "-y"
+      description: "Skip confirmation prompt when downloading"
+    - flag: "--no-install"
+      description: "Fail if package not already installed"
+    - flag: "-p <pkg> <cmd>"
+      description: "Add a package to PATH for this invocation only"
+    - flag: "@<scope>/<pkg>"
+      description: "Run a scoped package"
+
+  preferred_invocations:
+    - invocation: "npx create-react-app my-app"
+      use_when: "Scaffold a new project without global install"
+    - invocation: "npx prettier --write ."
+      use_when: "Format code with prettier"
+    - invocation: "npx ts-node script.ts"
+      use_when: "Run TypeScript directly"
+    - invocation: "npx eslint . --fix"
+      use_when: "Lint and auto-fix JavaScript/TypeScript"
+
+output_schema:
+  enable_filter: false

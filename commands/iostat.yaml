@@ -1,0 +1,36 @@
+command: iostat
+platform: linux
+description: "Report CPU and I/O statistics for devices and partitions"
+
+syntax:
+  usage: "iostat [options] [interval [count]]"
+  key_flags:
+    - flag: "-x"
+      description: "Extended statistics — utilization, await, queue depth"
+      use_when: "Diagnosing disk I/O bottlenecks"
+    - flag: "-d"
+      description: "Device statistics only (no CPU)"
+    - flag: "-c"
+      description: "CPU statistics only"
+    - flag: "-h"
+      description: "Human-readable sizes"
+    - flag: "-m"
+      description: "Megabytes per second"
+    - flag: "1 5"
+      description: "Sample every 1 second, 5 times"
+
+  preferred_invocations:
+    - invocation: "iostat -xh 1 5"
+      use_when: "Check disk I/O performance — extended, human-readable"
+    - invocation: "iostat -x 1"
+      use_when: "Watch disk utilization continuously"
+
+output_schema:
+  enable_filter: true
+  noise_patterns:
+    - pattern: "^Linux "
+      reason: "System header line"
+    - pattern: "^avg-cpu:"
+      reason: "CPU header"
+  max_lines: 40
+  truncation_message: "... {remaining} more iostat lines."

@@ -1,0 +1,33 @@
+command: gh
+subcommand: api
+platform: all
+description: "GitHub CLI — make authenticated GitHub API requests"
+
+syntax:
+  usage: "gh api <endpoint> [flags]"
+  key_flags:
+    - flag: "<endpoint>"
+      description: "GitHub API endpoint path (e.g. repos/{owner}/{repo})"
+    - flag: "-X POST"
+      description: "HTTP method (GET default)"
+    - flag: "-f <field>=<value>"
+      description: "Add a form field"
+    - flag: "-F <field>=<value>"
+      description: "Add a typed field (auto-converts types)"
+    - flag: "--jq '<filter>'"
+      description: "Filter response with jq"
+    - flag: "--paginate"
+      description: "Fetch all pages of results"
+    - flag: "-H 'Accept: application/vnd.github.v3+json'"
+      description: "Add a header"
+
+  preferred_invocations:
+    - invocation: "gh api repos/{owner}/{repo}/releases"
+      use_when: "List releases via API"
+    - invocation: "gh api repos/{owner}/{repo}/pulls --jq '.[].number'"
+      use_when: "Get PR numbers with jq filter"
+    - invocation: "gh api --paginate /orgs/{org}/repos --jq '.[].full_name'"
+      use_when: "List all repos in an org"
+
+output_schema:
+  enable_filter: false

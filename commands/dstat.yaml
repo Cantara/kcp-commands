@@ -1,0 +1,34 @@
+command: dstat
+platform: linux
+description: "Versatile resource statistics — CPU, disk, net, memory in one view"
+
+syntax:
+  usage: "dstat [options] [delay [count]]"
+  key_flags:
+    - flag: "-c"
+      description: "CPU stats"
+    - flag: "-d"
+      description: "Disk read/write stats"
+    - flag: "-n"
+      description: "Network send/recv stats"
+    - flag: "-m"
+      description: "Memory usage stats"
+    - flag: "-p"
+      description: "Process stats (runnable, blocked, new)"
+    - flag: "--top-cpu"
+      description: "Show most CPU-intensive process"
+    - flag: "--top-io"
+      description: "Show most I/O-intensive process"
+    - flag: "--output <file>"
+      description: "Export CSV output to file"
+
+  preferred_invocations:
+    - invocation: "dstat -cdnm 1 10"
+      use_when: "All-in-one view: CPU, disk, net, memory"
+    - invocation: "dstat --top-cpu --top-io"
+      use_when: "Find the hottest process per resource"
+    - invocation: "dstat --output stats.csv 1 60"
+      use_when: "Capture 60 seconds of stats to CSV"
+
+output_schema:
+  enable_filter: false

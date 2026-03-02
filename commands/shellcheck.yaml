@@ -1,0 +1,30 @@
+command: shellcheck
+platform: all
+description: "Shell script static analysis — finds bugs and bad practices in bash/sh scripts"
+
+syntax:
+  usage: "shellcheck [options] <script.sh>"
+  key_flags:
+    - flag: "<script.sh>"
+      description: "Analyze script for errors, warnings, and suggestions"
+    - flag: "-S <severity>"
+      description: "Minimum severity to report: error, warning, info, style"
+    - flag: "-e <SC####>"
+      description: "Exclude specific check codes"
+    - flag: "--format <fmt>"
+      description: "Output format: tty (default), gcc, json, checkstyle"
+    - flag: "-x / --external-sources"
+      description: "Follow sourced files (check . and source includes)"
+    - flag: "--shell <sh>"
+      description: "Override shell: bash, sh, dash, ksh"
+
+  preferred_invocations:
+    - invocation: "shellcheck <script.sh>"
+      use_when: "Lint a shell script before committing"
+    - invocation: "shellcheck -S warning <script.sh>"
+      use_when: "Show only warnings and errors (suppress style)"
+    - invocation: "shellcheck --format json <script.sh> | jq"
+      use_when: "Machine-readable output for CI integration"
+
+output_schema:
+  enable_filter: false

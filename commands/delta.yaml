@@ -1,0 +1,26 @@
+command: delta
+platform: all
+description: "Syntax-highlighting diff viewer — used as a git pager"
+
+syntax:
+  usage: "delta [options]"
+  key_flags:
+    - flag: "--side-by-side"
+      description: "Side-by-side diff view"
+    - flag: "--line-numbers"
+      description: "Show line numbers"
+    - flag: "--diff-highlight"
+      description: "Highlight changed words within lines"
+    - flag: "--dark / --light"
+      description: "Color theme"
+    - flag: "--syntax-theme <name>"
+      description: "Syntax highlighting theme"
+
+  preferred_invocations:
+    - invocation: "git diff | delta"
+      use_when: "View git diff with highlighting"
+    - invocation: "git diff | delta --side-by-side"
+      use_when: "Side-by-side diff comparison"
+
+output_schema:
+  enable_filter: false

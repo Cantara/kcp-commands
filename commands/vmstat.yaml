@@ -1,0 +1,30 @@
+command: vmstat
+platform: linux
+description: "Virtual memory statistics — CPU, memory, swap, I/O activity"
+
+syntax:
+  usage: "vmstat [options] [delay [count]]"
+  key_flags:
+    - flag: "<delay> <count>"
+      description: "Repeat every <delay> seconds, <count> times"
+    - flag: "-a"
+      description: "Show active/inactive memory"
+    - flag: "-d"
+      description: "Disk I/O statistics"
+    - flag: "-s"
+      description: "Memory statistics table"
+    - flag: "-w"
+      description: "Wide output (no column truncation)"
+    - flag: "-S M"
+      description: "Show values in megabytes"
+
+  preferred_invocations:
+    - invocation: "vmstat 1 10"
+      use_when: "Sample system stats every second, 10 times"
+    - invocation: "vmstat -s -S M"
+      use_when: "Memory summary in megabytes"
+    - invocation: "vmstat -d"
+      use_when: "Disk I/O breakdown"
+
+output_schema:
+  enable_filter: false

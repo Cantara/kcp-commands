@@ -1,0 +1,36 @@
+command: fzf
+platform: all
+description: "Fuzzy finder — interactive search and selection from any list"
+
+syntax:
+  usage: "fzf [options]"
+  key_flags:
+    - flag: "(no flags)"
+      description: "Fuzzy search files in current directory"
+    - flag: "--preview '<cmd>'"
+      description: "Show preview of selected item"
+    - flag: "--preview 'cat {}'"
+      description: "Preview file contents"
+    - flag: "--multi"
+      description: "Enable multi-selection with Tab"
+    - flag: "--height 40%"
+      description: "Use partial screen height"
+    - flag: "--query '<text>'"
+      description: "Pre-fill the search query"
+    - flag: "--filter '<text>'"
+      description: "Non-interactive filtering"
+    - flag: "--exact"
+      description: "Exact match instead of fuzzy"
+
+  preferred_invocations:
+    - invocation: "git branch | fzf | xargs git checkout"
+      use_when: "Interactively select and switch git branch"
+    - invocation: "cat file | fzf"
+      use_when: "Fuzzy search lines in a file"
+    - invocation: "ps aux | fzf"
+      use_when: "Interactively find a process"
+    - invocation: "ls | fzf --preview 'cat {}'"
+      use_when: "Browse files with previews"
+
+output_schema:
+  enable_filter: false

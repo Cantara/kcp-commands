@@ -1,0 +1,36 @@
+command: yq
+platform: all
+description: "Command-line YAML/JSON/TOML processor — like jq but for YAML"
+
+syntax:
+  usage: "yq [options] '<expression>' [file...]"
+  key_flags:
+    - flag: "'.<field>'"
+      description: "Extract a field"
+    - flag: "'.[] | .<field>'"
+      description: "Extract field from each array item"
+    - flag: "'.field = \"value\"'"
+      description: "Set a field value"
+    - flag: "-i"
+      description: "Edit file in-place"
+      use_when: "Modify a YAML file directly"
+    - flag: "-o json"
+      description: "Output as JSON"
+      use_when: "Convert YAML to JSON"
+    - flag: "-P"
+      description: "Prettify output"
+    - flag: "e 'del(.field)' -i <file>"
+      description: "Delete a field in-place"
+
+  preferred_invocations:
+    - invocation: "yq '.version' Chart.yaml"
+      use_when: "Read a field from a YAML file"
+    - invocation: "yq -i '.image.tag = \"v1.2.3\"' values.yaml"
+      use_when: "Update a field in-place"
+    - invocation: "yq -o json config.yaml"
+      use_when: "Convert YAML to JSON"
+    - invocation: "yq '.spec.containers[].image' deployment.yaml"
+      use_when: "Extract nested values from Kubernetes manifests"
+
+output_schema:
+  enable_filter: false

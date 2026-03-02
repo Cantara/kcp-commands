@@ -1,0 +1,38 @@
+command: python3
+platform: all
+description: "Python 3 interpreter — run scripts, REPL, and one-liners"
+
+syntax:
+  usage: "python3 [options] [file | -c cmd | -m module]"
+  key_flags:
+    - flag: "<script.py>"
+      description: "Run a Python script"
+    - flag: "-c '<code>'"
+      description: "Execute Python code inline"
+      use_when: "Quick one-liners"
+    - flag: "-m <module>"
+      description: "Run a module as a script (e.g. -m http.server)"
+    - flag: "-m http.server <port>"
+      description: "Start a simple HTTP file server"
+      use_when: "Serve local files over HTTP"
+    - flag: "-m json.tool"
+      description: "Pretty-print JSON from stdin"
+    - flag: "-m venv <dir>"
+      description: "Create a virtual environment"
+    - flag: "-i"
+      description: "Enter REPL after running script"
+    - flag: "-v"
+      description: "Show Python version"
+
+  preferred_invocations:
+    - invocation: "python3 script.py"
+      use_when: "Run a Python script"
+    - invocation: "python3 -m http.server 8080"
+      use_when: "Serve files in current directory over HTTP"
+    - invocation: "python3 -m venv .venv && source .venv/bin/activate"
+      use_when: "Create and activate a virtual environment"
+    - invocation: "cat data.json | python3 -m json.tool"
+      use_when: "Pretty-print JSON"
+
+output_schema:
+  enable_filter: false

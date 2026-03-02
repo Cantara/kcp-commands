@@ -1,0 +1,49 @@
+command: sbt
+platform: all
+description: "Scala Build Tool — build, test, and run Scala and Java projects"
+
+syntax:
+  usage: "sbt [options] [command...]"
+  key_flags:
+    - flag: "compile"
+      description: "Compile the project"
+    - flag: "test"
+      description: "Run all tests"
+    - flag: "testOnly <ClassName>"
+      description: "Run a specific test class"
+    - flag: "run"
+      description: "Run the main class"
+    - flag: "package"
+      description: "Package as JAR"
+    - flag: "assembly"
+      description: "Create fat JAR (requires sbt-assembly plugin)"
+    - flag: "clean"
+      description: "Delete target/ directory"
+    - flag: "reload"
+      description: "Reload build definitions"
+    - flag: "~compile"
+      description: "Watch and recompile on file changes"
+    - flag: "console"
+      description: "Start Scala REPL with project classes"
+
+  preferred_invocations:
+    - invocation: "sbt test"
+      use_when: "Run all tests"
+    - invocation: "sbt 'testOnly *MySpec'"
+      use_when: "Run a specific test"
+    - invocation: "sbt clean assembly"
+      use_when: "Build fat JAR"
+
+output_schema:
+  enable_filter: true
+  noise_patterns:
+    - pattern: "^\\[info\\] Loading "
+      reason: "SBT loading messages"
+    - pattern: "^\\[info\\] Updating "
+      reason: "Dependency update progress"
+    - pattern: "^\\[info\\] Resolving "
+      reason: "Dependency resolution"
+    - pattern: "^\\[info\\] Done updating"
+      reason: "Update completion"
+  max_lines: 80
+  truncation_message: "... {remaining} more SBT lines. Look for [error] or [success]."

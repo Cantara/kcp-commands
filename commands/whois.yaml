@@ -1,0 +1,22 @@
+command: whois
+platform: all
+description: "Domain registration lookup — registrar, owner, expiry, nameservers"
+
+syntax:
+  usage: "whois [options] <domain|IP>"
+  key_flags:
+    - flag: "<domain>"
+      description: "Look up domain registration details"
+    - flag: "<IP>"
+      description: "Look up IP address ownership and ASN info"
+    - flag: "-h <server>"
+      description: "Query a specific WHOIS server"
+
+  preferred_invocations:
+    - invocation: "whois <domain>"
+      use_when: "Check domain registration, expiry, and registrar"
+    - invocation: "whois <IP>"
+      use_when: "Find who owns an IP address or block"
+
+output_schema:
+  enable_filter: false

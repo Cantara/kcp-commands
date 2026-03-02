@@ -1,0 +1,35 @@
+command: snap
+platform: linux
+description: "Snap package manager — install and manage snap packages on Linux"
+
+syntax:
+  usage: "snap <command> [options]"
+  key_flags:
+    - flag: "install <name>"
+      description: "Install a snap package"
+    - flag: "install --classic <name>"
+      description: "Install with classic (unconfined) confinement"
+      use_when: "Developer tools like vscode, go, node"
+    - flag: "remove <name>"
+      description: "Remove a snap"
+    - flag: "list"
+      description: "List installed snaps"
+    - flag: "refresh"
+      description: "Update all snaps"
+    - flag: "refresh <name>"
+      description: "Update a specific snap"
+    - flag: "find <query>"
+      description: "Search the snap store"
+    - flag: "info <name>"
+      description: "Show snap details"
+
+  preferred_invocations:
+    - invocation: "snap install --classic <name>"
+      use_when: "Install a developer tool snap"
+    - invocation: "snap list"
+      use_when: "See installed snaps"
+    - invocation: "snap refresh"
+      use_when: "Update all snaps"
+
+output_schema:
+  enable_filter: false

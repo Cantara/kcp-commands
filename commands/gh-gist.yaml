@@ -1,0 +1,37 @@
+command: gh
+subcommand: gist
+platform: all
+description: "GitHub CLI — manage GitHub Gists"
+
+syntax:
+  usage: "gh gist <subcommand> [flags]"
+  key_flags:
+    - flag: "create <file>"
+      description: "Create a new gist from a file"
+    - flag: "create <file> -d '<description>'"
+      description: "Create with description"
+    - flag: "create <file> --public"
+      description: "Create a public gist (default: secret)"
+    - flag: "create - "
+      description: "Create from stdin"
+    - flag: "list"
+      description: "List your gists"
+    - flag: "view <id>"
+      description: "View a gist"
+    - flag: "clone <id>"
+      description: "Clone a gist as a git repo"
+    - flag: "edit <id>"
+      description: "Edit a gist"
+    - flag: "delete <id>"
+      description: "Delete a gist"
+
+  preferred_invocations:
+    - invocation: "gh gist create script.sh -d 'Useful script'"
+      use_when: "Share a script via Gist"
+    - invocation: "cat output.txt | gh gist create -"
+      use_when: "Share command output via Gist"
+    - invocation: "gh gist list"
+      use_when: "See your gists"
+
+output_schema:
+  enable_filter: false

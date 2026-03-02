@@ -1,0 +1,46 @@
+command: mix
+platform: all
+description: "Elixir build tool — compile, test, and manage Elixir projects"
+
+syntax:
+  usage: "mix <task> [options]"
+  key_flags:
+    - flag: "deps.get"
+      description: "Fetch dependencies from Hex"
+      use_when: "After clone or when deps are missing"
+    - flag: "compile"
+      description: "Compile the project"
+    - flag: "test"
+      description: "Run all tests"
+    - flag: "test <path>"
+      description: "Run tests in a specific file or directory"
+    - flag: "test --only <tag>"
+      description: "Run tests with a specific tag"
+    - flag: "run"
+      description: "Run the application"
+    - flag: "ecto.migrate"
+      description: "Run database migrations"
+    - flag: "ecto.rollback"
+      description: "Roll back last migration"
+    - flag: "format"
+      description: "Format source files"
+    - flag: "hex.search <name>"
+      description: "Search Hex packages"
+
+  preferred_invocations:
+    - invocation: "mix deps.get && mix compile"
+      use_when: "Set up a newly cloned project"
+    - invocation: "mix test"
+      use_when: "Run all tests"
+    - invocation: "mix ecto.migrate"
+      use_when: "Apply database migrations"
+
+output_schema:
+  enable_filter: true
+  noise_patterns:
+    - pattern: "^==> "
+      reason: "Dependency build headers"
+    - pattern: "^Compiling \\d+ files"
+      reason: "File count compilation lines"
+  max_lines: 60
+  truncation_message: "... {remaining} more mix lines."

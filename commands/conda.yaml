@@ -1,0 +1,51 @@
+command: conda
+platform: all
+description: "Conda package and environment manager for Python and data science"
+
+syntax:
+  usage: "conda <command> [options]"
+  key_flags:
+    - flag: "create -n <name> python=3.11"
+      description: "Create a new environment with a specific Python version"
+    - flag: "activate <name>"
+      description: "Activate an environment"
+    - flag: "deactivate"
+      description: "Deactivate current environment"
+    - flag: "install <pkg>"
+      description: "Install a package in the active environment"
+    - flag: "install -c conda-forge <pkg>"
+      description: "Install from conda-forge channel"
+    - flag: "update <pkg>"
+      description: "Update a package"
+    - flag: "env list"
+      description: "List all environments"
+    - flag: "list"
+      description: "List packages in active environment"
+    - flag: "env export > environment.yml"
+      description: "Export environment to file"
+    - flag: "env create -f environment.yml"
+      description: "Create environment from file"
+    - flag: "remove -n <name> --all"
+      description: "Delete an environment"
+
+  preferred_invocations:
+    - invocation: "conda create -n myenv python=3.11 && conda activate myenv"
+      use_when: "Create a new isolated Python environment"
+    - invocation: "conda env create -f environment.yml"
+      use_when: "Reproduce an environment from file"
+    - invocation: "conda env export > environment.yml"
+      use_when: "Save current environment for sharing"
+
+output_schema:
+  enable_filter: true
+  noise_patterns:
+    - pattern: "^Collecting package metadata"
+      reason: "Metadata fetch header"
+    - pattern: "^Solving environment:"
+      reason: "Solver progress"
+    - pattern: "^Preparing transaction:"
+      reason: "Transaction prep"
+    - pattern: "^Verifying transaction:"
+      reason: "Verification step"
+  max_lines: 60
+  truncation_message: "... {remaining} more conda lines."

@@ -1,0 +1,30 @@
+command: htop
+platform: all
+description: "Interactive process viewer — visual top replacement with mouse support"
+
+syntax:
+  usage: "htop [options]"
+  key_flags:
+    - flag: "(interactive)"
+      description: "Full-screen process viewer with CPU/mem bars"
+    - flag: "-u <user>"
+      description: "Show only processes for a specific user"
+    - flag: "-p <pid>,<pid>"
+      description: "Show only specified PIDs"
+    - flag: "-s <column>"
+      description: "Sort by column (e.g. PERCENT_CPU, PERCENT_MEM)"
+    - flag: "-d <delay>"
+      description: "Refresh delay in tenths of a second"
+    - flag: "--no-color"
+      description: "Disable color output"
+
+  preferred_invocations:
+    - invocation: "htop"
+      use_when: "Monitor all processes interactively"
+    - invocation: "htop -u $(whoami)"
+      use_when: "Watch only current user's processes"
+    - invocation: "htop -p <pid>"
+      use_when: "Monitor a specific process"
+
+output_schema:
+  enable_filter: false

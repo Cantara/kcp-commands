@@ -1,0 +1,32 @@
+command: ruby
+platform: all
+description: "Ruby interpreter — run scripts and one-liners"
+
+syntax:
+  usage: "ruby [options] [file]"
+  key_flags:
+    - flag: "<script.rb>"
+      description: "Run a Ruby script"
+    - flag: "-e '<code>'"
+      description: "Execute Ruby code inline"
+    - flag: "-n"
+      description: "Loop over input lines (like awk)"
+    - flag: "-p"
+      description: "Loop and print each line (like sed)"
+    - flag: "-i"
+      description: "Edit files in-place (with -p)"
+    - flag: "-r <lib>"
+      description: "Require a library"
+    - flag: "-v"
+      description: "Show Ruby version"
+
+  preferred_invocations:
+    - invocation: "ruby script.rb"
+      use_when: "Run a script"
+    - invocation: "ruby -e 'puts RUBY_VERSION'"
+      use_when: "Quick inline execution"
+    - invocation: "ruby -p -i -e 'gsub(/old/, \"new\")' file"
+      use_when: "Sed-like in-place substitution"
+
+output_schema:
+  enable_filter: false

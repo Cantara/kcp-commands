@@ -1,0 +1,34 @@
+command: kubectl
+subcommand: top
+platform: all
+description: "Show CPU and memory usage of nodes or pods"
+
+syntax:
+  usage: "kubectl top [node|pod] [options]"
+  key_flags:
+    - flag: "node"
+      description: "Show resource usage for all nodes"
+    - flag: "pod"
+      description: "Show resource usage for pods in current namespace"
+    - flag: "pod -n <namespace>"
+      description: "Pods in a specific namespace"
+    - flag: "pod -A"
+      description: "Pods across all namespaces"
+    - flag: "pod --containers"
+      description: "Show per-container usage"
+      use_when: "Identify which container in a pod is using resources"
+    - flag: "pod --sort-by=cpu"
+      description: "Sort by CPU usage"
+    - flag: "pod --sort-by=memory"
+      description: "Sort by memory usage"
+
+  preferred_invocations:
+    - invocation: "kubectl top pod -A --sort-by=cpu"
+      use_when: "Find the most CPU-hungry pods"
+    - invocation: "kubectl top node"
+      use_when: "Check node resource utilization"
+    - invocation: "kubectl top pod -n <ns> --containers"
+      use_when: "Container-level resource breakdown"
+
+output_schema:
+  enable_filter: false

@@ -1,0 +1,29 @@
+command: lsblk
+platform: linux
+description: "List block devices — disks, partitions, LVM volumes"
+
+syntax:
+  usage: "lsblk [options] [device...]"
+  key_flags:
+    - flag: "(no flags)"
+      description: "Tree view of all block devices and mount points"
+    - flag: "-f"
+      description: "Show filesystem type, label, and UUID"
+      use_when: "Find UUID for /etc/fstab or identify filesystems"
+    - flag: "-o NAME,SIZE,TYPE,MOUNTPOINT,FSTYPE"
+      description: "Custom columns"
+    - flag: "-J"
+      description: "JSON output"
+    - flag: "-d"
+      description: "No partition children — disk summary only"
+
+  preferred_invocations:
+    - invocation: "lsblk"
+      use_when: "See all disks and how they're partitioned/mounted"
+    - invocation: "lsblk -f"
+      use_when: "Find filesystem types and UUIDs"
+    - invocation: "lsblk -d -o NAME,SIZE,TYPE"
+      use_when: "Summary of physical disks only"
+
+output_schema:
+  enable_filter: false

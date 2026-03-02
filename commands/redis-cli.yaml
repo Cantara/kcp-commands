@@ -1,0 +1,42 @@
+command: redis-cli
+platform: all
+description: "Redis command-line client"
+
+syntax:
+  usage: "redis-cli [options] [command [arg [arg ...]]]"
+  key_flags:
+    - flag: "-h <host> -p <port>"
+      description: "Connect to a remote Redis instance"
+    - flag: "-n <db>"
+      description: "Select database number (0-15)"
+    - flag: "-a <password>"
+      description: "Authenticate with password"
+    - flag: "PING"
+      description: "Test connectivity — returns PONG"
+    - flag: "GET <key>"
+      description: "Get a value"
+    - flag: "SET <key> <value>"
+      description: "Set a value"
+    - flag: "KEYS <pattern>"
+      description: "List keys matching pattern (use SCAN in production)"
+    - flag: "SCAN 0 MATCH <pattern>"
+      description: "Safely scan keys without blocking"
+    - flag: "FLUSHDB"
+      description: "Delete all keys in current database"
+    - flag: "--scan --pattern '<pat>'"
+      description: "Scan from CLI flags"
+    - flag: "monitor"
+      description: "Stream all commands being executed"
+    - flag: "info"
+      description: "Server stats and configuration"
+
+  preferred_invocations:
+    - invocation: "redis-cli -h <host> PING"
+      use_when: "Test Redis connectivity"
+    - invocation: "redis-cli -h <host> KEYS '*'"
+      use_when: "List all keys (dev only — slow on large DBs)"
+    - invocation: "redis-cli -h <host> info memory"
+      use_when: "Check memory usage"
+
+output_schema:
+  enable_filter: false

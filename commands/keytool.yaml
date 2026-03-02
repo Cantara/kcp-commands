@@ -1,0 +1,32 @@
+command: keytool
+platform: all
+description: "Java key and certificate management tool"
+
+syntax:
+  usage: "keytool -command [options]"
+  key_flags:
+    - flag: "-list -keystore <file>"
+      description: "List contents of a keystore"
+    - flag: "-list -v -keystore <file>"
+      description: "Verbose list with certificate details"
+    - flag: "-genkeypair -alias <name> -keystore <file>"
+      description: "Generate a new key pair"
+    - flag: "-importcert -alias <name> -file <cert> -keystore <file>"
+      description: "Import a certificate into keystore"
+    - flag: "-exportcert -alias <name> -keystore <file> -file <out>"
+      description: "Export a certificate"
+    - flag: "-delete -alias <name> -keystore <file>"
+      description: "Delete an entry"
+    - flag: "-printcert -file <cert>"
+      description: "Print certificate details without a keystore"
+
+  preferred_invocations:
+    - invocation: "keytool -list -keystore keystore.jks"
+      use_when: "List all certs in a JKS keystore"
+    - invocation: "keytool -importcert -alias myca -file ca.crt -keystore cacerts"
+      use_when: "Trust a certificate in the JVM truststore"
+    - invocation: "keytool -printcert -file cert.pem"
+      use_when: "Inspect a certificate file"
+
+output_schema:
+  enable_filter: false

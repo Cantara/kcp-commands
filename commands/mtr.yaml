@@ -1,0 +1,32 @@
+command: mtr
+platform: all
+description: "Network diagnostic — combines ping + traceroute with live statistics"
+
+syntax:
+  usage: "mtr [options] <hostname>"
+  key_flags:
+    - flag: "<hostname>"
+      description: "Live traceroute with packet loss and latency per hop"
+    - flag: "--report / -r"
+      description: "Run in report mode (non-interactive, outputs summary)"
+    - flag: "--report-cycles <N>"
+      description: "Number of ping cycles in report mode"
+    - flag: "--tcp / -T"
+      description: "Use TCP SYN instead of ICMP (bypasses ICMP blocks)"
+    - flag: "--port <N>"
+      description: "Target port for TCP mode"
+    - flag: "--no-dns / -n"
+      description: "Skip reverse DNS lookups (faster)"
+    - flag: "--csv"
+      description: "Output in CSV format"
+
+  preferred_invocations:
+    - invocation: "mtr <hostname>"
+      use_when: "Live network path diagnostics"
+    - invocation: "mtr --report --report-cycles 10 <hostname>"
+      use_when: "Summarized 10-cycle report for sharing"
+    - invocation: "mtr --tcp --port 443 <hostname>"
+      use_when: "Diagnose HTTPS path (bypasses ICMP filtering)"
+
+output_schema:
+  enable_filter: false

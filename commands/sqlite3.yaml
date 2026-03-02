@@ -1,0 +1,38 @@
+command: sqlite3
+platform: all
+description: "SQLite 3 command-line interface"
+
+syntax:
+  usage: "sqlite3 [options] [database] [SQL]"
+  key_flags:
+    - flag: "<database.db>"
+      description: "Open a SQLite database file"
+    - flag: "<database.db> '<SQL>'"
+      description: "Execute SQL and exit"
+    - flag: ".tables"
+      description: "List tables (inside sqlite3 REPL)"
+    - flag: ".schema <table>"
+      description: "Show CREATE statement for table"
+    - flag: ".mode column"
+      description: "Aligned column output"
+    - flag: ".headers on"
+      description: "Show column headers"
+    - flag: ".output <file>"
+      description: "Redirect output to file"
+    - flag: ".read <file.sql>"
+      description: "Execute SQL from file"
+    - flag: "-json"
+      description: "Output as JSON"
+    - flag: "-csv"
+      description: "Output as CSV"
+
+  preferred_invocations:
+    - invocation: "sqlite3 <database.db> 'SELECT * FROM <table> LIMIT 10'"
+      use_when: "Quick data inspection"
+    - invocation: "sqlite3 -csv -header <db> 'SELECT ...' > out.csv"
+      use_when: "Export query results as CSV"
+    - invocation: "sqlite3 <db> .tables"
+      use_when: "List tables in a database"
+
+output_schema:
+  enable_filter: false

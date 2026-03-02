@@ -1,0 +1,22 @@
+command: uptime
+platform: linux
+description: "Show how long the system has been running and load averages"
+
+syntax:
+  usage: "uptime [options]"
+  key_flags:
+    - flag: "(no flags)"
+      description: "Show uptime and 1/5/15-minute load averages"
+    - flag: "-p"
+      description: "Pretty format: 'up 2 days, 3 hours, 4 minutes'"
+    - flag: "-s"
+      description: "System up since: 'YYYY-MM-DD HH:MM:SS'"
+
+  preferred_invocations:
+    - invocation: "uptime"
+      use_when: "Check system uptime and load"
+    - invocation: "uptime -p"
+      use_when: "Human-readable uptime"
+
+output_schema:
+  enable_filter: false

@@ -1,0 +1,30 @@
+command: id
+platform: linux
+description: "Print user and group identity — UID, GID, and group memberships"
+
+syntax:
+  usage: "id [options] [username]"
+  key_flags:
+    - flag: "(no args)"
+      description: "Show current user's UID, GID, and groups"
+    - flag: "<username>"
+      description: "Show identity for a specific user"
+    - flag: "-u"
+      description: "Print only effective user ID"
+    - flag: "-g"
+      description: "Print only effective group ID"
+    - flag: "-G"
+      description: "Print all group IDs"
+    - flag: "-n"
+      description: "Print names instead of numbers (combine with -u/-g/-G)"
+
+  preferred_invocations:
+    - invocation: "id"
+      use_when: "Check current user and group memberships"
+    - invocation: "id -nG"
+      use_when: "List all groups current user belongs to"
+    - invocation: "id <username>"
+      use_when: "Check another user's identity"
+
+output_schema:
+  enable_filter: false

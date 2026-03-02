@@ -1,0 +1,37 @@
+command: date
+platform: all
+description: "Print or set the system date and time"
+
+syntax:
+  usage: "date [options] [+format]"
+  key_flags:
+    - flag: "'+%Y-%m-%d'"
+      description: "ISO date: 2026-03-02"
+    - flag: "'+%Y-%m-%dT%H:%M:%S'"
+      description: "ISO 8601 datetime"
+    - flag: "'+%s'"
+      description: "Unix timestamp (seconds since epoch)"
+    - flag: "'+%Y%m%d_%H%M%S'"
+      description: "Compact timestamp — useful in filenames"
+    - flag: "-u"
+      description: "UTC time"
+    - flag: "-d '<string>'"
+      description: "Parse and display a date string"
+      use_when: "Convert or validate date strings"
+    - flag: "-d 'yesterday'"
+      description: "Relative dates: yesterday, '1 week ago', etc."
+    - flag: "-d @<epoch>"
+      description: "Convert Unix timestamp to human-readable"
+
+  preferred_invocations:
+    - invocation: "date '+%Y-%m-%d'"
+      use_when: "Get today's date"
+    - invocation: "date '+%Y%m%d_%H%M%S'"
+      use_when: "Timestamp for log files or filenames"
+    - invocation: "date -d '1 week ago' '+%Y-%m-%d'"
+      use_when: "Date arithmetic"
+    - invocation: "date -d @1700000000"
+      use_when: "Convert epoch to readable date"
+
+output_schema:
+  enable_filter: false

@@ -1,0 +1,34 @@
+command: tmux
+platform: all
+description: "Terminal multiplexer — multiple terminals in one, sessions survive disconnects"
+
+syntax:
+  usage: "tmux [command]"
+  key_flags:
+    - flag: "new -s <name>"
+      description: "Create a named session"
+      use_when: "Start a persistent session"
+    - flag: "attach -t <name>"
+      description: "Attach to a named session"
+      use_when: "Resume a detached session"
+    - flag: "ls"
+      description: "List active sessions"
+    - flag: "kill-session -t <name>"
+      description: "Kill a session"
+    - flag: "new-window"
+      description: "Create a new window (prefix + c)"
+    - flag: "split-window -h"
+      description: "Horizontal split (prefix + %)"
+    - flag: "split-window -v"
+      description: "Vertical split (prefix + \")"
+
+  preferred_invocations:
+    - invocation: "tmux new -s main"
+      use_when: "Start a named session"
+    - invocation: "tmux attach -t main"
+      use_when: "Reconnect to existing session"
+    - invocation: "tmux ls"
+      use_when: "List running sessions"
+
+output_schema:
+  enable_filter: false

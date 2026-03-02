@@ -1,0 +1,22 @@
+command: docker
+subcommand: push
+platform: all
+description: "Push an image to a container registry"
+
+syntax:
+  usage: "docker push [options] NAME[:TAG]"
+  key_flags:
+    - flag: "<image>:<tag>"
+      description: "Push a tagged image to its registry"
+      use_when: "After docker build and docker tag"
+    - flag: "--all-tags"
+      description: "Push all tags for the image"
+
+  preferred_invocations:
+    - invocation: "docker push <registry>/<image>:<tag>"
+      use_when: "Push to a registry after building"
+    - invocation: "docker build -t <registry>/<image>:<tag> . && docker push <registry>/<image>:<tag>"
+      use_when: "Build and push in sequence"
+
+output_schema:
+  enable_filter: false

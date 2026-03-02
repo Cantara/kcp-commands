@@ -1,0 +1,31 @@
+command: base64
+platform: all
+description: "Encode or decode data in Base64 format"
+
+syntax:
+  usage: "base64 [options] [file]"
+  key_flags:
+    - flag: "(no flags)"
+      description: "Encode stdin to Base64"
+    - flag: "-d"
+      description: "Decode Base64 to original data"
+    - flag: "-w 0"
+      description: "No line wrapping (default wraps at 76 chars)"
+      use_when: "Machine-readable output — single line"
+    - flag: "-i <file>"
+      description: "Read input from file"
+
+  preferred_invocations:
+    - invocation: "echo -n 'text' | base64"
+      use_when: "Encode a string"
+    - invocation: "echo -n 'text' | base64 -w 0"
+      use_when: "Encode to single line (no wrapping)"
+    - invocation: "echo 'dGVzdA==' | base64 -d"
+      use_when: "Decode a Base64 string"
+    - invocation: "base64 -w 0 file.bin"
+      use_when: "Encode a binary file to Base64"
+    - invocation: "kubectl get secret <name> -o jsonpath='{.data.key}' | base64 -d"
+      use_when: "Decode a Kubernetes secret value"
+
+output_schema:
+  enable_filter: false

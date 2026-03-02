@@ -1,0 +1,35 @@
+command: gzip
+platform: all
+description: "Compress or decompress files using gzip format"
+
+syntax:
+  usage: "gzip [options] [file...]"
+  key_flags:
+    - flag: "<file>"
+      description: "Compress file in-place — replaces with file.gz"
+    - flag: "-d <file.gz>"
+      description: "Decompress (same as gunzip)"
+    - flag: "-k"
+      description: "Keep original file after compression"
+    - flag: "-c"
+      description: "Write to stdout — keep original file"
+      use_when: "Pipe compressed output or preserve original"
+    - flag: "-r <dir>"
+      description: "Recursively compress all files in directory"
+    - flag: "-9"
+      description: "Best compression (slower)"
+    - flag: "-1"
+      description: "Fastest compression"
+    - flag: "-l <file.gz>"
+      description: "List compression statistics"
+
+  preferred_invocations:
+    - invocation: "gzip -k file"
+      use_when: "Compress file, keep original"
+    - invocation: "gzip -d file.gz"
+      use_when: "Decompress"
+    - invocation: "tar -czf archive.tar.gz dir/"
+      use_when: "Prefer tar with gzip for directories"
+
+output_schema:
+  enable_filter: false

@@ -1,0 +1,34 @@
+command: zip
+platform: all
+description: "Create and manage ZIP archives"
+
+syntax:
+  usage: "zip [options] archive.zip files..."
+  key_flags:
+    - flag: "-r <archive> <dir>"
+      description: "Recursively zip a directory"
+      use_when: "Archiving a directory tree"
+    - flag: "-9"
+      description: "Maximum compression"
+    - flag: "-e"
+      description: "Encrypt with password"
+    - flag: "-u <archive> <files>"
+      description: "Update existing archive"
+    - flag: "-d <archive> <file>"
+      description: "Delete a file from archive"
+    - flag: "-l <archive>"
+      description: "List archive contents (use unzip -l for better output)"
+    - flag: "-x <pattern>"
+      description: "Exclude matching files"
+      use_when: "Skip .git, node_modules, etc."
+
+  preferred_invocations:
+    - invocation: "zip -r archive.zip ./dir"
+      use_when: "Zip a directory"
+    - invocation: "zip -r archive.zip ./dir -x '*.git*' -x 'node_modules/*'"
+      use_when: "Zip directory excluding common noise"
+    - invocation: "zip archive.zip file1 file2"
+      use_when: "Zip specific files"
+
+output_schema:
+  enable_filter: false

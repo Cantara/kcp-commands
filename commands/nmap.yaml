@@ -1,0 +1,50 @@
+command: nmap
+platform: all
+description: "Network scanner — discover hosts, open ports, and services"
+
+syntax:
+  usage: "nmap [scan type] [options] {target}"
+  key_flags:
+    - flag: "<host/IP>"
+      description: "Scan top 1000 ports on a host"
+    - flag: "-p <ports>"
+      description: "Scan specific ports (e.g. -p 80,443 or -p 1-1024)"
+    - flag: "-p-"
+      description: "Scan all 65535 ports"
+    - flag: "-sV"
+      description: "Detect service versions"
+    - flag: "-sS"
+      description: "SYN scan (stealth, requires root)"
+    - flag: "-A"
+      description: "Aggressive: OS detection, version, scripts, traceroute"
+    - flag: "-O"
+      description: "OS detection (requires root)"
+    - flag: "-Pn"
+      description: "Skip host discovery — treat all hosts as up"
+      use_when: "Host blocks ping but may have open ports"
+    - flag: "--open"
+      description: "Show only open ports"
+    - flag: "-T4"
+      description: "Faster timing (T0-T5, T3 default)"
+    - flag: "-oN <file>"
+      description: "Save output to file"
+
+  preferred_invocations:
+    - invocation: "nmap -sV --open <host>"
+      use_when: "Quick service scan showing only open ports"
+    - invocation: "nmap -p 80,443,8080,8443 <host>"
+      use_when: "Check specific ports on a host"
+    - invocation: "nmap -A <host>"
+      use_when: "Full scan with OS and service detection"
+
+output_schema:
+  enable_filter: true
+  noise_patterns:
+    - pattern: "^Starting Nmap"
+      reason: "Version header"
+    - pattern: "^Nmap done:"
+      reason: "Summary footer"
+    - pattern: "^Host is up"
+      reason: "Host liveness confirmation"
+  max_lines: 80
+  truncation_message: "... {remaining} more lines."

@@ -1,0 +1,28 @@
+command: column
+platform: all
+description: "Format input into aligned columns — make tabular output readable"
+
+syntax:
+  usage: "column [options] [file...]"
+  key_flags:
+    - flag: "-t"
+      description: "Table mode — align whitespace-separated columns"
+      use_when: "Most common — pretty-print command output"
+    - flag: "-s <sep>"
+      description: "Use sep as input column separator"
+      use_when: "Formatting CSV or colon-separated input"
+    - flag: "-o <sep>"
+      description: "Use sep as output separator"
+    - flag: "-N <headers>"
+      description: "Specify column names (GNU coreutils 2.35+)"
+
+  preferred_invocations:
+    - invocation: "mount | column -t"
+      use_when: "Pretty-print mount output"
+    - invocation: "cat /etc/passwd | column -t -s:"
+      use_when: "Format colon-separated file as table"
+    - invocation: "ps aux | column -t"
+      use_when: "Align ps output into readable columns"
+
+output_schema:
+  enable_filter: false

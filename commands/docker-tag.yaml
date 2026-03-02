@@ -1,0 +1,20 @@
+command: docker
+subcommand: tag
+platform: all
+description: "Create a tag reference pointing to a source image"
+
+syntax:
+  usage: "docker tag SOURCE_IMAGE[:TAG] TARGET_IMAGE[:TAG]"
+  key_flags:
+    - flag: "<source> <target>"
+      description: "Create an alias tag for an image"
+      use_when: "Rename or add registry prefix before pushing"
+
+  preferred_invocations:
+    - invocation: "docker tag myapp:latest registry.example.com/myapp:v1.2.3"
+      use_when: "Tag image with registry URL before pushing"
+    - invocation: "docker tag myapp:latest myapp:v1.2.3"
+      use_when: "Add a version tag to an existing image"
+
+output_schema:
+  enable_filter: false

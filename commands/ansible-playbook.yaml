@@ -1,0 +1,50 @@
+command: ansible-playbook
+platform: all
+description: "Run Ansible playbooks — automate configuration and deployment"
+
+syntax:
+  usage: "ansible-playbook [options] playbook.yml"
+  key_flags:
+    - flag: "<playbook.yml>"
+      description: "Run a playbook"
+    - flag: "-i <inventory>"
+      description: "Specify inventory file or host"
+    - flag: "-l <host>"
+      description: "Limit to specific hosts"
+    - flag: "-t <tag>"
+      description: "Run only tasks with specified tag"
+    - flag: "--skip-tags <tag>"
+      description: "Skip tasks with specified tag"
+    - flag: "-e '<key>=<value>'"
+      description: "Set extra variable"
+    - flag: "--check"
+      description: "Dry run — show what would change"
+      use_when: "Preview changes before applying"
+    - flag: "--diff"
+      description: "Show file diffs for changed files"
+    - flag: "-v / -vv / -vvv"
+      description: "Verbosity level"
+    - flag: "--start-at-task '<name>'"
+      description: "Start from a specific task"
+
+  preferred_invocations:
+    - invocation: "ansible-playbook -i inventory.ini site.yml --check --diff"
+      use_when: "Dry run to preview changes"
+    - invocation: "ansible-playbook -i inventory.ini site.yml -l <host>"
+      use_when: "Run against specific hosts only"
+    - invocation: "ansible-playbook -i inventory.ini deploy.yml -t <tag>"
+      use_when: "Run only tagged tasks"
+
+output_schema:
+  enable_filter: true
+  noise_patterns:
+    - pattern: "^\\[WARNING\\]"
+      reason: "Deprecation warnings"
+    - pattern: "^PLAY \\["
+      reason: "Play header — keep first occurrence"
+    - pattern: "^TASK \\[Gathering Facts\\]"
+      reason: "Default facts gathering task"
+    - pattern: "^ok: \\["
+      reason: "Unchanged task results (keep failed/changed)"
+  max_lines: 100
+  truncation_message: "... {remaining} more playbook lines. Look for 'failed=' in PLAY RECAP."
