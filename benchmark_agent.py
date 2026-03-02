@@ -106,7 +106,7 @@ def get_hook_response(payload: str, port: int) -> dict:
         return {}
 
 def get_node_response(payload: str) -> dict:
-    cli = SCRIPT_DIR / "dist" / "cli.js"
+    cli = SCRIPT_DIR / "typescript" / "dist" / "cli.js"
     try:
         result = subprocess.run(
             ["node", str(cli)],
@@ -121,7 +121,7 @@ def get_node_response(payload: str) -> dict:
 def filter_output(raw: str, key: str, port: int) -> str:
     """Pipe raw output through the daemon's filter endpoint."""
     # We use the Node.js filter directly (it's the same filter logic)
-    cli = SCRIPT_DIR / "dist" / "cli.js"
+    cli = SCRIPT_DIR / "typescript" / "dist" / "cli.js"
     try:
         result = subprocess.run(
             ["node", str(cli), "filter", key],

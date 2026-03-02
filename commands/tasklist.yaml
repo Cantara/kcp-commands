@@ -1,0 +1,43 @@
+command: tasklist
+platform: windows
+description: "Display running processes (CMD). PowerShell equivalent: Get-Process (alias: ps, gps)"
+
+syntax:
+  usage: "tasklist [/options]"
+  key_flags:
+    - flag: "/v"
+      description: "Verbose — includes status, username, CPU time, window title"
+      use_when: "Need detailed process information"
+    - flag: "/fi \"imagename eq <name>\""
+      description: "Filter by process name"
+      use_when: "Finding a specific process"
+    - flag: "/fi \"pid eq <pid>\""
+      description: "Filter by PID"
+    - flag: "/fo csv"
+      description: "Output in CSV format"
+      use_when: "Parsing output programmatically"
+    - flag: "/svc"
+      description: "Show services hosted in each process"
+    - flag: "/fi \"memusage gt <KB>\""
+      description: "Filter by memory usage (in KB)"
+      use_when: "Finding memory-heavy processes"
+
+  preferred_invocations:
+    - invocation: "tasklist"
+      use_when: "List all running processes"
+    - invocation: "tasklist /fi \"imagename eq node.exe\""
+      use_when: "Find specific process by name"
+    - invocation: "Get-Process | Sort-Object CPU -Descending | Select-Object -First 15"
+      use_when: "PowerShell — top CPU consumers (preferred)"
+    - invocation: "Get-Process | Sort-Object WorkingSet64 -Descending | Select-Object -First 15 Name, Id, @{N='MB';E={[math]::Round($_.WorkingSet64/1MB)}}"
+      use_when: "PowerShell — top memory consumers with MB sizes"
+
+output_schema:
+  enable_filter: true
+  noise_patterns:
+    - pattern: "^Image Name\\s+PID"
+      reason: "Header line"
+    - pattern: "^=+"
+      reason: "Header separator line"
+  max_lines: 30
+  truncation_message: "... {remaining} more processes. Use /fi to filter or Get-Process in PowerShell."

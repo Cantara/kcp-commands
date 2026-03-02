@@ -1,0 +1,46 @@
+command: curl
+platform: all
+description: "Transfer data from or to a server using URLs — HTTP, HTTPS, FTP, etc."
+
+syntax:
+  usage: "curl [OPTIONS] <URL>"
+  key_flags:
+    - flag: "-s"
+      description: "Silent mode — no progress bar"
+      use_when: "Always use in scripts — progress bar is noise"
+    - flag: "-o <file>"
+      description: "Write output to file instead of stdout"
+    - flag: "-O"
+      description: "Save with the remote filename"
+    - flag: "-L"
+      description: "Follow redirects"
+      use_when: "Almost always — many URLs redirect"
+    - flag: "-H '<header>'"
+      description: "Set a request header"
+      use_when: "Authorization, Content-Type, etc."
+    - flag: "-X <method>"
+      description: "HTTP method (GET, POST, PUT, DELETE, PATCH)"
+    - flag: "-d '<data>'"
+      description: "Send data in request body (sets POST by default)"
+      use_when: "API calls with JSON payload"
+    - flag: "-w '%{http_code}'"
+      description: "Write out response info (status code, timing, etc.)"
+      use_when: "Checking HTTP status codes in scripts"
+    - flag: "-f"
+      description: "Fail silently on HTTP errors (no output, exit code 22)"
+      use_when: "Scripting — detect failures via exit code"
+
+  preferred_invocations:
+    - invocation: "curl -sL <url>"
+      use_when: "Fetch a URL silently following redirects"
+    - invocation: "curl -s -H 'Authorization: Bearer <token>' <url>"
+      use_when: "Authenticated API call"
+    - invocation: "curl -s -X POST -H 'Content-Type: application/json' -d '{\"key\":\"value\"}' <url>"
+      use_when: "POST JSON to an API"
+    - invocation: "curl -sL -o <file> <url>"
+      use_when: "Download a file"
+
+output_schema:
+  enable_filter: false
+  max_lines: 200
+  truncation_message: "... {remaining} more lines. Pipe through jq for JSON or head for text."

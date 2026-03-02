@@ -62,26 +62,34 @@ public class ManifestResolver {
     /**
      * Pre-load all bundled manifests from the classpath into memory.
      * Called once at daemon startup — eliminates per-request classpath scanning.
+     *
+     * Keys are read from commands/index.txt (one key per line, # comments allowed).
+     * Add a line to index.txt whenever a new manifest is added to commands/.
      */
     private void preloadPrimed() {
-        // Known primed manifest keys — extend this list as more are added
-        String[] primedKeys = {
-                "ls", "ps", "find",
-                "git-log", "git-diff", "git-status", "git-branch",
-                "docker-ps", "docker-logs",
-                "mvn", "npm", "gradle"
-        };
+        InputStream idx = getClass().getClassLoader().getResourceAsStream("commands/index.txt");
+        if (idx == null) {
+            System.err.println("[kcp-commands] Warning: commands/index.txt not found in classpath");
+            return;
+        }
 
         int loaded = 0;
-        for (String key : primedKeys) {
-            String resource = "commands/" + key + ".yaml";
-            try (InputStream is = getClass().getClassLoader().getResourceAsStream(resource)) {
-                if (is != null) {
-                    primedCache.put(key, ManifestParser.parse(is));
-                    loaded++;
+        try (java.util.Scanner scanner = new java.util.Scanner(idx, java.nio.charset.StandardCharsets.UTF_8)) {
+            while (scanner.hasNextLine()) {
+                String key = scanner.nextLine().trim();
+                if (key.isEmpty() || key.startsWith("#")) continue;
+
+                String resource = "commands/" + key + ".yaml";
+                try (InputStream is = getClass().getClassLoader().getResourceAsStream(resource)) {
+                    if (is != null) {
+                        primedCache.put(key, ManifestParser.parse(is));
+                        loaded++;
+                    } else {
+                        System.err.println("[kcp-commands] Warning: manifest not found for key '" + key + "'");
+                    }
+                } catch (IOException | IllegalArgumentException e) {
+                    System.err.println("[kcp-commands] Warning: could not load primed manifest " + key + ": " + e.getMessage());
                 }
-            } catch (IOException | IllegalArgumentException e) {
-                System.err.println("[kcp-commands] Warning: could not load primed manifest " + key + ": " + e.getMessage());
             }
         }
         System.err.println("[kcp-commands] Loaded " + loaded + " primed manifests");

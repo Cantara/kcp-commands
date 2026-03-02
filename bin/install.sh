@@ -16,10 +16,11 @@
 set -e
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+ROOT_DIR="$(cd "$SCRIPT_DIR/.." && pwd)"
 SETTINGS_FILE="$HOME/.claude/settings.json"
 REPO="Cantara/kcp-commands"
 JAR_NAME="kcp-commands-daemon.jar"
-JAR_PATH="$SCRIPT_DIR/java/target/$JAR_NAME"
+JAR_PATH="$ROOT_DIR/java/target/$JAR_NAME"
 RELEASE_URL="https://github.com/$REPO/releases/latest/download/$JAR_NAME"
 
 # ── Parse args ────────────────────────────────────────────────────────────────
@@ -55,9 +56,9 @@ echo "========================================"
 
 # ── Node.js filter (always needed — Phase B pipe target) ─────────────────────
 
-if [ ! -f "$SCRIPT_DIR/dist/cli.js" ]; then
+if [ ! -f "$ROOT_DIR/typescript/dist/cli.js" ]; then
   echo "→ Building Node.js filter..."
-  cd "$SCRIPT_DIR"
+  cd "$ROOT_DIR/typescript"
   npm install --silent
   npm run build --silent
   echo "✓ Node.js filter built"
@@ -72,13 +73,13 @@ if [ "$MODE" = "java" ]; then
     echo "✓ Java daemon already present ($JAR_NAME)"
   else
     echo "→ Downloading Java daemon from GitHub releases..."
-    mkdir -p "$SCRIPT_DIR/java/target"
+    mkdir -p "$ROOT_DIR/java/target"
 
     if curl -fsSL "$RELEASE_URL" -o "$JAR_PATH" 2>/dev/null; then
       echo "✓ Java daemon downloaded"
     elif command -v mvn > /dev/null 2>&1; then
       echo "  (download failed — building from source with Maven)"
-      mvn -f "$SCRIPT_DIR/java/pom.xml" -q package -DskipTests
+      mvn -f "$ROOT_DIR/java/pom.xml" -q package -DskipTests
       echo "✓ Java daemon built from source"
     else
       echo "✗ Could not obtain Java daemon (download failed; mvn not found)"
@@ -91,10 +92,10 @@ fi
 # ── Hook command ──────────────────────────────────────────────────────────────
 
 if [ "$MODE" = "java" ]; then
-  HOOK_COMMAND="bash \"$SCRIPT_DIR/hook.sh\""
+  HOOK_COMMAND="bash \"$ROOT_DIR/bin/hook.sh\""
   BACKEND_LABEL="Java daemon"
 else
-  HOOK_COMMAND="node \"$SCRIPT_DIR/dist/cli.js\""
+  HOOK_COMMAND="node \"$ROOT_DIR/typescript/dist/cli.js\""
   BACKEND_LABEL="Node.js"
 fi
 

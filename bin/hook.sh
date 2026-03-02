@@ -4,9 +4,10 @@
 # Talks to the Java daemon (fast path) or falls back to Node.js (slow path).
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+ROOT_DIR="$(cd "$SCRIPT_DIR/.." && pwd)"
 PORT=7734
-DAEMON_JAR="$SCRIPT_DIR/java/target/kcp-commands-daemon.jar"
-NODE_HOOK="$SCRIPT_DIR/dist/cli.js"
+DAEMON_JAR="$ROOT_DIR/java/target/kcp-commands-daemon.jar"
+NODE_HOOK="$ROOT_DIR/typescript/dist/cli.js"
 DAEMON_LOG="/tmp/kcp-commands-daemon.log"
 
 # Read stdin (Claude Code hook JSON) once

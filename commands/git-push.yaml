@@ -1,0 +1,36 @@
+command: git
+subcommand: push
+platform: all
+description: "Upload local branch commits to a remote repository"
+
+syntax:
+  usage: "git push [<options>] [<remote>] [<refspec>...]"
+  key_flags:
+    - flag: "-u <remote> <branch>"
+      description: "Push and set upstream tracking"
+      use_when: "First push of a new branch — sets default remote for future pushes"
+    - flag: "--force-with-lease"
+      description: "Force push only if remote matches expected state"
+      use_when: "After rebase — safer than --force"
+    - flag: "--force"
+      description: "Force push (overwrites remote history)"
+      use_when: "Almost never — destructive. Prefer --force-with-lease"
+    - flag: "--tags"
+      description: "Push all local tags"
+      use_when: "After creating release tags"
+    - flag: "--delete <remote> <branch>"
+      description: "Delete a remote branch"
+      use_when: "Cleaning up after merge"
+
+  preferred_invocations:
+    - invocation: "git push"
+      use_when: "Push to already-configured upstream"
+    - invocation: "git push -u origin <branch>"
+      use_when: "First push of a new branch"
+    - invocation: "git push --force-with-lease"
+      use_when: "After rebase — safe force push"
+    - invocation: "git push origin --delete <branch>"
+      use_when: "Remove a remote branch"
+
+output_schema:
+  enable_filter: false

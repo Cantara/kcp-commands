@@ -1,0 +1,34 @@
+command: git
+subcommand: reset
+platform: all
+description: "Reset current HEAD to a specified state — unstage files or rewrite history"
+
+syntax:
+  usage: "git reset [<mode>] [<commit>] | git reset [--] <pathspec>..."
+  key_flags:
+    - flag: "<file>"
+      description: "Unstage a file (opposite of git add)"
+      use_when: "Removing a file from staging area without losing changes"
+    - flag: "--soft HEAD~1"
+      description: "Undo last commit but keep changes staged"
+      use_when: "Re-doing last commit with different message or extra files"
+    - flag: "--mixed HEAD~1"
+      description: "Undo last commit, keep changes unstaged (default mode)"
+      use_when: "Undo commit and re-stage selectively"
+    - flag: "--hard HEAD~1"
+      description: "Undo last commit AND discard all changes"
+      use_when: "Nuclear option — permanently destroys uncommitted work"
+    - flag: "--hard origin/main"
+      description: "Reset branch to match remote exactly"
+      use_when: "Throwing away all local work to match remote — destructive"
+
+  preferred_invocations:
+    - invocation: "git reset <file>"
+      use_when: "Unstage a specific file"
+    - invocation: "git reset --soft HEAD~1"
+      use_when: "Undo last commit, keep everything staged"
+    - invocation: "git reset --mixed HEAD~1"
+      use_when: "Undo last commit, keep changes as unstaged"
+
+output_schema:
+  enable_filter: false

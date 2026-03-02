@@ -1,0 +1,40 @@
+command: git
+subcommand: stash
+platform: all
+description: "Temporarily shelve changes in the working directory"
+
+syntax:
+  usage: "git stash [push | pop | list | show | drop | apply] [<options>]"
+  key_flags:
+    - flag: "push -m '<message>'"
+      description: "Stash with a descriptive message"
+      use_when: "Always use a message — unnamed stashes are hard to identify later"
+    - flag: "pop"
+      description: "Apply most recent stash and remove it from stash list"
+      use_when: "Restoring stashed work"
+    - flag: "apply"
+      description: "Apply stash but keep it in stash list"
+      use_when: "Applying stash to multiple branches"
+    - flag: "list"
+      description: "Show all stashed entries"
+    - flag: "show -p"
+      description: "Show diff of a stash entry"
+      use_when: "Inspecting stash contents before applying"
+    - flag: "drop stash@{N}"
+      description: "Remove a specific stash entry"
+    - flag: "--include-untracked"
+      description: "Also stash untracked files"
+      use_when: "New files not yet added need to be stashed too"
+
+  preferred_invocations:
+    - invocation: "git stash push -m 'WIP: feature X'"
+      use_when: "Save work in progress before switching branches"
+    - invocation: "git stash pop"
+      use_when: "Restore most recent stash"
+    - invocation: "git stash list"
+      use_when: "See what's stashed"
+    - invocation: "git stash show -p stash@{0}"
+      use_when: "Preview stash contents before applying"
+
+output_schema:
+  enable_filter: false

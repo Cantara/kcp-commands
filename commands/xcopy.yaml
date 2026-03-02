@@ -1,0 +1,36 @@
+command: xcopy
+platform: windows
+description: "Extended copy — legacy recursive file copy (CMD). Prefer robocopy for new scripts"
+
+syntax:
+  usage: "xcopy <source> <dest> [/options]"
+  key_flags:
+    - flag: "/s"
+      description: "Copy directories and subdirectories (non-empty)"
+    - flag: "/e"
+      description: "Copy all subdirectories including empty ones"
+      use_when: "Full recursive copy"
+    - flag: "/i"
+      description: "Assume dest is a directory if it doesn't exist"
+      use_when: "Prevents 'Is this a file or directory?' prompt"
+    - flag: "/y"
+      description: "Suppress overwrite confirmation"
+      use_when: "Scripting — no interactive prompts"
+    - flag: "/d"
+      description: "Copy only files newer than dest"
+      use_when: "Incremental copy"
+    - flag: "/h"
+      description: "Copy hidden and system files"
+    - flag: "/q"
+      description: "Quiet — don't display filenames while copying"
+
+  preferred_invocations:
+    - invocation: "xcopy <source> <dest> /e /i /y"
+      use_when: "Recursive copy without prompts (legacy)"
+    - invocation: "robocopy <source> <dest> /e"
+      use_when: "Preferred modern alternative — use robocopy instead"
+    - invocation: "Copy-Item <source> <dest> -Recurse"
+      use_when: "PowerShell alternative (preferred for scripts)"
+
+output_schema:
+  enable_filter: false

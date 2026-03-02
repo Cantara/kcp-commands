@@ -8,9 +8,8 @@ import type { CommandManifest } from './model.js';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
-// Subcommands we track per compound command
-const GIT_SUBCOMMANDS = new Set(['log', 'diff', 'status', 'branch', 'show', 'blame', 'stash']);
-const DOCKER_SUBCOMMANDS = new Set(['ps', 'logs', 'exec', 'run', 'images', 'inspect']);
+// Regex for a first argument that looks like a subcommand word (not a flag, path, or option)
+const SUBCOMMAND_PATTERN = /^[a-z][a-z0-9-]*$/;
 
 interface ParsedCommand {
   key: string;   // manifest lookup key, e.g. "ls", "git-log"
@@ -36,12 +35,13 @@ function parseCommand(shellCommand: string): ParsedCommand | null {
   if (parts.length === 0 || !parts[0]) return null;
 
   const cmd = parts[0];
+  const firstArg = parts[1];
 
-  if (cmd === 'git' && parts[1] && GIT_SUBCOMMANDS.has(parts[1])) {
-    return { key: buildKey('git', parts[1]), cmd: 'git', subcommand: parts[1] };
-  }
-  if (cmd === 'docker' && parts[1] && DOCKER_SUBCOMMANDS.has(parts[1])) {
-    return { key: buildKey('docker', parts[1]), cmd: 'docker', subcommand: parts[1] };
+  // If the first argument looks like a subcommand word (e.g. "get", "log", "ps"),
+  // try the compound key first (e.g. "kubectl-get", "git-log", "docker-ps").
+  // The hook will fall back to the simple key if no compound manifest exists.
+  if (firstArg && SUBCOMMAND_PATTERN.test(firstArg)) {
+    return { key: buildKey(cmd, firstArg), cmd, subcommand: firstArg };
   }
 
   return { key: buildKey(cmd), cmd };
@@ -115,7 +115,12 @@ export async function runHook(): Promise<void> {
 
   let manifest = resolveManifest(parsed.key);
 
-  // Auto-generate if missing (Phase C)
+  // Compound key not found — try the simple command key (e.g. "npm" when "npm-install" absent)
+  if (!manifest && parsed.subcommand) {
+    manifest = resolveManifest(parsed.cmd);
+  }
+
+  // Auto-generate if still missing (Phase C)
   if (!manifest) {
     manifest = generateManifest(parsed.cmd, parsed.subcommand);
   }

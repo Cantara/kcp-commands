@@ -1,0 +1,49 @@
+command: top
+platform: linux
+description: "Display real-time process resource usage (CPU, memory)"
+
+syntax:
+  usage: "top [OPTION]..."
+  key_flags:
+    - flag: "-b"
+      description: "Batch mode — write output to stdout (non-interactive)"
+      use_when: "Always use in scripts or piped commands — required for non-interactive use"
+    - flag: "-n <N>"
+      description: "Number of iterations then exit"
+      use_when: "Always combine with -b: -bn1 for a single snapshot"
+    - flag: "-o %CPU"
+      description: "Sort by CPU usage"
+      use_when: "Default sort — finding CPU hogs"
+    - flag: "-o %MEM"
+      description: "Sort by memory usage"
+      use_when: "Finding memory hogs"
+    - flag: "-p <pid>"
+      description: "Monitor specific PIDs only"
+    - flag: "-u <user>"
+      description: "Show only processes for a specific user"
+
+  preferred_invocations:
+    - invocation: "top -bn1 | head -20"
+      use_when: "Single snapshot of top processes (non-interactive)"
+    - invocation: "top -bn1 -o %MEM | head -20"
+      use_when: "Top memory consumers — single snapshot"
+    - invocation: "top -bn1 -u <user> | head -20"
+      use_when: "Processes for a specific user"
+
+output_schema:
+  enable_filter: true
+  noise_patterns:
+    - pattern: "^top - \\d+:\\d+:\\d+"
+      reason: "Header timestamp line"
+    - pattern: "^Tasks:"
+      reason: "Task summary — rarely needed for specific process lookup"
+    - pattern: "^%Cpu"
+      reason: "CPU summary line"
+    - pattern: "^MiB Mem"
+      reason: "Memory summary line"
+    - pattern: "^MiB Swap"
+      reason: "Swap summary line"
+    - pattern: "^\\s*$"
+      reason: "Blank lines"
+  max_lines: 30
+  truncation_message: "... {remaining} more processes. Use -p <pid> or -u <user> to filter."

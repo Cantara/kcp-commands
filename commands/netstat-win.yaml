@@ -1,0 +1,39 @@
+command: netstat
+platform: windows
+description: "Display network connections and listening ports (Windows variant). PowerShell equivalent: Get-NetTCPConnection"
+
+syntax:
+  usage: "netstat [/options]"
+  key_flags:
+    - flag: "-ano"
+      description: "All connections, numeric addresses, with owning PID"
+      use_when: "Default — see what's listening and connected with PIDs"
+    - flag: "-b"
+      description: "Show executable name for each connection (requires admin)"
+      use_when: "Identifying which program owns a connection"
+    - flag: "-p tcp"
+      description: "TCP connections only"
+    - flag: "-p udp"
+      description: "UDP connections only"
+    - flag: "-r"
+      description: "Display routing table"
+
+  preferred_invocations:
+    - invocation: "netstat -ano"
+      use_when: "All connections with PIDs"
+    - invocation: "netstat -ano | findstr :<port>"
+      use_when: "Find what's using a specific port"
+    - invocation: "netstat -ano | findstr LISTENING"
+      use_when: "Show only listening ports"
+    - invocation: "Get-NetTCPConnection -LocalPort <port>"
+      use_when: "PowerShell — find process on a specific port (preferred)"
+
+output_schema:
+  enable_filter: true
+  noise_patterns:
+    - pattern: "^\\s*Active Connections"
+      reason: "Section header"
+    - pattern: "^\\s*Proto\\s+Local Address"
+      reason: "Column header"
+  max_lines: 30
+  truncation_message: "... {remaining} more connections. Use findstr to filter by port."

@@ -1,0 +1,39 @@
+command: netstat
+platform: linux
+description: "Display network connections, routing tables, and interface statistics"
+
+syntax:
+  usage: "netstat [OPTIONS]"
+  key_flags:
+    - flag: "-tlnp"
+      description: "TCP listening sockets, numeric ports, with PID/program"
+      use_when: "Default — most common usage: see what's listening"
+    - flag: "-ulnp"
+      description: "UDP listening sockets, numeric, with PID"
+    - flag: "-a"
+      description: "All sockets (listening and established)"
+    - flag: "-n"
+      description: "Numeric addresses (no DNS resolve)"
+      use_when: "Always include — DNS lookup is slow"
+    - flag: "-r"
+      description: "Display routing table"
+
+  preferred_invocations:
+    - invocation: "netstat -tlnp"
+      use_when: "What TCP services are listening on which ports (requires root for PIDs)"
+    - invocation: "netstat -anp | grep <port>"
+      use_when: "Find connections on a specific port"
+    - invocation: "ss -tlnp"
+      use_when: "Preferred modern alternative to netstat (faster, more info)"
+
+output_schema:
+  enable_filter: true
+  noise_patterns:
+    - pattern: "^Active Internet connections"
+      reason: "Section header"
+    - pattern: "^Active UNIX domain sockets"
+      reason: "Section header for UNIX sockets — usually not what you want"
+    - pattern: "^Proto\\s+Recv"
+      reason: "Column header — keep only first occurrence"
+  max_lines: 30
+  truncation_message: "... {remaining} more connections. Use grep to filter by port or address."

@@ -1,0 +1,29 @@
+command: git
+subcommand: fetch
+platform: all
+description: "Download objects and refs from a remote without merging"
+
+syntax:
+  usage: "git fetch [<options>] [<remote>] [<refspec>...]"
+  key_flags:
+    - flag: "--all"
+      description: "Fetch from all configured remotes"
+      use_when: "Repos with multiple remotes (origin + upstream)"
+    - flag: "--prune"
+      description: "Remove remote-tracking refs that no longer exist on remote"
+      use_when: "Cleaning stale branches after teammates merge and delete"
+    - flag: "--tags"
+      description: "Fetch all tags from remote"
+    - flag: "<remote>"
+      description: "Fetch from a specific remote (default: origin)"
+
+  preferred_invocations:
+    - invocation: "git fetch --prune"
+      use_when: "Default — sync remote state and clean up stale refs"
+    - invocation: "git fetch --all"
+      use_when: "Sync all remotes (e.g. fork + upstream)"
+    - invocation: "git fetch origin main"
+      use_when: "Update only the main branch ref from origin"
+
+output_schema:
+  enable_filter: false

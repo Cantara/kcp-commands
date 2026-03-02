@@ -1,0 +1,32 @@
+command: git
+subcommand: remote
+platform: all
+description: "Manage set of tracked remote repositories"
+
+syntax:
+  usage: "git remote [<subcommand>] [<options>]"
+  key_flags:
+    - flag: "-v"
+      description: "Show remote URLs for fetch and push"
+      use_when: "Default — always include to see URLs"
+    - flag: "add <name> <url>"
+      description: "Add a new remote"
+      use_when: "Adding upstream for forks or additional remotes"
+    - flag: "remove <name>"
+      description: "Remove a remote and its tracking branches"
+    - flag: "set-url <name> <url>"
+      description: "Change the URL of a remote"
+      use_when: "Switching from HTTPS to SSH or vice versa"
+    - flag: "rename <old> <new>"
+      description: "Rename a remote"
+
+  preferred_invocations:
+    - invocation: "git remote -v"
+      use_when: "See all remotes with their URLs"
+    - invocation: "git remote add upstream <url>"
+      use_when: "Add upstream remote for a forked repo"
+    - invocation: "git remote set-url origin <new-url>"
+      use_when: "Change origin URL (e.g. HTTPS to SSH)"
+
+output_schema:
+  enable_filter: false

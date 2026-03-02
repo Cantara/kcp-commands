@@ -71,11 +71,12 @@ public class KcpCommandsDaemon {
      * Falls back to searching PATH via 'which kcp-commands'.
      */
     private static String resolveFilterScript() {
-        // If running from the repo: java/target/ → ../../dist/cli.js
+        // If running from the repo: java/target/ → ../../typescript/dist/cli.js
         try {
             Path jarDir = Path.of(KcpCommandsDaemon.class
                     .getProtectionDomain().getCodeSource().getLocation().toURI());
-            Path candidate = jarDir.getParent().getParent().getParent().resolve("dist/cli.js");
+            // java/target/kcp-commands-daemon.jar  →  ../../../typescript/dist/cli.js
+            Path candidate = jarDir.getParent().getParent().getParent().resolve("typescript/dist/cli.js");
             if (candidate.toFile().exists()) return candidate.toAbsolutePath().toString();
         } catch (Exception ignored) {}
 

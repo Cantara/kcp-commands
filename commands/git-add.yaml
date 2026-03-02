@@ -1,0 +1,34 @@
+command: git
+subcommand: add
+platform: all
+description: "Stage file contents for the next commit"
+
+syntax:
+  usage: "git add [<options>] [--] <pathspec>..."
+  key_flags:
+    - flag: "<file>..."
+      description: "Stage specific files by name"
+      use_when: "Default — always prefer explicit filenames over wildcards"
+    - flag: "-A"
+      description: "Stage all changes (new, modified, deleted) in entire working tree"
+      use_when: "Only when you truly want everything — risks staging secrets or binaries"
+    - flag: "-p"
+      description: "Interactive patch mode — stage hunks selectively"
+      use_when: "Splitting changes into logical commits (not available in non-interactive)"
+    - flag: "-u"
+      description: "Stage only tracked files (modified + deleted, not new)"
+      use_when: "Updating existing files without adding untracked ones"
+    - flag: "--dry-run"
+      description: "Show what would be staged without actually staging"
+      use_when: "Verifying a glob pattern before committing to it"
+
+  preferred_invocations:
+    - invocation: "git add <file1> <file2>"
+      use_when: "Stage specific files — safest and most intentional"
+    - invocation: "git add ."
+      use_when: "Stage everything in current directory (check git status first)"
+    - invocation: "git add '*.yaml'"
+      use_when: "Stage all files matching a pattern"
+
+output_schema:
+  enable_filter: false

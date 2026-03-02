@@ -1,0 +1,26 @@
+command: head
+platform: linux
+description: "Output the first part of a file"
+
+syntax:
+  usage: "head [OPTION]... [FILE]..."
+  key_flags:
+    - flag: "-n <N>"
+      description: "Print the first N lines (default: 10)"
+      use_when: "Always specify to control output size"
+    - flag: "-c <N>"
+      description: "Print the first N bytes"
+      use_when: "Binary or fixed-width files"
+    - flag: "-n -<N>"
+      description: "Print all but the last N lines"
+
+  preferred_invocations:
+    - invocation: "head -n 20 <file>"
+      use_when: "Preview the top of a file"
+    - invocation: "head -n 1 <file>"
+      use_when: "Read just the first line (e.g. shebang, CSV header)"
+    - invocation: "<command> | head -20"
+      use_when: "Limit piped output to first 20 lines"
+
+output_schema:
+  enable_filter: false

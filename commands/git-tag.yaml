@@ -1,0 +1,33 @@
+command: git
+subcommand: tag
+platform: all
+description: "Create, list, delete, or verify tags"
+
+syntax:
+  usage: "git tag [<options>] [<tagname>] [<commit>]"
+  key_flags:
+    - flag: "<tagname>"
+      description: "Create a lightweight tag at HEAD"
+    - flag: "-a <tagname> -m '<message>'"
+      description: "Create an annotated tag with a message"
+      use_when: "Release tags — annotated tags are preferred for releases"
+    - flag: "-l"
+      description: "List tags (supports glob: -l 'v1.*')"
+    - flag: "-d <tagname>"
+      description: "Delete a local tag"
+    - flag: "-n"
+      description: "Show tag message (combine with -l)"
+      use_when: "Viewing annotated tag messages"
+
+  preferred_invocations:
+    - invocation: "git tag -a v1.0.0 -m 'Release 1.0.0'"
+      use_when: "Create a release tag (annotated)"
+    - invocation: "git tag -l"
+      use_when: "List all tags"
+    - invocation: "git tag -l 'v2.*'"
+      use_when: "List tags matching a pattern"
+    - invocation: "git tag -d <tagname> && git push origin :refs/tags/<tagname>"
+      use_when: "Delete a tag locally and from remote"
+
+output_schema:
+  enable_filter: false

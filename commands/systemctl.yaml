@@ -1,0 +1,44 @@
+command: systemctl
+platform: linux
+description: "Control systemd services and the system manager"
+
+syntax:
+  usage: "systemctl [COMMAND] [UNIT]"
+  key_flags:
+    - flag: "status <unit>"
+      description: "Show service status, recent logs, PID, memory"
+      use_when: "Default check — shows everything at a glance"
+    - flag: "start <unit>"
+      description: "Start a service"
+    - flag: "stop <unit>"
+      description: "Stop a service"
+    - flag: "restart <unit>"
+      description: "Stop and start a service"
+      use_when: "After config changes that require restart"
+    - flag: "reload <unit>"
+      description: "Reload config without restart"
+      use_when: "Service supports reload (e.g. nginx)"
+    - flag: "enable <unit>"
+      description: "Enable service to start on boot"
+    - flag: "disable <unit>"
+      description: "Disable service from starting on boot"
+    - flag: "list-units --type=service"
+      description: "List all active services"
+
+  preferred_invocations:
+    - invocation: "systemctl status <service>"
+      use_when: "Check if a service is running and see recent logs"
+    - invocation: "systemctl restart <service>"
+      use_when: "Restart a service after config change"
+    - invocation: "systemctl list-units --type=service --state=running"
+      use_when: "List all currently running services"
+    - invocation: "systemctl enable --now <service>"
+      use_when: "Enable and start a service in one command"
+
+output_schema:
+  enable_filter: true
+  noise_patterns:
+    - pattern: "^\\s*$"
+      reason: "Blank lines in status output"
+  max_lines: 30
+  truncation_message: "... {remaining} more lines. Use journalctl -u <unit> for full logs."

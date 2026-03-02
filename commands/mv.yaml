@@ -1,0 +1,28 @@
+command: mv
+platform: linux
+description: "Move or rename files and directories"
+
+syntax:
+  usage: "mv [OPTION]... SOURCE... DEST"
+  key_flags:
+    - flag: "-i"
+      description: "Prompt before overwrite"
+      use_when: "Safety — prevent accidental overwrites"
+    - flag: "-v"
+      description: "Verbose — print each rename/move"
+    - flag: "-n"
+      description: "Do not overwrite existing files"
+      use_when: "Preventing clobbering"
+    - flag: "-f"
+      description: "Force — do not prompt before overwriting"
+
+  preferred_invocations:
+    - invocation: "mv <oldname> <newname>"
+      use_when: "Rename a file or directory"
+    - invocation: "mv <file> <directory>/"
+      use_when: "Move a file into a directory"
+    - invocation: "mv -v <source>... <dest>/"
+      use_when: "Move multiple files with confirmation output"
+
+output_schema:
+  enable_filter: false

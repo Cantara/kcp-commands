@@ -1,0 +1,35 @@
+command: cp
+platform: linux
+description: "Copy files and directories"
+
+syntax:
+  usage: "cp [OPTION]... SOURCE... DEST"
+  key_flags:
+    - flag: "-r"
+      description: "Copy directories recursively"
+      use_when: "Copying a directory — required for directories"
+    - flag: "-i"
+      description: "Prompt before overwrite"
+      use_when: "Safety check in scripts"
+    - flag: "-v"
+      description: "Verbose — print each file as it's copied"
+    - flag: "-p"
+      description: "Preserve mode, ownership, and timestamps"
+      use_when: "Maintaining file metadata (e.g. deploy scripts)"
+    - flag: "-a"
+      description: "Archive mode: -r + preserve all attributes + symlinks"
+      use_when: "Full backup copy of a directory tree"
+    - flag: "-n"
+      description: "Do not overwrite existing files"
+      use_when: "Copying without clobbering existing files"
+
+  preferred_invocations:
+    - invocation: "cp <source> <dest>"
+      use_when: "Copy a single file"
+    - invocation: "cp -r <srcdir> <destdir>"
+      use_when: "Copy a directory recursively"
+    - invocation: "cp -a <srcdir> <destdir>"
+      use_when: "Full archive copy preserving all attributes"
+
+output_schema:
+  enable_filter: false

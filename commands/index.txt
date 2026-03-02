@@ -1,0 +1,76 @@
+# kcp-commands primed manifest index
+# One key per line. key = filename without .yaml extension.
+# git subcommands use key format: git-<subcommand>
+# Add a line here whenever a new manifest is added to commands/
+
+# ── File system ───────────────────────────────────────────────────────────────
+ls
+find
+cp
+mv
+rm
+mkdir
+cat
+head
+tail
+grep
+chmod
+df
+du
+tar
+ln
+rsync
+
+# ── Process / system (Linux) ──────────────────────────────────────────────────
+ps
+top
+kill
+systemctl
+journalctl
+lsof
+netstat
+ss
+ping
+
+# ── Git ───────────────────────────────────────────────────────────────────────
+git-log
+git-diff
+git-status
+git-branch
+git-checkout
+git-add
+git-commit
+git-push
+git-pull
+git-fetch
+git-stash
+git-merge
+git-rebase
+git-clone
+git-reset
+git-tag
+git-remote
+git-show
+
+# ── Cross-platform tools ──────────────────────────────────────────────────────
+curl
+npm
+node
+ssh
+docker-ps
+docker-images
+docker-logs
+kubectl-get
+kubectl-logs
+kubectl-describe
+
+# ── Windows ───────────────────────────────────────────────────────────────────
+dir
+tasklist
+taskkill
+ipconfig
+netstat-win
+where
+robocopy
+type
+xcopy

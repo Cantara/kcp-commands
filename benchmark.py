@@ -48,7 +48,7 @@ def run_baseline(payload: str) -> float:
     return (time.perf_counter() - start) * 1000
 
 def run_nodejs(payload: str) -> float:
-    cli = SCRIPT_DIR / "dist" / "cli.js"
+    cli = SCRIPT_DIR / "typescript" / "dist" / "cli.js"
     start = time.perf_counter()
     proc = subprocess.run(
         ["node", str(cli)],
@@ -144,7 +144,7 @@ def main():
     print("=" * 70)
 
     # ── Verify Node.js build exists ───────────────────────────────────────────
-    cli = SCRIPT_DIR / "dist" / "cli.js"
+    cli = SCRIPT_DIR / "typescript" / "dist" / "cli.js"
     if not cli.exists():
         print("ERROR: dist/cli.js not found. Run: npm run build")
         sys.exit(1)

@@ -1,0 +1,31 @@
+command: cat
+platform: linux
+description: "Concatenate and print files to stdout"
+
+syntax:
+  usage: "cat [OPTION]... [FILE]..."
+  key_flags:
+    - flag: "-n"
+      description: "Number all output lines"
+      use_when: "Referencing specific line numbers"
+    - flag: "-b"
+      description: "Number non-blank lines only"
+    - flag: "-s"
+      description: "Squeeze consecutive blank lines into one"
+      use_when: "Cleaning up files with excessive blank lines"
+    - flag: "-A"
+      description: "Show all non-printing characters (tabs, line endings)"
+      use_when: "Debugging whitespace issues (tabs vs spaces, CRLF)"
+
+  preferred_invocations:
+    - invocation: "cat <file>"
+      use_when: "Display file contents (small files only)"
+    - invocation: "cat -n <file>"
+      use_when: "Display with line numbers"
+    - invocation: "cat <file1> <file2> > <combined>"
+      use_when: "Concatenate multiple files"
+
+output_schema:
+  enable_filter: false
+  max_lines: 200
+  truncation_message: "... {remaining} more lines. Use head/tail for large files or grep for search."

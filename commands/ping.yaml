@@ -1,0 +1,33 @@
+command: ping
+platform: linux
+description: "Send ICMP echo requests to test network connectivity"
+
+syntax:
+  usage: "ping [OPTIONS] <destination>"
+  key_flags:
+    - flag: "-c <N>"
+      description: "Send N packets then stop"
+      use_when: "Always use — otherwise ping runs forever on Linux"
+    - flag: "-W <sec>"
+      description: "Timeout for each response in seconds"
+      use_when: "Short timeout for quick reachability check"
+    - flag: "-i <sec>"
+      description: "Interval between packets"
+    - flag: "-q"
+      description: "Quiet — show only summary"
+      use_when: "Scripting — only care about pass/fail"
+    - flag: "-4"
+      description: "Force IPv4"
+    - flag: "-6"
+      description: "Force IPv6"
+
+  preferred_invocations:
+    - invocation: "ping -c 3 <host>"
+      use_when: "Quick connectivity check — 3 packets"
+    - invocation: "ping -c 1 -W 2 <host>"
+      use_when: "Fast reachability test with 2-second timeout"
+    - invocation: "ping -c 5 -q <host>"
+      use_when: "Summary-only connectivity test"
+
+output_schema:
+  enable_filter: false

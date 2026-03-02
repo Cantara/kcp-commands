@@ -1,0 +1,36 @@
+command: git
+subcommand: show
+platform: all
+description: "Show information about git objects (commits, tags, blobs)"
+
+syntax:
+  usage: "git show [<options>] <object>..."
+  key_flags:
+    - flag: "<commit>"
+      description: "Show commit message and diff"
+      use_when: "Inspecting a specific commit"
+    - flag: "--stat"
+      description: "Show file change stats instead of full diff"
+      use_when: "Quick overview of what a commit changed"
+    - flag: "--name-only"
+      description: "Show only names of changed files"
+    - flag: "<commit>:<file>"
+      description: "Show file contents at a specific commit"
+      use_when: "Reading a file as it existed in a past commit"
+    - flag: "--format='%H %s'"
+      description: "Custom format for commit info"
+
+  preferred_invocations:
+    - invocation: "git show HEAD"
+      use_when: "Inspect the latest commit (message + diff)"
+    - invocation: "git show --stat <commit>"
+      use_when: "Overview of files changed in a commit"
+    - invocation: "git show <commit>:<filepath>"
+      use_when: "View a file at a specific commit"
+    - invocation: "git show <tag>"
+      use_when: "Inspect an annotated tag"
+
+output_schema:
+  enable_filter: false
+  max_lines: 200
+  truncation_message: "... {remaining} more lines. Use --stat for overview or -- <file> to narrow."

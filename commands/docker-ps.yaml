@@ -1,0 +1,39 @@
+command: docker
+subcommand: ps
+platform: all
+description: "List running containers"
+
+syntax:
+  usage: "docker ps [OPTIONS]"
+  key_flags:
+    - flag: "-a"
+      description: "Show all containers (including stopped)"
+      use_when: "Finding exited or created containers"
+    - flag: "--format '<template>'"
+      description: "Custom Go template output"
+      use_when: "Clean output: --format 'table {{.Names}}\t{{.Status}}\t{{.Ports}}'"
+    - flag: "-q"
+      description: "Only display container IDs"
+      use_when: "Piping to docker stop/rm"
+    - flag: "--filter 'name=<name>'"
+      description: "Filter by container name"
+    - flag: "--filter 'status=<status>'"
+      description: "Filter by status (running, exited, paused)"
+    - flag: "-n <N>"
+      description: "Show last N created containers"
+
+  preferred_invocations:
+    - invocation: "docker ps"
+      use_when: "List running containers"
+    - invocation: "docker ps -a"
+      use_when: "List all containers including stopped"
+    - invocation: "docker ps --format 'table {{.Names}}\t{{.Status}}\t{{.Ports}}'"
+      use_when: "Clean table with name, status, and ports"
+    - invocation: "docker stop $(docker ps -q)"
+      use_when: "Stop all running containers"
+
+output_schema:
+  enable_filter: true
+  noise_patterns: []
+  max_lines: 30
+  truncation_message: "... {remaining} more containers. Use --filter to narrow."

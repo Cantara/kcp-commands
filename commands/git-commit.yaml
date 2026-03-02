@@ -1,0 +1,34 @@
+command: git
+subcommand: commit
+platform: all
+description: "Record staged changes to the repository"
+
+syntax:
+  usage: "git commit [<options>]"
+  key_flags:
+    - flag: "-m '<message>'"
+      description: "Commit message inline"
+      use_when: "Simple one-line commits"
+    - flag: "--amend"
+      description: "Replace the last commit (rewrites history)"
+      use_when: "Fixing typo in last commit message or adding forgotten file — never after push"
+    - flag: "-a"
+      description: "Auto-stage all tracked modified files before committing"
+      use_when: "Quick commit of all changes to tracked files"
+    - flag: "--allow-empty"
+      description: "Allow a commit with no changes"
+      use_when: "Triggering CI or marking a milestone"
+    - flag: "--no-verify"
+      description: "Skip pre-commit and commit-msg hooks"
+      use_when: "Only when hooks are broken — not as standard practice"
+
+  preferred_invocations:
+    - invocation: "git commit -m 'Add feature X'"
+      use_when: "Standard single-line commit"
+    - invocation: "git commit -m \"$(cat <<'EOF'\nSummary line\n\nDetailed body here.\nEOF\n)\""
+      use_when: "Multi-line commit message via heredoc (non-interactive)"
+    - invocation: "git commit --amend -m 'Fixed message'"
+      use_when: "Fix the last (unpushed) commit message"
+
+output_schema:
+  enable_filter: false

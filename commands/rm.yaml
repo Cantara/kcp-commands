@@ -1,0 +1,31 @@
+command: rm
+platform: linux
+description: "Remove files or directories — irreversible, no trash"
+
+syntax:
+  usage: "rm [OPTION]... FILE..."
+  key_flags:
+    - flag: "-r"
+      description: "Remove directories and their contents recursively"
+      use_when: "Deleting a directory tree — always double-check the path"
+    - flag: "-f"
+      description: "Force — ignore nonexistent files, no prompts"
+      use_when: "Scripting — but dangerous combined with -r"
+    - flag: "-i"
+      description: "Prompt before every removal"
+      use_when: "Safety check"
+    - flag: "-v"
+      description: "Verbose — print each file as it's removed"
+    - flag: "-d"
+      description: "Remove empty directories"
+
+  preferred_invocations:
+    - invocation: "rm <file>"
+      use_when: "Delete a single file"
+    - invocation: "rm -r <directory>"
+      use_when: "Delete a directory and contents"
+    - invocation: "rm -rf <directory>"
+      use_when: "Force delete without prompts — triple-check the path first"
+
+output_schema:
+  enable_filter: false

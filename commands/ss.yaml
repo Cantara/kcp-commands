@@ -1,0 +1,43 @@
+command: ss
+platform: linux
+description: "Socket statistics — modern replacement for netstat, faster and more detailed"
+
+syntax:
+  usage: "ss [OPTIONS] [FILTER]"
+  key_flags:
+    - flag: "-t"
+      description: "TCP sockets only"
+    - flag: "-u"
+      description: "UDP sockets only"
+    - flag: "-l"
+      description: "Listening sockets only"
+      use_when: "See what services are listening"
+    - flag: "-n"
+      description: "Numeric (no DNS resolve)"
+      use_when: "Always include — much faster"
+    - flag: "-p"
+      description: "Show process using socket"
+      use_when: "Finding which process owns a port (may need root)"
+    - flag: "-a"
+      description: "All sockets (listening + established)"
+    - flag: "sport = :<port>"
+      description: "Filter by source port"
+      use_when: "Finding connections on a specific port"
+
+  preferred_invocations:
+    - invocation: "ss -tlnp"
+      use_when: "Default — list all TCP listening ports with processes"
+    - invocation: "ss -tlnp | grep <port>"
+      use_when: "Check if a specific port is in use"
+    - invocation: "ss -tnp"
+      use_when: "All established TCP connections with processes"
+    - invocation: "ss -tlnp sport = :443"
+      use_when: "Find what's listening on a specific port"
+
+output_schema:
+  enable_filter: true
+  noise_patterns:
+    - pattern: "^State\\s+Recv-Q"
+      reason: "Column header"
+  max_lines: 30
+  truncation_message: "... {remaining} more sockets. Filter by port or state."

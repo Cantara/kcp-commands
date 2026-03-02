@@ -1,0 +1,45 @@
+command: kubectl
+subcommand: get
+platform: all
+description: "List Kubernetes resources (pods, services, deployments, etc.)"
+
+syntax:
+  usage: "kubectl get <resource> [<name>] [OPTIONS]"
+  key_flags:
+    - flag: "<resource>"
+      description: "Resource type: pods, svc, deploy, nodes, ingress, configmap, secret, etc."
+    - flag: "-n <namespace>"
+      description: "Specify namespace"
+      use_when: "Always specify — default namespace is often wrong"
+    - flag: "-A"
+      description: "All namespaces"
+      use_when: "Finding a resource when you don't know the namespace"
+    - flag: "-o wide"
+      description: "Wide output — extra columns (node, IP, etc.)"
+    - flag: "-o yaml"
+      description: "Full YAML definition"
+      use_when: "Inspecting resource configuration"
+    - flag: "-o json"
+      description: "Full JSON definition"
+      use_when: "Programmatic parsing"
+    - flag: "--selector '<label>=<value>'"
+      description: "Filter by label"
+    - flag: "-w"
+      description: "Watch for changes"
+      use_when: "Monitoring deployment rollout"
+
+  preferred_invocations:
+    - invocation: "kubectl get pods -n <namespace>"
+      use_when: "List pods in a namespace"
+    - invocation: "kubectl get pods -A"
+      use_when: "List pods across all namespaces"
+    - invocation: "kubectl get svc,deploy,pods -n <namespace>"
+      use_when: "Overview of services, deployments, and pods"
+    - invocation: "kubectl get pods -n <namespace> -o wide"
+      use_when: "Pods with node and IP information"
+
+output_schema:
+  enable_filter: true
+  noise_patterns: []
+  max_lines: 50
+  truncation_message: "... {remaining} more resources. Add --selector or specify a name to narrow."

@@ -1,0 +1,36 @@
+command: du
+platform: linux
+description: "Estimate file and directory space usage"
+
+syntax:
+  usage: "du [OPTION]... [FILE]..."
+  key_flags:
+    - flag: "-h"
+      description: "Human-readable sizes"
+      use_when: "Always use"
+    - flag: "-s"
+      description: "Summary — show only total for each argument"
+      use_when: "Total size of a directory without listing every file"
+    - flag: "-d <N>"
+      description: "Max depth of directory listing"
+      use_when: "Overview of top-level subdirectory sizes"
+    - flag: "--sort=size"
+      description: "Sort by size (GNU coreutils 8.25+)"
+      use_when: "Finding largest directories"
+    - flag: "--exclude='<pattern>'"
+      description: "Skip files matching pattern"
+      use_when: "Excluding node_modules, .git, etc."
+
+  preferred_invocations:
+    - invocation: "du -sh <directory>"
+      use_when: "Total size of a directory"
+    - invocation: "du -h -d 1 <directory> | sort -hr | head -20"
+      use_when: "Largest subdirectories (sorted)"
+    - invocation: "du -sh * | sort -hr | head -10"
+      use_when: "Largest items in current directory"
+
+output_schema:
+  enable_filter: true
+  noise_patterns: []
+  max_lines: 50
+  truncation_message: "... {remaining} more entries. Use -d 1 or -s to limit depth."

@@ -1,0 +1,23 @@
+command: mkdir
+platform: linux
+description: "Create directories"
+
+syntax:
+  usage: "mkdir [OPTION]... DIRECTORY..."
+  key_flags:
+    - flag: "-p"
+      description: "Create parent directories as needed, no error if existing"
+      use_when: "Always use — avoids errors and creates full path"
+    - flag: "-m <mode>"
+      description: "Set permission mode (e.g. 755)"
+    - flag: "-v"
+      description: "Verbose — print each directory created"
+
+  preferred_invocations:
+    - invocation: "mkdir -p <path>"
+      use_when: "Default — create directory (and parents if needed)"
+    - invocation: "mkdir -p src/{components,utils,tests}"
+      use_when: "Create multiple sibling directories with brace expansion"
+
+output_schema:
+  enable_filter: false

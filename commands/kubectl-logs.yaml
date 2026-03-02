@@ -1,0 +1,46 @@
+command: kubectl
+subcommand: logs
+platform: all
+description: "Print container logs from a Kubernetes pod"
+
+syntax:
+  usage: "kubectl logs <pod> [-c <container>] [OPTIONS]"
+  key_flags:
+    - flag: "<pod>"
+      description: "Pod name"
+    - flag: "-c <container>"
+      description: "Container name within the pod"
+      use_when: "Multi-container pods — required when pod has sidecars"
+    - flag: "-n <namespace>"
+      description: "Namespace"
+      use_when: "Always specify"
+    - flag: "-f"
+      description: "Follow / stream logs"
+    - flag: "--tail <N>"
+      description: "Only last N lines"
+      use_when: "Always use to bound output"
+    - flag: "--since <duration>"
+      description: "Logs since duration (e.g. 1h, 30m, 10s)"
+      use_when: "Investigating recent issues"
+    - flag: "--previous"
+      description: "Logs from previous (crashed) container instance"
+      use_when: "Debugging CrashLoopBackOff — see crash output"
+    - flag: "-l '<label>=<value>'"
+      description: "Logs from all pods matching label selector"
+      use_when: "Aggregating logs from a deployment"
+
+  preferred_invocations:
+    - invocation: "kubectl logs --tail 50 -n <ns> <pod>"
+      use_when: "Recent logs from a pod"
+    - invocation: "kubectl logs --previous -n <ns> <pod>"
+      use_when: "Logs from a crashed pod"
+    - invocation: "kubectl logs --since 30m -n <ns> <pod>"
+      use_when: "Last 30 minutes of logs"
+    - invocation: "kubectl logs -l app=<name> --tail 20 -n <ns>"
+      use_when: "Aggregate logs from all pods in a deployment"
+
+output_schema:
+  enable_filter: true
+  noise_patterns: []
+  max_lines: 50
+  truncation_message: "... {remaining} more log lines. Use --tail or --since to narrow."

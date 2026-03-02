@@ -1,0 +1,28 @@
+command: ln
+platform: linux
+description: "Create links between files"
+
+syntax:
+  usage: "ln [OPTION]... TARGET LINK_NAME"
+  key_flags:
+    - flag: "-s"
+      description: "Create a symbolic (soft) link"
+      use_when: "Almost always — symlinks are the standard choice"
+    - flag: "-f"
+      description: "Force — remove existing destination file"
+    - flag: "-n"
+      description: "Treat LINK_NAME as a normal file if it is a symlink to a directory"
+      use_when: "Replacing an existing symlink to a directory"
+    - flag: "-v"
+      description: "Verbose — print each link created"
+
+  preferred_invocations:
+    - invocation: "ln -s <target> <linkname>"
+      use_when: "Create a symbolic link"
+    - invocation: "ln -sf <target> <linkname>"
+      use_when: "Create or replace a symbolic link"
+    - invocation: "ln -sfn <target> <linkname>"
+      use_when: "Replace a symlink that points to a directory"
+
+output_schema:
+  enable_filter: false

@@ -1,0 +1,47 @@
+command: rsync
+platform: linux
+description: "Fast, versatile file copying — local or remote, with delta transfer"
+
+syntax:
+  usage: "rsync [OPTION]... SRC [SRC]... DEST"
+  key_flags:
+    - flag: "-a"
+      description: "Archive mode: recursion + preserve symlinks, permissions, times, group, owner"
+      use_when: "Default for most copies — preserves everything"
+    - flag: "-v"
+      description: "Verbose — list files transferred"
+    - flag: "-z"
+      description: "Compress data during transfer"
+      use_when: "Remote transfers over slow networks"
+    - flag: "--delete"
+      description: "Delete files in DEST that don't exist in SRC"
+      use_when: "Exact mirror — be careful, removes files"
+    - flag: "--dry-run"
+      description: "Show what would be transferred without doing it"
+      use_when: "Always run first with --dry-run when using --delete"
+    - flag: "--exclude='<pattern>'"
+      description: "Exclude files matching pattern"
+      use_when: "Skipping .git, node_modules, build artifacts"
+    - flag: "-P"
+      description: "Show progress + keep partially transferred files"
+      use_when: "Large transfers — shows progress bar"
+
+  preferred_invocations:
+    - invocation: "rsync -av <src>/ <dest>/"
+      use_when: "Copy directory contents (trailing slash = contents, not dir itself)"
+    - invocation: "rsync -avz <src>/ user@host:<dest>/"
+      use_when: "Sync to remote server with compression"
+    - invocation: "rsync -av --delete --dry-run <src>/ <dest>/"
+      use_when: "Preview mirror sync before executing"
+    - invocation: "rsync -av --exclude='.git' --exclude='node_modules' <src>/ <dest>/"
+      use_when: "Copy project excluding common noise directories"
+
+output_schema:
+  enable_filter: true
+  noise_patterns:
+    - pattern: "^sending incremental file list$"
+      reason: "Status header"
+    - pattern: "^sent .* bytes\\s+received"
+      reason: "Transfer summary — keep only for large transfers"
+  max_lines: 50
+  truncation_message: "... {remaining} more files transferred."

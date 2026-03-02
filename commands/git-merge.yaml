@@ -1,0 +1,37 @@
+command: git
+subcommand: merge
+platform: all
+description: "Join two or more development histories together"
+
+syntax:
+  usage: "git merge [<options>] <branch>..."
+  key_flags:
+    - flag: "<branch>"
+      description: "Merge the specified branch into the current branch"
+    - flag: "--no-ff"
+      description: "Always create a merge commit (no fast-forward)"
+      use_when: "Preserving branch topology in history"
+    - flag: "--ff-only"
+      description: "Only merge if it can fast-forward; abort otherwise"
+      use_when: "Ensuring clean linear merge on main"
+    - flag: "--squash"
+      description: "Squash all branch commits into one staged change (no merge commit)"
+      use_when: "Collapsing a messy feature branch into one clean commit"
+    - flag: "--abort"
+      description: "Abort the current merge and restore pre-merge state"
+      use_when: "Merge conflicts are too complex — need to rethink approach"
+    - flag: "--continue"
+      description: "Resume merge after resolving conflicts"
+
+  preferred_invocations:
+    - invocation: "git merge feature/branch"
+      use_when: "Merge a feature branch into current branch"
+    - invocation: "git merge --no-ff feature/branch"
+      use_when: "Merge with explicit merge commit (preserves branch history)"
+    - invocation: "git merge --squash feature/branch"
+      use_when: "Collapse feature branch into single commit"
+    - invocation: "git merge --abort"
+      use_when: "Cancel a conflicted merge"
+
+output_schema:
+  enable_filter: false

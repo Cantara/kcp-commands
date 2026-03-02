@@ -1,0 +1,48 @@
+command: journalctl
+platform: linux
+description: "Query the systemd journal (system and service logs)"
+
+syntax:
+  usage: "journalctl [OPTIONS]"
+  key_flags:
+    - flag: "-u <unit>"
+      description: "Show logs for a specific systemd unit/service"
+      use_when: "Debugging a specific service"
+    - flag: "-f"
+      description: "Follow — live tail of new log entries"
+      use_when: "Watching logs in real-time (like tail -f)"
+    - flag: "-n <N>"
+      description: "Show last N lines (default: 10)"
+      use_when: "Always specify to bound output"
+    - flag: "--since '<time>'"
+      description: "Entries since time (e.g. '1 hour ago', '2026-03-01')"
+      use_when: "Investigating a recent incident"
+    - flag: "-p <priority>"
+      description: "Filter by priority (emerg, alert, crit, err, warning, notice, info, debug)"
+      use_when: "Finding errors: -p err"
+    - flag: "--no-pager"
+      description: "Output directly to stdout (no less/pager)"
+      use_when: "Always use in scripts and piped commands"
+    - flag: "-b"
+      description: "Logs from current boot only"
+      use_when: "Ignoring logs from before last reboot"
+
+  preferred_invocations:
+    - invocation: "journalctl -u <service> -n 50 --no-pager"
+      use_when: "Recent logs for a service"
+    - invocation: "journalctl -u <service> --since '1 hour ago' --no-pager"
+      use_when: "Service logs from the last hour"
+    - invocation: "journalctl -p err -b --no-pager"
+      use_when: "All errors since last boot"
+    - invocation: "journalctl -u <service> -f"
+      use_when: "Live-follow service logs"
+
+output_schema:
+  enable_filter: true
+  noise_patterns:
+    - pattern: "^-- Journal begins at"
+      reason: "Journal header line"
+    - pattern: "^-- No entries --$"
+      reason: "Empty result marker"
+  max_lines: 50
+  truncation_message: "... {remaining} more log entries. Use --since or -n to narrow."

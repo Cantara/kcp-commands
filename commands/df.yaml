@@ -1,0 +1,35 @@
+command: df
+platform: linux
+description: "Report file system disk space usage"
+
+syntax:
+  usage: "df [OPTION]... [FILE]..."
+  key_flags:
+    - flag: "-h"
+      description: "Human-readable sizes (GB, MB)"
+      use_when: "Always use — raw blocks are unreadable"
+    - flag: "-T"
+      description: "Show filesystem type"
+    - flag: "-i"
+      description: "Show inode usage instead of block usage"
+      use_when: "Diagnosing 'no space left' when disk isn't full (inode exhaustion)"
+    - flag: "--total"
+      description: "Show a grand total line"
+
+  preferred_invocations:
+    - invocation: "df -h"
+      use_when: "Check disk space on all mounted filesystems"
+    - invocation: "df -h <path>"
+      use_when: "Check space on the filesystem containing a specific path"
+    - invocation: "df -hT"
+      use_when: "Disk space with filesystem types"
+
+output_schema:
+  enable_filter: true
+  noise_patterns:
+    - pattern: "^tmpfs\\s+"
+      reason: "tmpfs mounts are usually noise in disk space checks"
+    - pattern: "^devtmpfs\\s+"
+      reason: "Virtual filesystem — not real disk"
+  max_lines: 30
+  truncation_message: "... {remaining} more filesystems."

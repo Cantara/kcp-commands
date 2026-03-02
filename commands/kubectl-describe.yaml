@@ -1,0 +1,39 @@
+command: kubectl
+subcommand: describe
+platform: all
+description: "Show detailed information about a Kubernetes resource"
+
+syntax:
+  usage: "kubectl describe <resource> [<name>] [OPTIONS]"
+  key_flags:
+    - flag: "<resource> <name>"
+      description: "Resource type and name (e.g. pod my-pod, deploy my-app)"
+    - flag: "-n <namespace>"
+      description: "Namespace"
+      use_when: "Always specify"
+    - flag: "--selector '<label>=<value>'"
+      description: "Describe all resources matching label"
+    - flag: "-A"
+      description: "All namespaces"
+
+  preferred_invocations:
+    - invocation: "kubectl describe pod <name> -n <ns>"
+      use_when: "Diagnose pod issues — shows events, conditions, container status"
+    - invocation: "kubectl describe node <name>"
+      use_when: "Node capacity, conditions, allocated resources"
+    - invocation: "kubectl describe deploy <name> -n <ns>"
+      use_when: "Deployment strategy, replicas, rollout status"
+    - invocation: "kubectl describe svc <name> -n <ns>"
+      use_when: "Service endpoints, ports, selectors"
+
+output_schema:
+  enable_filter: true
+  noise_patterns:
+    - pattern: "^\\s*$"
+      reason: "Blank lines in describe output"
+    - pattern: "^Annotations:\\s+<none>$"
+      reason: "Empty annotations"
+    - pattern: "^Labels:\\s+<none>$"
+      reason: "Empty labels"
+  max_lines: 100
+  truncation_message: "... {remaining} more lines. Focus on Events section for troubleshooting."

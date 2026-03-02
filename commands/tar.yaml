@@ -1,0 +1,40 @@
+command: tar
+platform: linux
+description: "Archive and compress files"
+
+syntax:
+  usage: "tar [OPTION]... [FILE]..."
+  key_flags:
+    - flag: "-c"
+      description: "Create a new archive"
+    - flag: "-x"
+      description: "Extract from an archive"
+    - flag: "-z"
+      description: "Filter through gzip (.tar.gz / .tgz)"
+    - flag: "-j"
+      description: "Filter through bzip2 (.tar.bz2)"
+    - flag: "-J"
+      description: "Filter through xz (.tar.xz)"
+    - flag: "-f <file>"
+      description: "Archive filename — always required"
+    - flag: "-v"
+      description: "Verbose — list files processed"
+    - flag: "-t"
+      description: "List archive contents without extracting"
+      use_when: "Inspect archive before extraction"
+    - flag: "-C <dir>"
+      description: "Change to directory before operation"
+      use_when: "Extract to a specific directory"
+
+  preferred_invocations:
+    - invocation: "tar -czf archive.tar.gz <directory>"
+      use_when: "Create a gzipped tar archive"
+    - invocation: "tar -xzf archive.tar.gz"
+      use_when: "Extract a .tar.gz archive"
+    - invocation: "tar -xzf archive.tar.gz -C <dest>"
+      use_when: "Extract to a specific directory"
+    - invocation: "tar -tf archive.tar.gz"
+      use_when: "List contents without extracting"
+
+output_schema:
+  enable_filter: false

@@ -1,0 +1,41 @@
+command: git
+subcommand: branch
+platform: all
+description: "List, create, or delete branches"
+
+syntax:
+  usage: "git branch [<options>] [<branchname>] [<start-point>]"
+  key_flags:
+    - flag: "-a"
+      description: "List both local and remote-tracking branches"
+      use_when: "Need full picture of all branches"
+    - flag: "-r"
+      description: "List only remote-tracking branches"
+      use_when: "Checking what exists on remote"
+    - flag: "-d <branch>"
+      description: "Delete a fully merged branch"
+      use_when: "Cleaning up after merge"
+    - flag: "-D <branch>"
+      description: "Force delete a branch (even if unmerged)"
+      use_when: "Abandoning unmerged work — destructive"
+    - flag: "-m <old> <new>"
+      description: "Rename a branch"
+    - flag: "--contains <commit>"
+      description: "Only branches that contain the specified commit"
+      use_when: "Finding which branches include a fix"
+    - flag: "-v"
+      description: "Show last commit on each branch"
+      use_when: "Identifying stale branches"
+
+  preferred_invocations:
+    - invocation: "git branch -a"
+      use_when: "See all local and remote branches"
+    - invocation: "git branch -v"
+      use_when: "Overview of branches with last commit"
+    - invocation: "git branch <name>"
+      use_when: "Create a new branch at HEAD (does not switch to it)"
+    - invocation: "git branch -d <name>"
+      use_when: "Delete a branch after merging"
+
+output_schema:
+  enable_filter: false

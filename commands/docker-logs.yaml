@@ -1,0 +1,38 @@
+command: docker
+subcommand: logs
+platform: all
+description: "Fetch container logs"
+
+syntax:
+  usage: "docker logs [OPTIONS] <container>"
+  key_flags:
+    - flag: "<container>"
+      description: "Container name or ID"
+    - flag: "-f"
+      description: "Follow — stream new log entries"
+      use_when: "Live-watching container output"
+    - flag: "--tail <N>"
+      description: "Show only the last N lines"
+      use_when: "Always use to bound output: --tail 50"
+    - flag: "--since <time>"
+      description: "Logs since timestamp or duration (e.g. '10m', '2026-03-01T00:00:00')"
+      use_when: "Investigating a recent issue"
+    - flag: "-t"
+      description: "Show timestamps"
+      use_when: "Correlating events across containers"
+
+  preferred_invocations:
+    - invocation: "docker logs --tail 50 <container>"
+      use_when: "Recent logs from a container"
+    - invocation: "docker logs --since 10m <container>"
+      use_when: "Logs from the last 10 minutes"
+    - invocation: "docker logs -f <container>"
+      use_when: "Live-follow container logs"
+    - invocation: "docker logs --tail 100 <container> 2>&1 | grep -i error"
+      use_when: "Find errors in container logs"
+
+output_schema:
+  enable_filter: true
+  noise_patterns: []
+  max_lines: 50
+  truncation_message: "... {remaining} more log lines. Use --tail or --since to narrow."

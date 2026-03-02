@@ -1,0 +1,36 @@
+command: docker
+subcommand: images
+platform: all
+description: "List local Docker images"
+
+syntax:
+  usage: "docker images [OPTIONS] [REPOSITORY[:TAG]]"
+  key_flags:
+    - flag: "-a"
+      description: "Show all images (including intermediate layers)"
+    - flag: "--format '<template>'"
+      description: "Custom Go template output"
+    - flag: "-q"
+      description: "Only show image IDs"
+      use_when: "Piping to docker rmi"
+    - flag: "--filter 'dangling=true'"
+      description: "Show untagged images (cleanup candidates)"
+      use_when: "Finding images to prune"
+    - flag: "--digests"
+      description: "Show image digests"
+
+  preferred_invocations:
+    - invocation: "docker images"
+      use_when: "List all local images"
+    - invocation: "docker images --format 'table {{.Repository}}\t{{.Tag}}\t{{.Size}}'"
+      use_when: "Clean table with repo, tag, and size"
+    - invocation: "docker images --filter 'dangling=true' -q"
+      use_when: "Find dangling image IDs for cleanup"
+    - invocation: "docker image prune -f"
+      use_when: "Remove all dangling images"
+
+output_schema:
+  enable_filter: true
+  noise_patterns: []
+  max_lines: 30
+  truncation_message: "... {remaining} more images. Filter by repository name."

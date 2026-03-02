@@ -1,0 +1,30 @@
+command: git
+subcommand: pull
+platform: all
+description: "Fetch and integrate changes from a remote branch"
+
+syntax:
+  usage: "git pull [<options>] [<remote>] [<branch>]"
+  key_flags:
+    - flag: "--rebase"
+      description: "Rebase local commits on top of fetched commits instead of merging"
+      use_when: "Default preference — keeps history linear and clean"
+    - flag: "--ff-only"
+      description: "Only fast-forward; abort if diverged"
+      use_when: "Ensuring no accidental merge commits on main"
+    - flag: "--no-rebase"
+      description: "Force merge strategy (override config)"
+    - flag: "--autostash"
+      description: "Stash local changes before pull, reapply after"
+      use_when: "Pulling with uncommitted work in progress"
+
+  preferred_invocations:
+    - invocation: "git pull --rebase"
+      use_when: "Default — pull and rebase for clean history"
+    - invocation: "git pull --ff-only"
+      use_when: "Safe pull on main — fails if not fast-forward"
+    - invocation: "git pull origin main --rebase"
+      use_when: "Update feature branch from main"
+
+output_schema:
+  enable_filter: false

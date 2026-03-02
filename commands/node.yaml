@@ -1,0 +1,36 @@
+command: node
+platform: all
+description: "Run JavaScript/TypeScript with Node.js runtime"
+
+syntax:
+  usage: "node [OPTIONS] [<script.js>] [<args>...]"
+  key_flags:
+    - flag: "<script.js>"
+      description: "Execute a JavaScript file"
+    - flag: "-e '<code>'"
+      description: "Evaluate inline JavaScript"
+      use_when: "Quick one-liner calculations or JSON processing"
+    - flag: "-p '<code>'"
+      description: "Evaluate and print result (implicit console.log)"
+      use_when: "Printing a computed value"
+    - flag: "--inspect"
+      description: "Enable debugger on port 9229"
+      use_when: "Attaching Chrome DevTools or VS Code debugger"
+    - flag: "--max-old-space-size=<MB>"
+      description: "Set max heap memory"
+      use_when: "Large builds hitting 'JavaScript heap out of memory'"
+    - flag: "--experimental-vm-modules"
+      description: "Enable ES module support in vm"
+
+  preferred_invocations:
+    - invocation: "node <script.js>"
+      use_when: "Run a JavaScript file"
+    - invocation: "node -e 'console.log(JSON.parse(require(\"fs\").readFileSync(\"package.json\")).version)'"
+      use_when: "Quick extract from JSON file"
+    - invocation: "node -p '2**32'"
+      use_when: "Quick calculation"
+    - invocation: "node --max-old-space-size=4096 <script.js>"
+      use_when: "Run with 4GB heap for memory-intensive operations"
+
+output_schema:
+  enable_filter: false

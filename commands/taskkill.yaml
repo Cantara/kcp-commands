@@ -1,0 +1,32 @@
+command: taskkill
+platform: windows
+description: "Terminate processes by PID or name (CMD). PowerShell equivalent: Stop-Process (alias: kill, spps)"
+
+syntax:
+  usage: "taskkill [/options]"
+  key_flags:
+    - flag: "/pid <pid>"
+      description: "Kill by process ID"
+      use_when: "Terminating a specific process"
+    - flag: "/im <name>"
+      description: "Kill by image name (e.g. node.exe)"
+      use_when: "Killing all instances of a process by name"
+    - flag: "/f"
+      description: "Force termination"
+      use_when: "Process not responding to graceful kill"
+    - flag: "/t"
+      description: "Kill the process and all child processes"
+      use_when: "Cleaning up a process tree (e.g. dev server + watchers)"
+
+  preferred_invocations:
+    - invocation: "taskkill /pid <pid>"
+      use_when: "Graceful termination by PID"
+    - invocation: "taskkill /f /pid <pid>"
+      use_when: "Force kill by PID"
+    - invocation: "taskkill /f /im node.exe /t"
+      use_when: "Force kill all Node.js processes and their children"
+    - invocation: "Stop-Process -Id <pid> -Force"
+      use_when: "PowerShell — force kill by PID (preferred)"
+
+output_schema:
+  enable_filter: false

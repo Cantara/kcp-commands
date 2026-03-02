@@ -1,0 +1,24 @@
+command: type
+platform: windows
+description: "Display file contents (CMD equivalent of cat). PowerShell equivalent: Get-Content (alias: cat, gc, type)"
+
+syntax:
+  usage: "type <filename>"
+  key_flags:
+    - flag: "<filename>"
+      description: "File to display"
+
+  preferred_invocations:
+    - invocation: "type <file>"
+      use_when: "Display file contents in CMD"
+    - invocation: "Get-Content <file>"
+      use_when: "PowerShell — read file contents (preferred)"
+    - invocation: "Get-Content <file> -Head 20"
+      use_when: "PowerShell — first 20 lines (like head)"
+    - invocation: "Get-Content <file> -Tail 20"
+      use_when: "PowerShell — last 20 lines (like tail)"
+
+output_schema:
+  enable_filter: false
+  max_lines: 200
+  truncation_message: "... {remaining} more lines. Use Get-Content -Head N in PowerShell."

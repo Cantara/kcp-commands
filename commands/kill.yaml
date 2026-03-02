@@ -1,0 +1,35 @@
+command: kill
+platform: linux
+description: "Send signals to processes — terminate, interrupt, or force-kill"
+
+syntax:
+  usage: "kill [OPTION]... PID..."
+  key_flags:
+    - flag: "<pid>"
+      description: "Send SIGTERM (graceful shutdown) to process"
+      use_when: "Default — always try graceful first"
+    - flag: "-9 <pid>"
+      description: "Send SIGKILL (force kill, immediate, no cleanup)"
+      use_when: "Process not responding to SIGTERM — last resort"
+    - flag: "-15 <pid>"
+      description: "Send SIGTERM explicitly (same as default)"
+    - flag: "-l"
+      description: "List all available signal names"
+    - flag: "-INT <pid>"
+      description: "Send SIGINT (same as Ctrl+C)"
+    - flag: "-HUP <pid>"
+      description: "Send SIGHUP — often used to reload config"
+      use_when: "Reloading daemon configuration (e.g. nginx, sshd)"
+
+  preferred_invocations:
+    - invocation: "kill <pid>"
+      use_when: "Graceful termination (SIGTERM)"
+    - invocation: "kill -9 <pid>"
+      use_when: "Force kill — process not responding to SIGTERM"
+    - invocation: "pkill -f '<pattern>'"
+      use_when: "Kill by process name/command pattern (avoids finding PID first)"
+    - invocation: "kill -HUP <pid>"
+      use_when: "Reload configuration without restarting"
+
+output_schema:
+  enable_filter: false

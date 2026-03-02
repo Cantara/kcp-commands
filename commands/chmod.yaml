@@ -1,0 +1,35 @@
+command: chmod
+platform: linux
+description: "Change file mode (permissions) bits"
+
+syntax:
+  usage: "chmod [OPTION]... MODE FILE..."
+  key_flags:
+    - flag: "+x"
+      description: "Add execute permission"
+      use_when: "Making a script executable"
+    - flag: "755"
+      description: "Owner rwx, group rx, others rx"
+      use_when: "Standard permissions for executable files and directories"
+    - flag: "644"
+      description: "Owner rw, group r, others r"
+      use_when: "Standard permissions for regular files"
+    - flag: "-R"
+      description: "Change permissions recursively"
+      use_when: "Applying permissions to an entire directory tree"
+    - flag: "u+x"
+      description: "Add execute for owner only"
+    - flag: "go-rwx"
+      description: "Remove all permissions for group and others"
+      use_when: "Securing sensitive files (keys, configs)"
+
+  preferred_invocations:
+    - invocation: "chmod +x <script>"
+      use_when: "Make a script executable"
+    - invocation: "chmod 600 <keyfile>"
+      use_when: "Secure a private key (SSH, TLS)"
+    - invocation: "chmod -R 755 <directory>"
+      use_when: "Fix permissions on a directory tree"
+
+output_schema:
+  enable_filter: false

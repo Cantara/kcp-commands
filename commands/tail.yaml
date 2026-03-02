@@ -1,0 +1,31 @@
+command: tail
+platform: linux
+description: "Output the last part of a file"
+
+syntax:
+  usage: "tail [OPTION]... [FILE]..."
+  key_flags:
+    - flag: "-n <N>"
+      description: "Print the last N lines (default: 10)"
+    - flag: "-f"
+      description: "Follow — output appended data as file grows"
+      use_when: "Watching a log file in real-time"
+    - flag: "-F"
+      description: "Follow with retry — handles log rotation"
+      use_when: "Watching rotating logs (e.g. /var/log/syslog)"
+    - flag: "+<N>"
+      description: "Output starting from line N (with -n)"
+      use_when: "Skipping a header: tail -n +2"
+    - flag: "-c <N>"
+      description: "Print the last N bytes"
+
+  preferred_invocations:
+    - invocation: "tail -n 50 <file>"
+      use_when: "View end of a log or output file"
+    - invocation: "tail -f <logfile>"
+      use_when: "Live-follow a log file"
+    - invocation: "tail -n +2 <file>"
+      use_when: "Print file contents skipping the first line (e.g. CSV header)"
+
+output_schema:
+  enable_filter: false

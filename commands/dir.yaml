@@ -1,0 +1,45 @@
+command: dir
+platform: windows
+description: "List directory contents (CMD). PowerShell equivalent: Get-ChildItem (alias: ls, gci, dir)"
+
+syntax:
+  usage: "dir [drive:][path][filename] [/options]"
+  key_flags:
+    - flag: "/a"
+      description: "Show all files including hidden and system"
+      use_when: "Looking for hidden files"
+    - flag: "/s"
+      description: "Recursive — list files in all subdirectories"
+      use_when: "Searching for files (prefer 'where /r' or Get-ChildItem -Recurse)"
+    - flag: "/b"
+      description: "Bare format — filenames only, no headers or summaries"
+      use_when: "Clean output for piping"
+    - flag: "/o:d"
+      description: "Sort by date (oldest first; use /o:-d for newest first)"
+      use_when: "Finding recently modified files"
+    - flag: "/o:s"
+      description: "Sort by size"
+
+  preferred_invocations:
+    - invocation: "dir"
+      use_when: "List current directory contents"
+    - invocation: "dir /a /o:-d"
+      use_when: "All files sorted newest first"
+    - invocation: "Get-ChildItem -Force"
+      use_when: "PowerShell — list including hidden files (preferred)"
+    - invocation: "Get-ChildItem -Recurse -Filter '*.yaml'"
+      use_when: "PowerShell — recursive search by extension"
+
+output_schema:
+  enable_filter: true
+  noise_patterns:
+    - pattern: "^\\s*Volume in drive"
+      reason: "Volume label header"
+    - pattern: "^\\s*Volume Serial Number"
+      reason: "Serial number line"
+    - pattern: "^\\s*\\d+ File\\(s\\)"
+      reason: "Summary line"
+    - pattern: "^\\s*\\d+ Dir\\(s\\)"
+      reason: "Summary line"
+  max_lines: 100
+  truncation_message: "... {remaining} more entries."

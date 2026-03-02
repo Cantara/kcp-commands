@@ -1,0 +1,38 @@
+command: lsof
+platform: linux
+description: "List open files — find which processes use files, ports, or sockets"
+
+syntax:
+  usage: "lsof [OPTIONS]"
+  key_flags:
+    - flag: "-i :<port>"
+      description: "Show processes using a specific TCP/UDP port"
+      use_when: "Finding what's occupying a port (e.g. port 3000 already in use)"
+    - flag: "-i"
+      description: "List all network connections"
+    - flag: "-p <pid>"
+      description: "Files opened by a specific process"
+    - flag: "+D <dir>"
+      description: "Files opened under a directory (non-recursive)"
+      use_when: "Finding processes using files in a directory"
+    - flag: "-u <user>"
+      description: "Files opened by a specific user"
+    - flag: "-t"
+      description: "Terse output — PIDs only"
+      use_when: "Piping to kill: kill $(lsof -t -i :3000)"
+
+  preferred_invocations:
+    - invocation: "lsof -i :8080"
+      use_when: "Find what process is using port 8080"
+    - invocation: "lsof -i -P -n"
+      use_when: "All network connections with numeric ports and IPs (no DNS lookup)"
+    - invocation: "kill $(lsof -t -i :<port>)"
+      use_when: "Kill the process occupying a port"
+    - invocation: "lsof -p <pid>"
+      use_when: "All files opened by a process"
+
+output_schema:
+  enable_filter: true
+  noise_patterns: []
+  max_lines: 30
+  truncation_message: "... {remaining} more entries. Add -i :<port> or -p <pid> to filter."

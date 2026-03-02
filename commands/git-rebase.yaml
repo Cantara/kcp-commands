@@ -1,0 +1,36 @@
+command: git
+subcommand: rebase
+platform: all
+description: "Reapply commits on top of another base tip"
+
+syntax:
+  usage: "git rebase [<options>] [<upstream>] [<branch>]"
+  key_flags:
+    - flag: "<upstream>"
+      description: "Rebase current branch onto upstream (e.g. main)"
+      use_when: "Updating feature branch with latest main"
+    - flag: "--onto <newbase> <upstream>"
+      description: "Rebase onto a different base, excluding older commits"
+      use_when: "Moving a branch from one base to another"
+    - flag: "--abort"
+      description: "Abort rebase and restore original state"
+      use_when: "Conflicts too complex — need to restart"
+    - flag: "--continue"
+      description: "Resume rebase after resolving conflicts"
+    - flag: "--skip"
+      description: "Skip the current conflicting commit and continue"
+      use_when: "Commit is no longer needed after upstream changes"
+    - flag: "--autostash"
+      description: "Stash uncommitted changes before rebase, reapply after"
+      use_when: "Rebasing with dirty working tree"
+
+  preferred_invocations:
+    - invocation: "git rebase main"
+      use_when: "Update feature branch with latest main"
+    - invocation: "git rebase --abort"
+      use_when: "Cancel a problematic rebase"
+    - invocation: "git rebase --continue"
+      use_when: "Resume after resolving conflicts"
+
+output_schema:
+  enable_filter: false

@@ -1,0 +1,29 @@
+command: where
+platform: windows
+description: "Locate executables in PATH (CMD). PowerShell equivalent: Get-Command (alias: gcm, which)"
+
+syntax:
+  usage: "where [/options] <pattern>"
+  key_flags:
+    - flag: "<name>"
+      description: "Find executable by name"
+      use_when: "Checking if a command is installed and where it lives"
+    - flag: "/r <dir> <pattern>"
+      description: "Recursive search in a directory"
+      use_when: "Finding files by name in a directory tree"
+    - flag: "/q"
+      description: "Quiet mode — set ERRORLEVEL but no output"
+      use_when: "Scripting — check existence without output"
+
+  preferred_invocations:
+    - invocation: "where node"
+      use_when: "Find where node.exe is installed"
+    - invocation: "where /r C:\\Projects *.yaml"
+      use_when: "Find all YAML files recursively"
+    - invocation: "Get-Command node"
+      use_when: "PowerShell — find a command with version and source info (preferred)"
+    - invocation: "(Get-Command node).Source"
+      use_when: "PowerShell — get just the path"
+
+output_schema:
+  enable_filter: false

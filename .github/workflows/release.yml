@@ -27,9 +27,10 @@ jobs:
         with:
           node-version: '20'
           cache: 'npm'
+          cache-dependency-path: typescript/package-lock.json
 
       - name: Build Node.js filter
-        run: npm ci && npm run build
+        run: cd typescript && npm ci && npm run build
 
       - name: Build Java daemon
         run: mvn -f java/pom.xml package -DskipTests -q
@@ -47,12 +48,12 @@ jobs:
 
             **Java daemon** — ~12 ms/hook call (recommended, requires Java 21):
             ```bash
-            curl -fsSL https://raw.githubusercontent.com/Cantara/kcp-commands/${{ github.ref_name }}/install.sh | bash -s -- --java
+            curl -fsSL https://raw.githubusercontent.com/Cantara/kcp-commands/${{ github.ref_name }}/bin/install.sh | bash -s -- --java
             ```
 
             **Node.js** — ~250 ms/hook call (requires Node.js only):
             ```bash
-            curl -fsSL https://raw.githubusercontent.com/Cantara/kcp-commands/${{ github.ref_name }}/install.sh | bash -s -- --node
+            curl -fsSL https://raw.githubusercontent.com/Cantara/kcp-commands/${{ github.ref_name }}/bin/install.sh | bash -s -- --node
             ```
 
             Or clone and run `./install.sh` for an interactive prompt.

@@ -1,0 +1,55 @@
+command: robocopy
+platform: windows
+description: "Robust file copy — reliable mirroring and syncing for Windows (replaces xcopy)"
+
+syntax:
+  usage: "robocopy <source> <dest> [<file>...] [/options]"
+  key_flags:
+    - flag: "/mir"
+      description: "Mirror: copy + delete files in dest not in source"
+      use_when: "Exact directory sync — be careful, deletes extra files"
+    - flag: "/e"
+      description: "Copy subdirectories including empty ones"
+      use_when: "Recursive copy preserving directory structure"
+    - flag: "/s"
+      description: "Copy subdirectories excluding empty ones"
+    - flag: "/z"
+      description: "Restartable mode — resume interrupted copies"
+      use_when: "Large files over unreliable networks"
+    - flag: "/mt[:N]"
+      description: "Multi-threaded copy (default 8 threads)"
+      use_when: "Many small files — significantly faster"
+    - flag: "/xd <dir>"
+      description: "Exclude directories by name"
+      use_when: "Skipping node_modules, .git, build"
+    - flag: "/log:<file>"
+      description: "Log output to file"
+    - flag: "/ndl /nfl"
+      description: "No directory listing, no file listing (summary only)"
+      use_when: "Quiet output — show only the summary"
+
+  preferred_invocations:
+    - invocation: "robocopy <source> <dest> /e"
+      use_when: "Copy directory tree recursively"
+    - invocation: "robocopy <source> <dest> /mir"
+      use_when: "Mirror directories (sync dest to match source)"
+    - invocation: "robocopy <source> <dest> /e /mt /xd node_modules .git"
+      use_when: "Fast copy excluding common noise directories"
+    - invocation: "robocopy <source> <dest> /e /ndl /nfl"
+      use_when: "Copy with minimal output (summary only)"
+
+output_schema:
+  enable_filter: true
+  noise_patterns:
+    - pattern: "^-+$"
+      reason: "Separator lines"
+    - pattern: "^\\s*ROBOCOPY\\s+::"
+      reason: "Header banner"
+    - pattern: "^\\s*Started :"
+      reason: "Timestamp header"
+    - pattern: "^\\s*Source :"
+      reason: "Path echo"
+    - pattern: "^\\s*Dest :"
+      reason: "Path echo"
+  max_lines: 30
+  truncation_message: "... {remaining} more lines. Use /ndl /nfl for summary-only output."

@@ -1,0 +1,37 @@
+command: git
+subcommand: clone
+platform: all
+description: "Clone a repository into a new directory"
+
+syntax:
+  usage: "git clone [<options>] <repository> [<directory>]"
+  key_flags:
+    - flag: "<repository>"
+      description: "URL or path of repository to clone"
+    - flag: "--depth <N>"
+      description: "Shallow clone with only N commits of history"
+      use_when: "Large repos where you only need recent code — much faster"
+    - flag: "--branch <branch>"
+      description: "Clone a specific branch instead of default"
+    - flag: "--single-branch"
+      description: "Clone only the specified branch (with --branch)"
+      use_when: "Minimizing clone size when only one branch needed"
+    - flag: "--recurse-submodules"
+      description: "Initialize and clone submodules"
+      use_when: "Repo uses git submodules"
+    - flag: "--bare"
+      description: "Clone as a bare repository (no working tree)"
+      use_when: "Setting up a mirror or server-side repo"
+
+  preferred_invocations:
+    - invocation: "git clone <url>"
+      use_when: "Standard clone with full history"
+    - invocation: "git clone --depth 1 <url>"
+      use_when: "Fast shallow clone — only latest snapshot"
+    - invocation: "git clone --branch <branch> --single-branch <url>"
+      use_when: "Clone only one specific branch"
+    - invocation: "git clone --recurse-submodules <url>"
+      use_when: "Repo has submodules that need initializing"
+
+output_schema:
+  enable_filter: false

@@ -1,0 +1,36 @@
+command: git
+subcommand: checkout
+platform: all
+description: "Switch branches or restore working tree files"
+
+syntax:
+  usage: "git checkout [<options>] <branch> | git checkout [<options>] -- <pathspec>..."
+  key_flags:
+    - flag: "<branch>"
+      description: "Switch to an existing branch"
+      use_when: "Changing branches"
+    - flag: "-b <new-branch>"
+      description: "Create and switch to a new branch"
+      use_when: "Starting new work — most common usage"
+    - flag: "-b <new-branch> <start-point>"
+      description: "Create branch from a specific commit or branch"
+      use_when: "Branching from a tag or remote branch"
+    - flag: "-- <file>"
+      description: "Restore a file to its state in HEAD (discards changes)"
+      use_when: "Undoing changes to a specific file — destructive"
+    - flag: "-t <remote/branch>"
+      description: "Create local tracking branch from remote"
+      use_when: "Checking out a colleague's remote branch locally"
+
+  preferred_invocations:
+    - invocation: "git checkout -b feature/my-feature"
+      use_when: "Start new feature branch from current HEAD"
+    - invocation: "git checkout main"
+      use_when: "Switch back to main branch"
+    - invocation: "git checkout -b fix/bug origin/main"
+      use_when: "Create a fix branch based on latest main"
+    - invocation: "git checkout -- <file>"
+      use_when: "Discard unstaged changes in a specific file"
+
+output_schema:
+  enable_filter: false

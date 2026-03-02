@@ -1,0 +1,40 @@
+command: ipconfig
+platform: windows
+description: "Display IP network configuration (CMD). PowerShell equivalent: Get-NetIPConfiguration, Get-NetIPAddress"
+
+syntax:
+  usage: "ipconfig [/options]"
+  key_flags:
+    - flag: "/all"
+      description: "Detailed info: MAC, DHCP, DNS, lease times"
+      use_when: "Full network adapter details"
+    - flag: "/release"
+      description: "Release DHCP lease"
+    - flag: "/renew"
+      description: "Renew DHCP lease"
+      use_when: "Refreshing IP address (connectivity issues)"
+    - flag: "/flushdns"
+      description: "Flush DNS resolver cache"
+      use_when: "DNS resolution issues after host/domain changes"
+    - flag: "/displaydns"
+      description: "Display contents of DNS resolver cache"
+
+  preferred_invocations:
+    - invocation: "ipconfig"
+      use_when: "Quick view of IP addresses on all adapters"
+    - invocation: "ipconfig /all"
+      use_when: "Full network configuration details"
+    - invocation: "ipconfig /flushdns"
+      use_when: "Clear DNS cache after DNS changes"
+    - invocation: "Get-NetIPAddress | Where-Object AddressFamily -eq 'IPv4'"
+      use_when: "PowerShell — list IPv4 addresses (preferred for scripting)"
+
+output_schema:
+  enable_filter: true
+  noise_patterns:
+    - pattern: "^Windows IP Configuration"
+      reason: "Header line"
+    - pattern: "^\\s*$"
+      reason: "Blank lines"
+  max_lines: 50
+  truncation_message: "... {remaining} more lines."

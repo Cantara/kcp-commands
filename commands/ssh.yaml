@@ -1,0 +1,41 @@
+command: ssh
+platform: all
+description: "Secure shell — remote login and command execution"
+
+syntax:
+  usage: "ssh [OPTIONS] [user@]hostname [command]"
+  key_flags:
+    - flag: "-i <keyfile>"
+      description: "Identity file (private key)"
+      use_when: "Using a specific SSH key"
+    - flag: "-p <port>"
+      description: "Port number (default: 22)"
+      use_when: "Non-standard SSH port"
+    - flag: "-L <local>:<host>:<remote>"
+      description: "Local port forwarding (tunnel)"
+      use_when: "Access remote services through SSH tunnel"
+    - flag: "-N"
+      description: "No remote command — just tunnel"
+      use_when: "Setting up port forwarding only"
+    - flag: "-v"
+      description: "Verbose — debug connection issues"
+      use_when: "Troubleshooting auth or connectivity failures"
+    - flag: "-o StrictHostKeyChecking=no"
+      description: "Skip host key verification"
+      use_when: "Scripting against ephemeral hosts (CI/CD, containers)"
+    - flag: "-J <jump-host>"
+      description: "Jump/bastion host (ProxyJump)"
+      use_when: "Reaching hosts behind a bastion"
+
+  preferred_invocations:
+    - invocation: "ssh user@host"
+      use_when: "Interactive login"
+    - invocation: "ssh user@host '<command>'"
+      use_when: "Execute a single command remotely"
+    - invocation: "ssh -i ~/.ssh/mykey -p 2222 user@host"
+      use_when: "Connect with specific key and port"
+    - invocation: "ssh -L 8080:localhost:80 user@host -N"
+      use_when: "Tunnel: local 8080 -> remote 80"
+
+output_schema:
+  enable_filter: false

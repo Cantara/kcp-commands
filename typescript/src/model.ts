@@ -30,7 +30,7 @@ export interface CommandSyntax {
 export interface CommandManifest {
   command: string;
   subcommand?: string;
-  platform?: 'linux' | 'darwin' | 'all';
+  platform?: 'linux' | 'darwin' | 'windows' | 'all';
   description: string;
   syntax: CommandSyntax;
   output_schema?: OutputSchema;

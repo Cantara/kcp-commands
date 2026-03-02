@@ -1,0 +1,46 @@
+command: npm
+platform: all
+description: "Node.js package manager — install, manage, and run packages"
+
+syntax:
+  usage: "npm <command> [<args>]"
+  key_flags:
+    - flag: "install"
+      description: "Install all dependencies from package.json"
+      use_when: "After cloning or when node_modules is missing"
+    - flag: "install <pkg>"
+      description: "Add a package as a dependency"
+    - flag: "install -D <pkg>"
+      description: "Add a package as a dev dependency"
+    - flag: "run <script>"
+      description: "Run a script defined in package.json"
+      use_when: "Running build, test, start, lint, etc."
+    - flag: "test"
+      description: "Run the test script"
+    - flag: "ci"
+      description: "Clean install from lockfile (faster, stricter)"
+      use_when: "CI/CD pipelines — deterministic installs"
+    - flag: "outdated"
+      description: "Check for outdated packages"
+    - flag: "ls --depth=0"
+      description: "List top-level installed packages"
+
+  preferred_invocations:
+    - invocation: "npm install"
+      use_when: "Install dependencies after clone"
+    - invocation: "npm run build"
+      use_when: "Build the project"
+    - invocation: "npm test"
+      use_when: "Run tests"
+    - invocation: "npm ls --depth=0"
+      use_when: "See what top-level packages are installed"
+
+output_schema:
+  enable_filter: true
+  noise_patterns:
+    - pattern: "^npm warn"
+      reason: "Warnings about peer deps and deprecated packages"
+    - pattern: "^added \\d+ packages"
+      reason: "Install summary — one line is enough"
+  max_lines: 50
+  truncation_message: "... {remaining} more lines."

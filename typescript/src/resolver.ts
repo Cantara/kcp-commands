@@ -9,8 +9,9 @@ import type { CommandManifest } from './model.js';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
-// Bundled primed manifests — packaged with the tool
-const PRIMED_DIR = join(__dirname, '..', 'commands');
+// Bundled primed manifests — shared commands/ at repo root
+// __dirname = typescript/dist/  →  ../../commands = commands/ at root
+const PRIMED_DIR = join(__dirname, '..', '..', 'commands');
 
 // User-level overrides — platform-specific tweaks, generated manifests
 const USER_DIR = join(homedir(), '.kcp', 'commands');

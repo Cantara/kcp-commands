@@ -1,0 +1,47 @@
+command: grep
+platform: linux
+description: "Search file contents for lines matching a pattern"
+
+syntax:
+  usage: "grep [OPTIONS] PATTERN [FILE...]"
+  key_flags:
+    - flag: "-r"
+      description: "Recursive search through directories"
+      use_when: "Searching across a codebase"
+    - flag: "-i"
+      description: "Case-insensitive matching"
+    - flag: "-n"
+      description: "Show line numbers"
+      use_when: "Always include — essential for navigating to matches"
+    - flag: "-l"
+      description: "List only filenames with matches"
+      use_when: "Finding which files contain a pattern"
+    - flag: "-c"
+      description: "Count of matching lines per file"
+    - flag: "-v"
+      description: "Invert match — show lines NOT matching"
+      use_when: "Filtering out noise lines"
+    - flag: "-E"
+      description: "Extended regex (ERE) — enables +, ?, |, () without escaping"
+      use_when: "Complex patterns — or use egrep"
+    - flag: "--include='*.ext'"
+      description: "Only search files matching the glob"
+      use_when: "Restricting search to specific file types"
+
+  preferred_invocations:
+    - invocation: "grep -rn '<pattern>' <dir>"
+      use_when: "Find all occurrences recursively with line numbers"
+    - invocation: "grep -rl '<pattern>' --include='*.java' <dir>"
+      use_when: "Find files containing pattern, filtered by extension"
+    - invocation: "grep -rn '<pattern>' --include='*.{ts,tsx}' ."
+      use_when: "Search specific file types in current directory"
+    - invocation: "<command> | grep -v '<noise>'"
+      use_when: "Filter out unwanted lines from piped output"
+
+output_schema:
+  enable_filter: true
+  noise_patterns:
+    - pattern: "^Binary file .* matches$"
+      reason: "Binary match notices — rarely useful"
+  max_lines: 100
+  truncation_message: "... {remaining} more matches. Add --include or narrow the pattern."
