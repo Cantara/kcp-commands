@@ -1,0 +1,46 @@
+{
+  "name": "kcp-commands",
+  "version": "0.1.0",
+  "description": "Semantic command manifests for the Knowledge Context Protocol — syntax context and noise filtering for CLI commands in AI agent sessions",
+  "license": "Apache-2.0",
+  "type": "module",
+  "engines": {
+    "node": ">=18"
+  },
+  "bin": {
+    "kcp-commands": "dist/cli.js"
+  },
+  "files": [
+    "dist",
+    "commands"
+  ],
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsc --watch",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "prepublishOnly": "npm run build"
+  },
+  "dependencies": {
+    "js-yaml": "^4.1.0"
+  },
+  "devDependencies": {
+    "@types/js-yaml": "^4.0.9",
+    "@types/node": "^20.0.0",
+    "typescript": "^5.4.0",
+    "vitest": "^1.6.0"
+  },
+  "keywords": [
+    "kcp",
+    "knowledge-context-protocol",
+    "claude-code",
+    "hooks",
+    "ai-agents",
+    "cli",
+    "command-manifests"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Cantara/kcp-commands"
+  }
+}

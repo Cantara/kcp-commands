@@ -1,0 +1,41 @@
+command: git
+subcommand: log
+platform: all
+description: "Show commit history"
+
+syntax:
+  usage: "git log [<options>] [<revision range>] [[--] <path>...]"
+  key_flags:
+    - flag: "--oneline"
+      description: "Compact: one line per commit (hash + subject)"
+      use_when: "Always use for overview — avoids wall of text"
+    - flag: "-n <N>"
+      description: "Limit to N most recent commits"
+      use_when: "Always pair with --oneline to bound output"
+    - flag: "--since='<date>'"
+      description: "Commits after date (e.g. '1 week ago', '2026-01-01')"
+    - flag: "--author=<pattern>"
+      description: "Filter by author name or email"
+    - flag: "--grep=<pattern>"
+      description: "Filter by commit message content"
+    - flag: "--stat"
+      description: "Show file change statistics per commit"
+      use_when: "Understanding scope of each commit"
+    - flag: "-- <path>"
+      description: "Limit to commits affecting a specific file or directory"
+
+  preferred_invocations:
+    - invocation: "git log --oneline -20"
+      use_when: "Quick overview of recent history"
+    - invocation: "git log --oneline --since='1 week ago'"
+      use_when: "What changed recently"
+    - invocation: "git log --oneline -- <file>"
+      use_when: "History for a specific file"
+    - invocation: "git log --oneline main..HEAD"
+      use_when: "Commits on current branch not yet in main"
+
+output_schema:
+  enable_filter: true
+  noise_patterns: []
+  max_lines: 50
+  truncation_message: "... {remaining} more commits. Add -n <N> or --since to narrow."

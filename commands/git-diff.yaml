@@ -1,0 +1,38 @@
+command: git
+subcommand: diff
+platform: all
+description: "Show changes between commits, working tree, and index"
+
+syntax:
+  usage: "git diff [<options>] [<commit>] [--] [<path>...]"
+  key_flags:
+    - flag: "--stat"
+      description: "Summary: files changed, insertions, deletions"
+      use_when: "Understanding scope before reading full diff"
+    - flag: "--name-only"
+      description: "List only changed file names"
+      use_when: "Quick check of which files changed"
+    - flag: "HEAD"
+      description: "All changes since last commit (staged + unstaged)"
+    - flag: "--staged"
+      description: "Only staged changes (what will be committed)"
+      use_when: "Reviewing before committing"
+    - flag: "main..HEAD"
+      description: "All changes on current branch vs main"
+    - flag: "-- <path>"
+      description: "Diff for a specific file or directory"
+
+  preferred_invocations:
+    - invocation: "git diff --stat"
+      use_when: "Overview of unstaged changes"
+    - invocation: "git diff --staged"
+      use_when: "Review what's about to be committed"
+    - invocation: "git diff --name-only HEAD"
+      use_when: "Quick list of all changed files"
+    - invocation: "git diff main..HEAD --stat"
+      use_when: "Scope of a feature branch"
+
+output_schema:
+  enable_filter: false
+  max_lines: 200
+  truncation_message: "... {remaining} more diff lines. Use '-- <file>' to narrow to one file."
