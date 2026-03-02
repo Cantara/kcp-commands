@@ -7,6 +7,7 @@ kcp-commands is a [Claude Code hook](https://docs.anthropic.com/en/docs/claude-c
 Measured across a typical agentic coding session: **67,352 tokens saved -- 33.7% of a 200K context window recovered**, equivalent to 33 additional tool call results fitting in the same context.
 
 Part of the [Knowledge Context Protocol](https://cantara.github.io/knowledge-context-protocol/) ecosystem.
+Read the [release post](https://wiki.totto.org/blog/2026/03/02/kcp-commands/) for the full benchmark methodology and design rationale.
 
 ---
 
@@ -244,6 +245,7 @@ Good candidates for custom manifests:
 
 ## Related projects
 
+- [Release post](https://wiki.totto.org/blog/2026/03/02/kcp-commands/) -- benchmark methodology, design rationale, and infographic
 - [Knowledge Context Protocol](https://github.com/Cantara/knowledge-context-protocol) -- the KCP specification
 - [KCP MCP Bridge](https://github.com/Cantara/knowledge-context-protocol/tree/main/bridge/typescript) -- MCP bridge for project manifests
 - [Synthesis](https://github.com/exoreaction/Synthesis) -- codebase intelligence and indexing
