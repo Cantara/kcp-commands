@@ -1,27 +1,28 @@
 #!/usr/bin/env bash
 # kcp-commands installer
 #
-# Usage:
-#   ./install.sh [--java | --node]
+# Usage (curl | bash — no clone needed):
+#   curl -fsSL https://raw.githubusercontent.com/Cantara/kcp-commands/main/bin/install.sh | bash
+#   curl -fsSL https://raw.githubusercontent.com/Cantara/kcp-commands/main/bin/install.sh | bash -s -- --java
+#   curl -fsSL https://raw.githubusercontent.com/Cantara/kcp-commands/main/bin/install.sh | bash -s -- --node
+#
+# Or from a cloned repo:
+#   ./bin/install.sh [--java | --node]
 #
 #   --java   Java daemon backend  — ~12 ms/hook call  (recommended, requires Java 21)
-#            Downloads the pre-built JAR from GitHub releases.
-#            Falls back to local Maven build if the download fails.
 #   --node   Node.js backend      — ~250 ms/hook call (requires Node.js only)
+#   No flag: interactive prompt
 #
-#   No flag: interactive prompt.
-#
-# Re-running install.sh upgrades an existing installation (replaces hook, re-downloads JAR).
+# Installs to ~/.kcp/ — no source tree required after installation.
+# Re-running upgrades an existing installation.
 
 set -e
 
-SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-ROOT_DIR="$(cd "$SCRIPT_DIR/.." && pwd)"
-SETTINGS_FILE="$HOME/.claude/settings.json"
 REPO="Cantara/kcp-commands"
-JAR_NAME="kcp-commands-daemon.jar"
-JAR_PATH="$ROOT_DIR/java/target/$JAR_NAME"
-RELEASE_URL="https://github.com/$REPO/releases/latest/download/$JAR_NAME"
+KCP_DIR="$HOME/.kcp"
+SETTINGS_FILE="$HOME/.claude/settings.json"
+RELEASES_URL="https://github.com/$REPO/releases/latest/download"
+RAW_URL="https://raw.githubusercontent.com/$REPO/main"
 
 # ── Parse args ────────────────────────────────────────────────────────────────
 
@@ -33,7 +34,7 @@ for arg in "$@"; do
   esac
 done
 
-# ── Interactive prompt (if no flag given) ─────────────────────────────────────
+# ── Interactive prompt ────────────────────────────────────────────────────────
 
 if [ -z "$MODE" ]; then
   echo "kcp-commands installer"
@@ -54,49 +55,68 @@ echo ""
 echo "kcp-commands installer — backend: $MODE"
 echo "========================================"
 
-# ── Node.js filter (always needed — Phase B pipe target) ─────────────────────
+# ── Create install directory ──────────────────────────────────────────────────
 
-if [ ! -f "$ROOT_DIR/typescript/dist/cli.js" ]; then
-  echo "→ Building Node.js filter..."
-  cd "$ROOT_DIR/typescript"
-  npm install --silent
-  npm run build --silent
-  echo "✓ Node.js filter built"
-else
-  echo "✓ Node.js filter already built"
-fi
+mkdir -p "$KCP_DIR/commands"
+echo "✓ Install directory: $KCP_DIR"
 
-# ── Java daemon (download from GitHub releases, fall back to mvn) ─────────────
+# ── Download hook.sh ──────────────────────────────────────────────────────────
+
+echo "→ Installing hook.sh..."
+curl -fsSL "$RAW_URL/bin/hook.sh" -o "$KCP_DIR/hook.sh"
+chmod +x "$KCP_DIR/hook.sh"
+echo "✓ hook.sh installed"
+
+# ── Java daemon ───────────────────────────────────────────────────────────────
 
 if [ "$MODE" = "java" ]; then
-  if [ -f "$JAR_PATH" ]; then
-    echo "✓ Java daemon already present ($JAR_NAME)"
+  echo "→ Downloading Java daemon..."
+  if curl -fsSL "$RELEASES_URL/kcp-commands-daemon.jar" -o "$KCP_DIR/kcp-commands-daemon.jar"; then
+    echo "✓ Java daemon downloaded"
   else
-    echo "→ Downloading Java daemon from GitHub releases..."
-    mkdir -p "$ROOT_DIR/java/target"
-
-    if curl -fsSL "$RELEASE_URL" -o "$JAR_PATH" 2>/dev/null; then
-      echo "✓ Java daemon downloaded"
-    elif command -v mvn > /dev/null 2>&1; then
-      echo "  (download failed — building from source with Maven)"
-      mvn -f "$ROOT_DIR/java/pom.xml" -q package -DskipTests
-      echo "✓ Java daemon built from source"
-    else
-      echo "✗ Could not obtain Java daemon (download failed; mvn not found)"
-      echo "  Falling back to Node.js backend."
+    echo "✗ Download failed. Checking for local Maven build..."
+    # If running from a cloned repo, fall back to building locally
+    SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" 2>/dev/null && pwd || echo "")"
+    LOCAL_JAR=""
+    if [ -n "$SCRIPT_DIR" ] && [ -f "$SCRIPT_DIR/../java/pom.xml" ]; then
+      LOCAL_JAR="$SCRIPT_DIR/../java/target/kcp-commands-daemon.jar"
+      if [ -f "$LOCAL_JAR" ]; then
+        cp "$LOCAL_JAR" "$KCP_DIR/kcp-commands-daemon.jar"
+        echo "✓ Java daemon copied from local build"
+      elif command -v mvn > /dev/null 2>&1; then
+        mvn -f "$SCRIPT_DIR/../java/pom.xml" -q package -DskipTests
+        cp "$SCRIPT_DIR/../java/target/kcp-commands-daemon.jar" "$KCP_DIR/kcp-commands-daemon.jar"
+        echo "✓ Java daemon built from source"
+      fi
+    fi
+    if [ ! -f "$KCP_DIR/kcp-commands-daemon.jar" ]; then
+      echo "✗ Could not obtain Java daemon. Falling back to Node.js."
       MODE="node"
     fi
   fi
 fi
 
-# ── Hook command ──────────────────────────────────────────────────────────────
+# ── Node.js CLI ───────────────────────────────────────────────────────────────
 
-if [ "$MODE" = "java" ]; then
-  HOOK_COMMAND="bash \"$ROOT_DIR/bin/hook.sh\""
-  BACKEND_LABEL="Java daemon"
-else
-  HOOK_COMMAND="node \"$ROOT_DIR/typescript/dist/cli.js\""
-  BACKEND_LABEL="Node.js"
+if [ "$MODE" = "node" ]; then
+  echo "→ Downloading Node.js CLI..."
+  if curl -fsSL "$RELEASES_URL/kcp-commands-cli.js" -o "$KCP_DIR/cli.js"; then
+    echo "✓ Node.js CLI downloaded"
+  else
+    echo "✗ Download failed. Checking for local build..."
+    SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" 2>/dev/null && pwd || echo "")"
+    if [ -n "$SCRIPT_DIR" ] && [ -f "$SCRIPT_DIR/../typescript/package.json" ]; then
+      cd "$SCRIPT_DIR/../typescript"
+      npm install --silent
+      npm run build --silent
+      cp dist/cli.js "$KCP_DIR/cli.js"
+      echo "✓ Node.js CLI built from source"
+    else
+      echo "✗ Could not obtain Node.js CLI."
+      echo "  Install will register the hook but it will pass through silently until"
+      echo "  a backend is available."
+    fi
+  fi
 fi
 
 # ── Register hook in ~/.claude/settings.json ─────────────────────────────────
@@ -104,19 +124,21 @@ fi
 if [ ! -f "$SETTINGS_FILE" ]; then
   mkdir -p "$(dirname "$SETTINGS_FILE")"
   echo '{}' > "$SETTINGS_FILE"
-  echo "✓ Created $SETTINGS_FILE"
 fi
 
-# Pass values via env vars; heredoc is single-quoted to prevent shell interpolation.
+HOOK_COMMAND="bash \"$KCP_DIR/hook.sh\""
+
+KCP_DIR="$KCP_DIR" \
 SETTINGS_FILE="$SETTINGS_FILE" \
 HOOK_COMMAND="$HOOK_COMMAND" \
-BACKEND_LABEL="$BACKEND_LABEL" \
+MODE="$MODE" \
 node --input-type=module << 'JSEOF'
 import { readFileSync, writeFileSync } from 'fs';
 
-const settingsPath  = process.env.SETTINGS_FILE;
-const hookCommand   = process.env.HOOK_COMMAND;
-const backendLabel  = process.env.BACKEND_LABEL;
+const kcpDir      = process.env.KCP_DIR;
+const settingsPath = process.env.SETTINGS_FILE;
+const hookCommand  = process.env.HOOK_COMMAND;
+const mode         = process.env.MODE;
 
 let settings;
 try {
@@ -125,7 +147,7 @@ try {
   settings = {};
 }
 
-settings.hooks        ??= {};
+settings.hooks            ??= {};
 settings.hooks.PreToolUse ??= [];
 
 // Remove any existing kcp-commands entry (upgrade support).
@@ -136,14 +158,25 @@ settings.hooks.PreToolUse = settings.hooks.PreToolUse.filter(
 settings.hooks.PreToolUse.push({
   matcher: 'Bash',
   hooks: [{
-    type: 'command',
-    command: hookCommand,
-    timeout: 10,
+    type:          'command',
+    command:       hookCommand,
+    timeout:       10,
     statusMessage: 'kcp-commands: looking up manifest...'
   }]
 });
 
 writeFileSync(settingsPath, JSON.stringify(settings, null, 2) + '\n');
-console.log(`✓ PreToolUse hook registered (${backendLabel})`);
-console.log('  Restart Claude Code to activate.');
+console.log(`✓ PreToolUse hook registered → ${kcpDir}/hook.sh (${mode})`);
 JSEOF
+
+echo ""
+echo "Installation complete!"
+echo "  Location : $KCP_DIR"
+echo "  Hook     : $KCP_DIR/hook.sh"
+if [ "$MODE" = "java" ]; then
+echo "  Daemon   : $KCP_DIR/kcp-commands-daemon.jar"
+else
+echo "  CLI      : $KCP_DIR/cli.js"
+fi
+echo ""
+echo "  ➜ Restart Claude Code to activate the hook."
