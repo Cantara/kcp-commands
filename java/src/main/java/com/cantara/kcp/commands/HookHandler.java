@@ -28,14 +28,13 @@ public class HookHandler implements HttpHandler {
     private final ManifestResolver resolver;
     private final ManifestGenerator generator;
     private final ObjectMapper mapper;
-    private final String filterScriptPath;
+    private final int port;
 
-    public HookHandler(ManifestResolver resolver, ManifestGenerator generator,
-                       String filterScriptPath) {
+    public HookHandler(ManifestResolver resolver, ManifestGenerator generator, int port) {
         this.resolver = resolver;
         this.generator = generator;
         this.mapper = new ObjectMapper();
-        this.filterScriptPath = filterScriptPath;
+        this.port = port;
     }
 
     @Override
@@ -73,7 +72,11 @@ public class HookHandler implements HttpHandler {
             return;
         }
 
+        // Compound-key lookup first, then fall back to simple key (e.g. git-log → git)
         CommandManifest manifest = resolver.resolve(parsed.key());
+        if (manifest == null && parsed.subcommand() != null) {
+            manifest = resolver.resolve(parsed.cmd());
+        }
         if (manifest == null) {
             manifest = generator.generate(parsed.cmd(), parsed.subcommand());
         }
@@ -93,10 +96,17 @@ public class HookHandler implements HttpHandler {
         hookOutput.put("permissionDecision", "allow");
         hookOutput.put("additionalContext", additionalContext);
 
-        // Phase B: pipe through Node.js filter for large-output commands
+        // Phase B: pipe through daemon's /filter/{key} endpoint for large-output commands.
+        // Use the manifest's own key (derived from command + optional subcommand) rather than
+        // parsed.key(), because the compound-to-simple fallback may have resolved a simpler key.
+        // e.g. "ps aux" → parsed.key()="ps-aux" but manifest.command()="ps", subcommand=null → "ps"
         var schema = manifest.outputSchema();
         if (schema != null && schema.enableFilter() && CommandParser.isFilterable(command)) {
-            String wrapped = command + " | node \"" + filterScriptPath + "\" filter \"" + parsed.key() + "\"";
+            String resolvedKey = manifest.subcommand() != null
+                    ? manifest.command() + "-" + manifest.subcommand()
+                    : manifest.command();
+            String filterUrl = "http://localhost:" + port + "/filter/" + resolvedKey;
+            String wrapped = command + " | curl -s -X POST \"" + filterUrl + "\" --data-binary @-";
             ObjectNode updatedInput = mapper.createObjectNode();
             updatedInput.put("command", wrapped);
             hookOutput.set("updatedInput", updatedInput);

@@ -2,7 +2,7 @@ package com.cantara.kcp.commands;
 
 import com.cantara.kcp.commands.model.ParsedCommand;
 
-import java.util.Set;
+import java.util.regex.Pattern;
 
 /**
  * Parses a shell command string into a (cmd, subcommand, key) triple
@@ -10,15 +10,20 @@ import java.util.Set;
  */
 public class CommandParser {
 
-    private static final Set<String> GIT_SUBCOMMANDS =
-            Set.of("log", "diff", "status", "branch", "show", "blame", "stash");
-
-    private static final Set<String> DOCKER_SUBCOMMANDS =
-            Set.of("ps", "logs", "exec", "run", "images", "inspect");
+    /**
+     * Pattern for a word that looks like a subcommand: lowercase letters, digits, hyphens.
+     * Matches "log", "diff", "get", "ps", "images", etc.
+     * Rejects flags (--flag), paths (/usr/bin), filenames (foo.yaml).
+     */
+    private static final Pattern SUBCOMMAND_PATTERN = Pattern.compile("^[a-z][a-z0-9-]*$");
 
     /**
      * Parse the base command from a shell string.
      * Returns null for complex expressions (subshells, etc.) that should pass through unchanged.
+     *
+     * For commands with a subcommand-shaped first argument (e.g. "git log", "kubectl get"),
+     * returns a compound key ("git-log", "kubectl-get") with the subcommand field set.
+     * The caller should fall back to the simple key if no compound manifest exists.
      */
     public static ParsedCommand parse(String shellCommand) {
         if (shellCommand == null || shellCommand.isBlank()) return null;
@@ -39,14 +44,11 @@ public class CommandParser {
 
         String cmd = parts[0];
 
-        // Compound commands: git <subcommand>, docker <subcommand>
-        if (cmd.equals("git") && parts.length > 1 && GIT_SUBCOMMANDS.contains(parts[1])) {
+        // Compound commands: any command whose first arg looks like a subcommand word.
+        // Examples: git log, docker ps, kubectl get, npm install
+        if (parts.length > 1 && SUBCOMMAND_PATTERN.matcher(parts[1]).matches()) {
             String sub = parts[1];
-            return new ParsedCommand("git-" + sub, "git", sub);
-        }
-        if (cmd.equals("docker") && parts.length > 1 && DOCKER_SUBCOMMANDS.contains(parts[1])) {
-            String sub = parts[1];
-            return new ParsedCommand("docker-" + sub, "docker", sub);
+            return new ParsedCommand(cmd + "-" + sub, cmd, sub);
         }
 
         return new ParsedCommand(cmd, cmd, null);
