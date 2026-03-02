@@ -5,21 +5,35 @@
 set -e
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-HOOK_SCRIPT="$SCRIPT_DIR/dist/cli.js"
+HOOK_SCRIPT="$SCRIPT_DIR/hook.sh"
 SETTINGS_FILE="$HOME/.claude/settings.json"
 
 echo "kcp-commands installer"
 echo "====================="
 
-# Build if needed
-if [ ! -f "$HOOK_SCRIPT" ]; then
-  echo "→ Building..."
+# Build Node.js filter (used by hook.sh as Phase B pipe target)
+if [ ! -f "$SCRIPT_DIR/dist/cli.js" ]; then
+  echo "→ Building Node.js filter..."
   cd "$SCRIPT_DIR"
   npm install --silent
   npm run build --silent
-  echo "✓ Build complete"
+  echo "✓ Node.js build complete"
 else
-  echo "✓ Already built"
+  echo "✓ Node.js filter already built"
+fi
+
+# Build Java daemon (fast path — optional but recommended)
+DAEMON_JAR="$SCRIPT_DIR/java/target/kcp-commands-daemon-0.1.0.jar"
+if [ ! -f "$DAEMON_JAR" ]; then
+  if command -v mvn > /dev/null 2>&1; then
+    echo "→ Building Java daemon..."
+    mvn -f "$SCRIPT_DIR/java/pom.xml" -q package -DskipTests
+    echo "✓ Java daemon built"
+  else
+    echo "⚠ mvn not found — skipping Java daemon (hook.sh will fall back to Node.js)"
+  fi
+else
+  echo "✓ Java daemon already built"
 fi
 
 # Create settings file if missing
@@ -59,7 +73,7 @@ settings.hooks.PreToolUse.push({
   matcher: 'Bash',
   hooks: [{
     type: 'command',
-    command: \`node "\${hookScript}"\`,
+    command: \`bash "\${hookScript}"\`,
     timeout: 10,
     statusMessage: 'kcp-commands: looking up manifest...'
   }]
