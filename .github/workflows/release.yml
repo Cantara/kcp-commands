@@ -1,0 +1,62 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Java 21
+        uses: actions/setup-java@v4
+        with:
+          java-version: '21'
+          distribution: 'temurin'
+          cache: 'maven'
+
+      - name: Set up Node.js 20
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Build Node.js filter
+        run: npm ci && npm run build
+
+      - name: Build Java daemon
+        run: mvn -f java/pom.xml package -DskipTests -q
+
+      - name: Extract version
+        id: version
+        run: echo "version=${GITHUB_REF_NAME#v}" >> "$GITHUB_OUTPUT"
+
+      - name: Publish GitHub release
+        uses: softprops/action-gh-release@v2
+        with:
+          name: "kcp-commands ${{ github.ref_name }}"
+          body: |
+            ## Installation
+
+            **Java daemon** — ~12 ms/hook call (recommended, requires Java 21):
+            ```bash
+            curl -fsSL https://raw.githubusercontent.com/Cantara/kcp-commands/${{ github.ref_name }}/install.sh | bash -s -- --java
+            ```
+
+            **Node.js** — ~250 ms/hook call (requires Node.js only):
+            ```bash
+            curl -fsSL https://raw.githubusercontent.com/Cantara/kcp-commands/${{ github.ref_name }}/install.sh | bash -s -- --node
+            ```
+
+            Or clone and run `./install.sh` for an interactive prompt.
+
+            See [README.md](https://github.com/Cantara/kcp-commands#readme) for full details.
+          files: |
+            java/target/kcp-commands-daemon.jar

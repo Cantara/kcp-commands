@@ -100,7 +100,7 @@ def daemon_running(port: int) -> bool:
     return r.returncode == 0
 
 def start_daemon(port: int) -> tuple[subprocess.Popen, float]:
-    jar = SCRIPT_DIR / "java" / "target" / "kcp-commands-daemon-0.1.0.jar"
+    jar = SCRIPT_DIR / "java" / "target" / "kcp-commands-daemon.jar"
     if not jar.exists():
         return None, 0.0
 
@@ -156,7 +156,7 @@ def main():
     if daemon_running(PORT):
         print(f"\n✓ Java daemon already running on port {PORT}")
     else:
-        jar = SCRIPT_DIR / "java" / "target" / "kcp-commands-daemon-0.1.0.jar"
+        jar = SCRIPT_DIR / "java" / "target" / "kcp-commands-daemon.jar"
         if jar.exists():
             print(f"\n→ Starting Java daemon on port {PORT}...", end="", flush=True)
             daemon_proc, cold_start_ms = start_daemon(PORT)

@@ -37,6 +37,9 @@
     </dependencies>
 
     <build>
+        <!-- Stable JAR name — no version suffix so the GitHub release URL never changes -->
+        <finalName>kcp-commands-daemon</finalName>
+
         <!-- Bundle shared commands/*.yaml from parent directory into JAR -->
         <resources>
             <resource>
