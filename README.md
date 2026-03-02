@@ -90,23 +90,21 @@ Full methodology and raw numbers: [docs/benchmark-results.md](docs/benchmark-res
 
 ## Supported commands
 
-### Bundled manifests (primed)
+### Bundled manifests (62 primed)
 
-| Command | Phase A (syntax) | Phase B (filter) |
-|---------|:-:|:-:|
-| `ls` | Y | noise only |
-| `ps` | Y | Y (30 line cap) |
-| `find` | Y | Y (permission errors stripped, 100 cap) |
-| `git log` | Y | Y (50 line cap) |
-| `git diff` | Y | context only |
-| `git status` | Y | hint lines stripped |
-| `git add` | Y | -- |
-| `git branch` | Y | -- |
-| `git checkout` | Y | -- |
+**Git** — `git log` · `git diff` · `git status` · `git add` · `git commit` · `git push` · `git pull` · `git fetch` · `git branch` · `git checkout` · `git stash` · `git merge` · `git rebase` · `git clone` · `git reset` · `git tag` · `git remote` · `git show`
+
+**Linux / macOS** — `ls` · `ps` · `find` · `cp` · `mv` · `rm` · `mkdir` · `cat` · `head` · `tail` · `grep` · `chmod` · `df` · `du` · `tar` · `ln` · `rsync` · `top` · `kill` · `systemctl` · `journalctl` · `lsof` · `netstat` · `ss` · `ping`
+
+**Cross-platform** — `curl` · `npm` · `node` · `ssh` · `docker ps` · `docker images` · `docker logs` · `kubectl get` · `kubectl logs` · `kubectl describe`
+
+**Windows** — `dir` · `tasklist` · `taskkill` · `ipconfig` · `netstat` · `where` · `robocopy` · `type` · `xcopy` (all include PowerShell equivalents)
+
+Phase B output filtering is enabled on the high-noise commands: `ps`, `find`, `top`, `df`, `du`, `grep`, `journalctl`, `systemctl`, `lsof`, `netstat`, `ss`, `rsync`, `npm`, `docker ps`, `docker images`, `docker logs`, `kubectl get`, `kubectl logs`, `kubectl describe`, `dir`, `tasklist`.
 
 ### Auto-generated manifests
 
-When the hook encounters an unknown command (e.g., `mvn`, `docker ps`, `kubectl`), it runs `<cmd> --help`, parses the output, and saves a generated manifest to `~/.kcp/commands/` for future sessions. The agent gets syntax context on the very next invocation -- no manual authoring needed.
+When the hook encounters an unknown command, it runs `<cmd> --help`, parses the output, and saves a generated manifest to `~/.kcp/commands/` for future sessions. The agent gets syntax context on the very next invocation — no manual authoring needed.
 
 ---
 
