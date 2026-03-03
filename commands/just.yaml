@@ -1,0 +1,38 @@
+command: just
+platform: all
+description: "Command runner (Justfile) — make alternative"
+
+syntax:
+  usage: "just [options] [recipe [args]]"
+  key_flags:
+    - flag: "just"
+      description: "Run default recipe (first in Justfile)"
+    - flag: "just <recipe>"
+      description: "Run a named recipe"
+    - flag: "--list / -l"
+      description: "List available recipes"
+      use_when: "Discover what's available"
+    - flag: "--show <recipe>"
+      description: "Show recipe source"
+    - flag: "--dry-run / -n"
+      description: "Print commands without executing"
+    - flag: "--justfile <path>"
+      description: "Use specific Justfile"
+    - flag: "--set <var> <value>"
+      description: "Override a variable"
+    - flag: "--variables"
+      description: "List all variables"
+    - flag: "--choose"
+      description: "Interactively select recipe (requires fzf)"
+    - flag: "--working-directory <dir>"
+      description: "Run from specific directory"
+  preferred_invocations:
+    - invocation: "just --list"
+      use_when: "See all available recipes"
+    - invocation: "just <recipe>"
+      use_when: "Run a recipe"
+    - invocation: "just --dry-run <recipe>"
+      use_when: "Preview commands before running"
+
+output_schema:
+  enable_filter: false

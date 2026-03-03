@@ -1,0 +1,39 @@
+command: pipx
+platform: all
+description: "Install and run Python applications in isolated environments"
+
+syntax:
+  usage: "pipx <command> [options] <package>"
+  key_flags:
+    - flag: "install <pkg>"
+      description: "Install CLI tool in isolated environment"
+      use_when: "Installing tools like ruff, black, mypy, pre-commit globally"
+    - flag: "run <pkg> [args]"
+      description: "Run tool without installing permanently"
+      use_when: "One-off execution"
+    - flag: "upgrade <pkg>"
+      description: "Upgrade installed tool"
+    - flag: "upgrade-all"
+      description: "Upgrade all installed tools"
+    - flag: "uninstall <pkg>"
+      description: "Remove installed tool"
+    - flag: "list"
+      description: "List installed tools with versions"
+    - flag: "inject <pkg> <dep>"
+      description: "Add dependency into an installed tool's environment"
+    - flag: "--include-deps"
+      description: "Install dependencies' executables too"
+    - flag: "--python <path>"
+      description: "Use specific Python interpreter"
+    - flag: "--force"
+      description: "Reinstall even if already installed"
+  preferred_invocations:
+    - invocation: "pipx install ruff"
+      use_when: "Install a Python CLI tool globally"
+    - invocation: "pipx run cowsay 'hello'"
+      use_when: "Run a tool once without installing"
+    - invocation: "pipx upgrade-all"
+      use_when: "Keep all tools up to date"
+
+output_schema:
+  enable_filter: false

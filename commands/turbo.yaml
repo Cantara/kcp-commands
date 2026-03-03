@@ -1,0 +1,50 @@
+command: turbo
+platform: all
+description: "Turborepo — high-performance monorepo build system"
+
+syntax:
+  usage: "turbo <task> [options]"
+  key_flags:
+    - flag: "build"
+      description: "Run build task across all packages"
+    - flag: "test"
+      description: "Run test task across all packages"
+    - flag: "lint"
+      description: "Run lint task across all packages"
+    - flag: "dev"
+      description: "Run dev task (typically watch mode)"
+    - flag: "--filter=<package>"
+      description: "Run task only for specific package(s)"
+      use_when: "Focus on one package and its dependencies"
+    - flag: "--filter=...[HEAD^1]"
+      description: "Run task for packages changed since last commit"
+      use_when: "CI — only affected packages"
+    - flag: "--no-cache"
+      description: "Disable task caching"
+    - flag: "--force"
+      description: "Force re-run even if cached"
+    - flag: "--dry-run"
+      description: "Show what would run without executing"
+    - flag: "--parallel"
+      description: "Run tasks in parallel (ignore dependencies)"
+    - flag: "--graph"
+      description: "Show task dependency graph"
+    - flag: "--cache-dir <path>"
+      description: "Custom cache directory"
+  preferred_invocations:
+    - invocation: "turbo build"
+      use_when: "Build all packages with caching"
+    - invocation: "turbo build --filter=my-app"
+      use_when: "Build a specific app and its dependencies"
+    - invocation: "turbo test --filter=...[HEAD^1]"
+      use_when: "CI — test only changed packages"
+
+output_schema:
+  enable_filter: true
+  noise_patterns:
+    - pattern: "^• Packages in scope:"
+      reason: "Scope summary header"
+    - pattern: "^• Running "
+      reason: "Task execution header"
+  max_lines: 80
+  truncation_message: "... {remaining} more turbo output lines."

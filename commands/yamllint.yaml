@@ -1,0 +1,36 @@
+command: yamllint
+platform: all
+description: "YAML file linter"
+
+syntax:
+  usage: "yamllint [options] <file|dir|->"
+  key_flags:
+    - flag: "."
+      description: "Lint all YAML files in current directory"
+    - flag: "-d relaxed"
+      description: "Use relaxed ruleset (fewer warnings)"
+      use_when: "Less strict enforcement"
+    - flag: "-d '{extends: default, rules: {line-length: {max: 120}}}'"
+      description: "Inline config override"
+    - flag: "-c .yamllint"
+      description: "Use config file"
+    - flag: "-f parsable"
+      description: "Output in parsable format (path:line:col: [level] message)"
+      use_when: "CI integration"
+    - flag: "-f colored"
+      description: "Colored terminal output"
+    - flag: "-f github"
+      description: "GitHub Actions annotation format"
+      use_when: "GitHub Actions workflow"
+    - flag: "-s"
+      description: "Strict mode — warnings become errors"
+  preferred_invocations:
+    - invocation: "yamllint ."
+      use_when: "Lint all YAML in current directory"
+    - invocation: "yamllint -d relaxed ."
+      use_when: "Less strict check"
+    - invocation: "yamllint -f github ."
+      use_when: "GitHub Actions CI"
+
+output_schema:
+  enable_filter: false

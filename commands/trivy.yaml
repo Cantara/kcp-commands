@@ -1,0 +1,50 @@
+command: trivy
+platform: all
+description: "Vulnerability and misconfiguration scanner (containers, filesystems, repos)"
+
+syntax:
+  usage: "trivy <target-type> [options] <target>"
+  key_flags:
+    - flag: "image <image>"
+      description: "Scan a container image"
+      use_when: "Default container scanning"
+    - flag: "fs ."
+      description: "Scan local filesystem / project"
+    - flag: "repo <url>"
+      description: "Scan a remote git repository"
+    - flag: "config ."
+      description: "Scan IaC files (Dockerfile, Terraform, k8s YAML)"
+    - flag: "--severity HIGH,CRITICAL"
+      description: "Filter by severity"
+      use_when: "Focus on high-impact issues"
+    - flag: "--ignore-unfixed"
+      description: "Skip vulnerabilities with no fix available"
+    - flag: "--format table"
+      description: "Output format (table, json, sarif, github)"
+      use_when: "CI: use sarif for GitHub Security tab"
+    - flag: "--output report.json"
+      description: "Write results to file"
+    - flag: "--exit-code 1"
+      description: "Exit with code 1 if vulnerabilities found"
+      use_when: "CI — fail pipeline on findings"
+    - flag: "--scanners vuln,secret,config"
+      description: "Enable specific scanners"
+    - flag: "--quiet"
+      description: "Suppress progress output"
+  preferred_invocations:
+    - invocation: "trivy image --severity HIGH,CRITICAL <image>"
+      use_when: "Scan image for critical vulnerabilities"
+    - invocation: "trivy fs --scanners vuln,secret ."
+      use_when: "Scan project for vulnerabilities and secrets"
+    - invocation: "trivy image --format sarif --output results.sarif <image>"
+      use_when: "CI — upload to GitHub Security tab"
+
+output_schema:
+  enable_filter: true
+  noise_patterns:
+    - pattern: "^\\d{4}-\\d{2}-\\d{2}T.*INFO"
+      reason: "Timestamp log lines"
+    - pattern: "^Fetching "
+      reason: "DB fetch progress lines"
+  max_lines: 80
+  truncation_message: "... {remaining} more trivy findings. Use --severity HIGH,CRITICAL to narrow."

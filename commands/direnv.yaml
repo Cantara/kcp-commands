@@ -1,0 +1,33 @@
+command: direnv
+platform: all
+description: "Load/unload environment variables based on .envrc in current directory"
+
+syntax:
+  usage: "direnv <command>"
+  key_flags:
+    - flag: "allow"
+      description: "Allow .envrc in current directory to be loaded"
+      use_when: "First time setup or after editing .envrc"
+    - flag: "allow ."
+      description: "Allow current directory explicitly"
+    - flag: "deny"
+      description: "Block .envrc from loading"
+    - flag: "reload"
+      description: "Force re-evaluation of .envrc"
+      use_when: "After editing .envrc"
+    - flag: "edit"
+      description: "Open .envrc in $EDITOR and allow after saving"
+    - flag: "status"
+      description: "Show direnv status for current directory"
+    - flag: "version"
+      description: "Print version"
+  preferred_invocations:
+    - invocation: "direnv allow"
+      use_when: "Allow .envrc to load (required on first use or after edit)"
+    - invocation: "direnv edit"
+      use_when: "Edit .envrc and automatically allow"
+    - invocation: "direnv status"
+      use_when: "Check why env isn't loading"
+
+output_schema:
+  enable_filter: false

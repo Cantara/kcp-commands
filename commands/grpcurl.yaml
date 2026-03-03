@@ -1,0 +1,41 @@
+command: grpcurl
+platform: all
+description: "gRPC command-line client (like curl for gRPC)"
+
+syntax:
+  usage: "grpcurl [options] <host:port> <service.Method>"
+  key_flags:
+    - flag: "-plaintext"
+      description: "Use plaintext (no TLS)"
+      use_when: "Local development servers without TLS"
+    - flag: "-proto <file>"
+      description: "Use proto file for reflection"
+      use_when: "Server doesn't support reflection"
+    - flag: "-d '<json>'"
+      description: "Request body as JSON"
+    - flag: "-d @"
+      description: "Read request body from stdin"
+    - flag: "-H '<header>: <value>'"
+      description: "Add request header (e.g. authorization)"
+    - flag: "list"
+      description: "List all services on the server"
+    - flag: "list <service>"
+      description: "List methods of a service"
+    - flag: "describe <symbol>"
+      description: "Describe a service, method, or message type"
+    - flag: "-format json"
+      description: "Output format (json or text)"
+    - flag: "-import-path <dir>"
+      description: "Proto import path"
+    - flag: "-rpc-header '<k>: <v>'"
+      description: "Attach metadata to the RPC"
+  preferred_invocations:
+    - invocation: "grpcurl -plaintext localhost:9090 list"
+      use_when: "Discover available services on local server"
+    - invocation: "grpcurl -plaintext -d '{\"name\": \"world\"}' localhost:9090 hello.Greeter/SayHello"
+      use_when: "Call a gRPC method with JSON body"
+    - invocation: "grpcurl -plaintext localhost:9090 describe my.Service"
+      use_when: "Inspect a service's methods and types"
+
+output_schema:
+  enable_filter: false

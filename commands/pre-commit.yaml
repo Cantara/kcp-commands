@@ -1,0 +1,48 @@
+command: pre-commit
+platform: all
+description: "Git hook manager — run linters and formatters before commit"
+
+syntax:
+  usage: "pre-commit <command> [options]"
+  key_flags:
+    - flag: "install"
+      description: "Install hooks into .git/hooks"
+      use_when: "First-time setup in a repo"
+    - flag: "run"
+      description: "Run hooks on staged files"
+    - flag: "run --all-files / -a"
+      description: "Run hooks on all files in the repo"
+      use_when: "CI or initial setup"
+    - flag: "run <hook-id>"
+      description: "Run a specific hook only"
+    - flag: "run --files <file>"
+      description: "Run hooks on specific files"
+    - flag: "autoupdate"
+      description: "Update hook revisions in .pre-commit-config.yaml"
+    - flag: "clean"
+      description: "Clean hook environments (removes cached envs)"
+    - flag: "uninstall"
+      description: "Remove hooks from .git/hooks"
+    - flag: "--show-diff-on-failure"
+      description: "Show diff when a hook modifies files"
+    - flag: "--verbose / -v"
+      description: "Show full output from each hook"
+    - flag: "--hook-stage <stage>"
+      description: "Target specific hook stage (pre-commit, pre-push, etc.)"
+  preferred_invocations:
+    - invocation: "pre-commit install"
+      use_when: "Set up hooks in a freshly cloned repo"
+    - invocation: "pre-commit run --all-files"
+      use_when: "CI check or initial repo-wide run"
+    - invocation: "pre-commit autoupdate"
+      use_when: "Update all hooks to latest versions"
+    - invocation: "pre-commit run ruff"
+      use_when: "Run only the ruff hook"
+
+output_schema:
+  enable_filter: true
+  noise_patterns:
+    - pattern: "^Passed$"
+      reason: "Summary line for each passing hook"
+  max_lines: 60
+  truncation_message: "... {remaining} more pre-commit output lines."

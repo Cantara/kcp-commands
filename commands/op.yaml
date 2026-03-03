@@ -1,0 +1,40 @@
+command: op
+platform: all
+description: "1Password CLI"
+
+syntax:
+  usage: "op <resource> <command> [options]"
+  key_flags:
+    - flag: "item get <name>"
+      description: "Get an item by name or ID"
+    - flag: "item get <name> --fields <field>"
+      description: "Get specific field(s) from an item"
+    - flag: "item list"
+      description: "List all items"
+    - flag: "read 'op://<vault>/<item>/<field>'"
+      description: "Read a secret value directly"
+      use_when: "Scripting — fetch a specific field"
+    - flag: "inject -i template.env"
+      description: "Inject secrets into a template file"
+      use_when: "Generating .env from op:// references"
+    - flag: "run -- <command>"
+      description: "Run command with secrets as env vars"
+      use_when: "Inject secrets without writing to disk"
+    - flag: "vault list"
+      description: "List available vaults"
+    - flag: "signin"
+      description: "Authenticate to 1Password"
+    - flag: "--account <shorthand>"
+      description: "Target a specific account"
+    - flag: "--format json"
+      description: "Output as JSON"
+  preferred_invocations:
+    - invocation: "op read 'op://Private/DB Prod/password'"
+      use_when: "Fetch a specific secret value"
+    - invocation: "op inject -i .env.tpl -o .env"
+      use_when: "Generate .env from template with op:// references"
+    - invocation: "op run -- node server.js"
+      use_when: "Run app with secrets injected as env vars"
+
+output_schema:
+  enable_filter: false

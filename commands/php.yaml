@@ -1,0 +1,39 @@
+command: php
+platform: all
+description: "PHP CLI interpreter"
+
+syntax:
+  usage: "php [options] [file] [args]"
+  key_flags:
+    - flag: "-f <file>"
+      description: "Parse and execute file"
+    - flag: "-r '<code>'"
+      description: "Run PHP code without tags"
+      use_when: "Quick one-liners"
+    - flag: "-l <file>"
+      description: "Lint (syntax check) a file"
+      use_when: "Checking for parse errors without executing"
+    - flag: "-S <host:port>"
+      description: "Start built-in development web server"
+      use_when: "Local dev without Apache/nginx"
+    - flag: "-a"
+      description: "Interactive REPL mode"
+    - flag: "-c <php.ini>"
+      description: "Use specific php.ini configuration"
+    - flag: "-d <key>=<value>"
+      description: "Override a php.ini setting"
+      use_when: "memory_limit, max_execution_time"
+    - flag: "-i"
+      description: "Print phpinfo() — show configuration"
+    - flag: "-m"
+      description: "List compiled-in modules"
+  preferred_invocations:
+    - invocation: "php -l <file>"
+      use_when: "Syntax check a PHP file"
+    - invocation: "php -S localhost:8000 -t public/"
+      use_when: "Start dev server serving public/ directory"
+    - invocation: "php -r 'echo phpversion();'"
+      use_when: "Quick one-liner"
+
+output_schema:
+  enable_filter: false

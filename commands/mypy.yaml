@@ -1,0 +1,48 @@
+command: mypy
+platform: all
+description: "Python static type checker"
+
+syntax:
+  usage: "mypy [options] [file|package]"
+  key_flags:
+    - flag: "src/"
+      description: "Type-check a directory"
+      use_when: "Check entire source tree"
+    - flag: "--strict"
+      description: "Enable all strict checks"
+      use_when: "Maximum type safety"
+    - flag: "--ignore-missing-imports"
+      description: "Suppress errors for missing stubs"
+      use_when: "Third-party packages without type stubs"
+    - flag: "--follow-imports skip"
+      description: "Don't follow untyped imports"
+    - flag: "--python-version 3.11"
+      description: "Target a specific Python version"
+    - flag: "--show-error-codes"
+      description: "Print error codes for each error"
+      use_when: "Useful for targeted ignores: # type: ignore[<code>]"
+    - flag: "--install-types"
+      description: "Install missing type stubs automatically"
+    - flag: "--check-untyped-defs"
+      description: "Type-check functions without annotations"
+    - flag: "--no-error-summary"
+      description: "Suppress summary line"
+    - flag: "--config-file mypy.ini"
+      description: "Use specific config file"
+  preferred_invocations:
+    - invocation: "mypy src/ --ignore-missing-imports"
+      use_when: "Check source tree, skip third-party stubs"
+    - invocation: "mypy . --strict"
+      use_when: "Full strict checking"
+    - invocation: "mypy --install-types && mypy src/"
+      use_when: "First-time setup with missing stubs"
+
+output_schema:
+  enable_filter: true
+  noise_patterns:
+    - pattern: "^Found \\d+ error"
+      reason: "Summary line"
+    - pattern: "^Success: no issues found"
+      reason: "Success summary"
+  max_lines: 60
+  truncation_message: "... {remaining} more mypy errors."

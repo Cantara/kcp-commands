@@ -1,0 +1,36 @@
+command: cosign
+platform: all
+description: "Container image signing and verification (Sigstore)"
+
+syntax:
+  usage: "cosign <command> [options]"
+  key_flags:
+    - flag: "sign <image>"
+      description: "Sign a container image (keyless via OIDC)"
+      use_when: "Signing in CI with OIDC identity"
+    - flag: "sign --key cosign.key <image>"
+      description: "Sign with a local key"
+    - flag: "verify <image>"
+      description: "Verify image signature (keyless)"
+    - flag: "verify --key cosign.pub <image>"
+      description: "Verify with a public key"
+    - flag: "generate-key-pair"
+      description: "Generate a cosign.key + cosign.pub key pair"
+      use_when: "Setting up key-based signing"
+    - flag: "attach sbom --sbom sbom.json <image>"
+      description: "Attach an SBOM to an image"
+    - flag: "verify --certificate-identity <email> --certificate-oidc-issuer <issuer>"
+      description: "Verify with identity constraints"
+      use_when: "Verifying keyless signatures"
+    - flag: "-y"
+      description: "Skip confirmation prompt"
+  preferred_invocations:
+    - invocation: "cosign sign --key cosign.key <registry>/<image>:<tag>"
+      use_when: "Sign an image with local key"
+    - invocation: "cosign verify --key cosign.pub <image>"
+      use_when: "Verify a signed image"
+    - invocation: "cosign generate-key-pair"
+      use_when: "First-time setup of signing keys"
+
+output_schema:
+  enable_filter: false

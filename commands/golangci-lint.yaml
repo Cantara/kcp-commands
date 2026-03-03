@@ -1,0 +1,46 @@
+command: golangci-lint
+platform: all
+description: "Fast Go linter aggregator (runs many linters in parallel)"
+
+syntax:
+  usage: "golangci-lint [command] [options]"
+  key_flags:
+    - flag: "run"
+      description: "Run linters on current package"
+      use_when: "Default lint pass"
+    - flag: "run ./..."
+      description: "Lint all packages recursively"
+    - flag: "run --fix"
+      description: "Auto-fix fixable issues"
+    - flag: "run --timeout 5m"
+      description: "Override default timeout"
+      use_when: "Large projects that time out"
+    - flag: "run --out-format colored-line-number"
+      description: "Output format (colored-line-number, json, github-actions)"
+      use_when: "CI: use github-actions for annotations"
+    - flag: "run --enable <linter>"
+      description: "Enable specific linter"
+    - flag: "run --disable <linter>"
+      description: "Disable specific linter"
+    - flag: "run --fast"
+      description: "Run only fast linters"
+    - flag: "run --new-from-rev HEAD~1"
+      description: "Only report issues introduced since a revision"
+      use_when: "PR diff checking"
+    - flag: "linters"
+      description: "List all available linters and their status"
+  preferred_invocations:
+    - invocation: "golangci-lint run ./..."
+      use_when: "Lint all packages in the repo"
+    - invocation: "golangci-lint run --fix ./..."
+      use_when: "Auto-fix and lint"
+    - invocation: "golangci-lint run --new-from-rev HEAD~1"
+      use_when: "Only check changes since last commit"
+
+output_schema:
+  enable_filter: true
+  noise_patterns:
+    - pattern: "^level=info"
+      reason: "Informational log lines"
+  max_lines: 80
+  truncation_message: "... {remaining} more lint issues."

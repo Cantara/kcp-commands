@@ -1,0 +1,39 @@
+command: task
+platform: all
+description: "Task runner / build tool (Taskfile.yml) — go-task"
+
+syntax:
+  usage: "task [options] [task [args]]"
+  key_flags:
+    - flag: "task"
+      description: "Run default task"
+    - flag: "task <name>"
+      description: "Run a named task"
+    - flag: "--list / -l"
+      description: "List available tasks with descriptions"
+    - flag: "--list-all / -a"
+      description: "List all tasks including private ones"
+    - flag: "--dry / -n"
+      description: "Print commands without executing"
+    - flag: "--force / -f"
+      description: "Run even if task is up-to-date"
+    - flag: "--parallel / -p"
+      description: "Run tasks in parallel"
+    - flag: "--watch / -w"
+      description: "Watch for file changes and re-run"
+    - flag: "--verbose / -v"
+      description: "Print full command before executing"
+    - flag: "--taskfile <path>"
+      description: "Use specific Taskfile"
+    - flag: "--dir <path>"
+      description: "Set working directory"
+  preferred_invocations:
+    - invocation: "task --list"
+      use_when: "Discover available tasks"
+    - invocation: "task <name>"
+      use_when: "Run a task"
+    - invocation: "task --watch test"
+      use_when: "Re-run tests on file changes"
+
+output_schema:
+  enable_filter: false

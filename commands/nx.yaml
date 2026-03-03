@@ -1,0 +1,49 @@
+command: nx
+platform: all
+description: "Nx monorepo build system and task runner"
+
+syntax:
+  usage: "nx <target> [project] [options]"
+  key_flags:
+    - flag: "build <project>"
+      description: "Build a project"
+    - flag: "test <project>"
+      description: "Run tests for a project"
+    - flag: "lint <project>"
+      description: "Lint a project"
+    - flag: "serve <project>"
+      description: "Serve a project locally"
+    - flag: "run <project>:<target>"
+      description: "Run any target on a project"
+    - flag: "affected --target=build"
+      description: "Build only affected projects (based on git diff)"
+      use_when: "CI — skip unchanged projects"
+    - flag: "affected --target=test --base=main"
+      description: "Test only projects affected since main"
+    - flag: "graph"
+      description: "Show project dependency graph in browser"
+    - flag: "generate @nx/react:component <name>"
+      description: "Run a generator/schematic"
+    - flag: "--skip-nx-cache"
+      description: "Ignore cached results"
+    - flag: "--parallel <n>"
+      description: "Run tasks in parallel"
+    - flag: "show projects"
+      description: "List all projects in the workspace"
+  preferred_invocations:
+    - invocation: "nx affected --target=build,test --base=main"
+      use_when: "CI — build and test only what changed"
+    - invocation: "nx run-many --target=build --all"
+      use_when: "Build all projects"
+    - invocation: "nx graph"
+      use_when: "Visualize project dependencies"
+
+output_schema:
+  enable_filter: true
+  noise_patterns:
+    - pattern: "^NX\\s+Running target"
+      reason: "Task runner header"
+    - pattern: "^>\\s+nx run"
+      reason: "Per-project execution line"
+  max_lines: 80
+  truncation_message: "... {remaining} more nx output lines."

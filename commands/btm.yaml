@@ -1,0 +1,34 @@
+command: btm
+platform: all
+description: "bottom — graphical system monitor (CPU, memory, disks, network, processes)"
+
+syntax:
+  usage: "btm [options]"
+  key_flags:
+    - flag: "--basic / -b"
+      description: "Basic mode (no graphs, minimal UI)"
+      use_when: "Low-resource terminals or SSH"
+    - flag: "--tree / -T"
+      description: "Show process tree view"
+    - flag: "--rate <ms>"
+      description: "Refresh rate in milliseconds (default 1000)"
+    - flag: "--filter <regex>"
+      description: "Filter processes by name on startup"
+    - flag: "--mem_as_value / -m"
+      description: "Show memory as absolute values, not percentages"
+    - flag: "--celsius / -c"
+      description: "Show temperatures in Celsius"
+    - flag: "--process_command"
+      description: "Show full command in process list"
+    - flag: "--network_use_bytes"
+      description: "Show network usage in bytes"
+  preferred_invocations:
+    - invocation: "btm"
+      use_when: "Full graphical system monitor"
+    - invocation: "btm --basic"
+      use_when: "Minimal mode for SSH or low-resource systems"
+    - invocation: "btm --tree"
+      use_when: "View process hierarchy"
+
+output_schema:
+  enable_filter: false

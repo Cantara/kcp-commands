@@ -1,0 +1,53 @@
+command: playwright
+platform: all
+description: "Browser end-to-end testing (Chromium, Firefox, WebKit)"
+
+syntax:
+  usage: "playwright <command> [options]"
+  key_flags:
+    - flag: "test"
+      description: "Run all tests"
+    - flag: "test <file>"
+      description: "Run specific test file"
+    - flag: "test -g '<name>'"
+      description: "Run tests matching name pattern"
+    - flag: "--project <name>"
+      description: "Run specific browser project (chromium, firefox, webkit)"
+    - flag: "--headed"
+      description: "Run in headed mode (show browser)"
+      use_when: "Debugging — see what's happening"
+    - flag: "--debug"
+      description: "Run in debug mode (pause on errors)"
+    - flag: "--ui"
+      description: "Launch interactive UI mode"
+    - flag: "--reporter list"
+      description: "Output format (list, dot, html, json, github)"
+    - flag: "--workers <n>"
+      description: "Number of parallel workers"
+    - flag: "--retries <n>"
+      description: "Number of retries on failure"
+    - flag: "--timeout <ms>"
+      description: "Test timeout in milliseconds"
+    - flag: "show-report"
+      description: "Open the HTML test report"
+    - flag: "codegen <url>"
+      description: "Record test by clicking through the browser"
+    - flag: "trace view <file>"
+      description: "View a trace file"
+  preferred_invocations:
+    - invocation: "playwright test"
+      use_when: "Run all tests headless"
+    - invocation: "playwright test --headed --debug"
+      use_when: "Debug a failing test interactively"
+    - invocation: "playwright test --project chromium -g 'login'"
+      use_when: "Run login tests in Chromium only"
+    - invocation: "playwright codegen https://example.com"
+      use_when: "Record a new test"
+
+output_schema:
+  enable_filter: true
+  noise_patterns:
+    - pattern: "^\\s+✓"
+      reason: "Individual passing test lines"
+  max_lines: 80
+  truncation_message: "... {remaining} more playwright output lines."

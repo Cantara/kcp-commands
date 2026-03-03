@@ -1,0 +1,51 @@
+command: jest
+platform: all
+description: "JavaScript/TypeScript test framework (Meta)"
+
+syntax:
+  usage: "jest [options] [testPathPattern]"
+  key_flags:
+    - flag: "--watch"
+      description: "Watch files and re-run changed tests"
+      use_when: "Interactive development"
+    - flag: "--watchAll"
+      description: "Watch all files, re-run all tests on change"
+    - flag: "--coverage"
+      description: "Collect and report code coverage"
+    - flag: "--testPathPattern <pattern>"
+      description: "Run tests matching file path pattern"
+    - flag: "-t '<name>'"
+      description: "Run tests matching description name"
+    - flag: "--verbose"
+      description: "Display individual test results"
+    - flag: "--bail / -b"
+      description: "Stop after first test failure"
+    - flag: "--runInBand / -i"
+      description: "Run tests serially (no parallelism)"
+      use_when: "Debugging — avoids concurrent test interference"
+    - flag: "--clearCache"
+      description: "Delete Jest's transform cache"
+      use_when: "Stale cache causing unexpected failures"
+    - flag: "--config <path>"
+      description: "Use specific Jest config file"
+    - flag: "--updateSnapshot / -u"
+      description: "Update snapshot files"
+  preferred_invocations:
+    - invocation: "jest --watch"
+      use_when: "Interactive test development"
+    - invocation: "jest --coverage --ci"
+      use_when: "CI — collect coverage, no watch"
+    - invocation: "jest -t 'my test name'"
+      use_when: "Run a specific test by name"
+    - invocation: "jest src/components/Button"
+      use_when: "Run tests for a specific file"
+
+output_schema:
+  enable_filter: true
+  noise_patterns:
+    - pattern: "^\\s+✓"
+      reason: "Individual passing test lines (verbose mode)"
+    - pattern: "^\\s+●"
+      reason: "Test suite header for failures — keep errors"
+  max_lines: 80
+  truncation_message: "... {remaining} more jest output lines."

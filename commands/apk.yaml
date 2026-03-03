@@ -1,0 +1,45 @@
+command: apk
+platform: linux
+description: "Alpine Linux package manager"
+
+syntax:
+  usage: "apk <command> [options] [packages]"
+  key_flags:
+    - flag: "add <pkg>"
+      description: "Install package"
+      use_when: "Adding a package"
+    - flag: "add --no-cache <pkg>"
+      description: "Install without caching index (Docker best practice)"
+      use_when: "Dockerfile RUN layer — keeps image small"
+    - flag: "del <pkg>"
+      description: "Remove package"
+    - flag: "update"
+      description: "Update package index"
+    - flag: "upgrade"
+      description: "Upgrade all installed packages"
+    - flag: "search <term>"
+      description: "Search for packages"
+    - flag: "info <pkg>"
+      description: "Show package details"
+    - flag: "--virtual <name>"
+      description: "Group packages under a virtual name for easy removal"
+      use_when: "Build dependencies in Docker (apk del <name> after build)"
+    - flag: "-q"
+      description: "Quiet output"
+  preferred_invocations:
+    - invocation: "apk add --no-cache <pkg>"
+      use_when: "Dockerfile — install without leaving cache"
+    - invocation: "apk add --virtual .build-deps gcc make && apk del .build-deps"
+      use_when: "Install + remove build-only deps in Docker"
+    - invocation: "apk update && apk upgrade"
+      use_when: "Update index and upgrade all packages"
+
+output_schema:
+  enable_filter: true
+  noise_patterns:
+    - pattern: "^fetch "
+      reason: "Index fetch progress lines"
+    - pattern: "^OK:"
+      reason: "Summary OK lines"
+  max_lines: 30
+  truncation_message: "... {remaining} more apk output lines."

@@ -1,0 +1,53 @@
+command: bazel
+platform: all
+description: "Bazel build system (Google) — fast, correct, multi-language"
+
+syntax:
+  usage: "bazel <command> [options] [target]"
+  key_flags:
+    - flag: "build //..."
+      description: "Build all targets in the workspace"
+    - flag: "build //<package>:<target>"
+      description: "Build a specific target"
+    - flag: "test //..."
+      description: "Run all tests"
+    - flag: "test //<package>:all"
+      description: "Run all tests in a package"
+    - flag: "run //<package>:<binary>"
+      description: "Build and run a binary target"
+    - flag: "query 'deps(//<target>)'"
+      description: "Query dependency graph"
+    - flag: "clean"
+      description: "Remove build outputs"
+    - flag: "clean --expunge"
+      description: "Remove all cached outputs including execution root"
+    - flag: "--config=<name>"
+      description: "Use named config from .bazelrc"
+    - flag: "--jobs <n>"
+      description: "Number of parallel jobs"
+    - flag: "--verbose_failures"
+      description: "Show full command on failure"
+      use_when: "Debugging build failures"
+    - flag: "--sandbox_debug"
+      description: "Debug sandboxing issues"
+    - flag: "info workspace"
+      description: "Show workspace root and build info"
+  preferred_invocations:
+    - invocation: "bazel build //..."
+      use_when: "Build everything"
+    - invocation: "bazel test //... --verbose_failures"
+      use_when: "Run all tests with failure detail"
+    - invocation: "bazel run //<pkg>:<bin>"
+      use_when: "Build and run a specific binary"
+
+output_schema:
+  enable_filter: true
+  noise_patterns:
+    - pattern: "^INFO: Analyzed "
+      reason: "Analysis summary line"
+    - pattern: "^INFO: Found \\d+ target"
+      reason: "Target discovery line"
+    - pattern: "^INFO: Elapsed time"
+      reason: "Timing summary line"
+  max_lines: 80
+  truncation_message: "... {remaining} more bazel output lines."

@@ -1,0 +1,46 @@
+command: ruff
+platform: all
+description: "Extremely fast Python linter and formatter (Astral)"
+
+syntax:
+  usage: "ruff <command> [options] [path]"
+  key_flags:
+    - flag: "check ."
+      description: "Lint all Python files"
+      use_when: "Default lint pass"
+    - flag: "check --fix ."
+      description: "Lint and auto-fix safe violations"
+    - flag: "check --unsafe-fixes ."
+      description: "Apply fixes that may change semantics"
+    - flag: "format ."
+      description: "Format all Python files (black-compatible)"
+    - flag: "format --check ."
+      description: "Check formatting without modifying files"
+      use_when: "CI — fail if unformatted"
+    - flag: "--select <rules>"
+      description: "Enable specific rule codes (e.g. E,W,F,I)"
+    - flag: "--ignore <rules>"
+      description: "Ignore specific rule codes"
+    - flag: "--line-length <n>"
+      description: "Override line length (default 88)"
+    - flag: "--watch"
+      description: "Re-run on file changes"
+    - flag: "--output-format concise"
+      description: "Compact output for CI"
+  preferred_invocations:
+    - invocation: "ruff check . && ruff format --check ."
+      use_when: "CI — lint and check formatting"
+    - invocation: "ruff check --fix . && ruff format ."
+      use_when: "Auto-fix and format before commit"
+    - invocation: "ruff check --select I --fix ."
+      use_when: "Sort imports only"
+
+output_schema:
+  enable_filter: true
+  noise_patterns:
+    - pattern: "^Found \\d+ error"
+      reason: "Summary line — keep, but not per-file noise"
+    - pattern: "^All checks passed"
+      reason: "Success summary"
+  max_lines: 60
+  truncation_message: "... {remaining} more ruff violations. Run with --output-format concise for summary."

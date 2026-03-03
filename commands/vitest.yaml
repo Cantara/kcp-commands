@@ -1,0 +1,49 @@
+command: vitest
+platform: all
+description: "Vite-native test runner (fast, ESM-first)"
+
+syntax:
+  usage: "vitest [command] [options] [filter]"
+  key_flags:
+    - flag: "run"
+      description: "Run tests once (no watch)"
+      use_when: "CI"
+    - flag: "watch"
+      description: "Watch mode (default when interactive)"
+    - flag: "ui"
+      description: "Launch browser UI for test results"
+    - flag: "bench"
+      description: "Run benchmarks"
+    - flag: "coverage"
+      description: "Run with coverage report"
+    - flag: "--reporter verbose"
+      description: "Show individual test results"
+    - flag: "--reporter dot"
+      description: "Minimal dot reporter for CI"
+    - flag: "-t '<name>'"
+      description: "Filter tests by name pattern"
+    - flag: "--project <name>"
+      description: "Run specific project in workspace mode"
+    - flag: "--threads false"
+      description: "Disable worker threads (easier debugging)"
+    - flag: "--bail <n>"
+      description: "Stop after n failures"
+    - flag: "--coverage.provider v8"
+      description: "Use V8 built-in coverage"
+  preferred_invocations:
+    - invocation: "vitest run"
+      use_when: "CI — run once and exit"
+    - invocation: "vitest"
+      use_when: "Watch mode for development"
+    - invocation: "vitest run --coverage"
+      use_when: "Run with coverage report"
+    - invocation: "vitest -t 'my test'"
+      use_when: "Run tests matching a name pattern"
+
+output_schema:
+  enable_filter: true
+  noise_patterns:
+    - pattern: "^\\s+✓"
+      reason: "Individual passing test lines"
+  max_lines: 60
+  truncation_message: "... {remaining} more vitest output lines."

@@ -1,0 +1,47 @@
+command: cypress
+platform: all
+description: "End-to-end browser testing framework"
+
+syntax:
+  usage: "cypress <command> [options]"
+  key_flags:
+    - flag: "run"
+      description: "Run tests headlessly (CI mode)"
+    - flag: "open"
+      description: "Open interactive test runner"
+      use_when: "Development and debugging"
+    - flag: "run --spec 'cypress/e2e/<file>.cy.ts'"
+      description: "Run a specific spec file"
+    - flag: "run --browser <chrome|firefox|electron|edge>"
+      description: "Use specific browser"
+    - flag: "run --headed"
+      description: "Run with browser UI visible"
+    - flag: "run --headless"
+      description: "Explicitly run headlessly"
+    - flag: "run --reporter <name>"
+      description: "Output format (spec, dot, json, junit)"
+    - flag: "run --env <key>=<value>"
+      description: "Pass environment variables"
+    - flag: "run --config baseUrl=http://localhost:3000"
+      description: "Override config values"
+    - flag: "run --record"
+      description: "Record to Cypress Cloud"
+    - flag: "verify"
+      description: "Verify Cypress is installed correctly"
+  preferred_invocations:
+    - invocation: "cypress run"
+      use_when: "CI — headless run all tests"
+    - invocation: "cypress open"
+      use_when: "Interactive development"
+    - invocation: "cypress run --spec 'cypress/e2e/login.cy.ts' --headed"
+      use_when: "Debug a specific test visually"
+
+output_schema:
+  enable_filter: true
+  noise_patterns:
+    - pattern: "^  ✓"
+      reason: "Individual passing test lines"
+    - pattern: "^────────"
+      reason: "Separator lines"
+  max_lines: 80
+  truncation_message: "... {remaining} more cypress output lines."

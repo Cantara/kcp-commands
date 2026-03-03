@@ -1,0 +1,40 @@
+command: prettier
+platform: all
+description: "Opinionated code formatter (JS, TS, CSS, HTML, JSON, YAML, Markdown)"
+
+syntax:
+  usage: "prettier [options] [file/glob]"
+  key_flags:
+    - flag: "--write ."
+      description: "Format all files in-place"
+      use_when: "Format before committing"
+    - flag: "--check ."
+      description: "Check formatting without writing"
+      use_when: "CI — exit 1 if unformatted"
+    - flag: "--list-different"
+      description: "List files that differ from formatted output"
+    - flag: "'src/**/*.{ts,tsx,css}'"
+      description: "Target specific glob pattern"
+    - flag: "--parser <name>"
+      description: "Force parser (babel, typescript, css, markdown, yaml)"
+      use_when: "File extension not recognized"
+    - flag: "--tab-width <n>"
+      description: "Spaces per indent level (default 2)"
+    - flag: "--single-quote"
+      description: "Use single quotes instead of double"
+    - flag: "--trailing-comma all"
+      description: "Add trailing commas everywhere (ES5, all, none)"
+    - flag: "--print-width <n>"
+      description: "Line wrap width (default 80)"
+    - flag: "--ignore-path .prettierignore"
+      description: "Use custom ignore file"
+  preferred_invocations:
+    - invocation: "prettier --write ."
+      use_when: "Format everything before commit"
+    - invocation: "prettier --check ."
+      use_when: "CI formatting check"
+    - invocation: "prettier --write 'src/**/*.{ts,tsx,css,json}'"
+      use_when: "Format specific file types"
+
+output_schema:
+  enable_filter: false

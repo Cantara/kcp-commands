@@ -1,0 +1,40 @@
+command: procs
+platform: all
+description: "Modern ps replacement with colour, search, and tree view (Rust)"
+
+syntax:
+  usage: "procs [options] [search terms]"
+  key_flags:
+    - flag: "procs"
+      description: "List all processes"
+    - flag: "procs <name>"
+      description: "Filter processes by name/command"
+      use_when: "Find a specific process"
+    - flag: "--tree / -t"
+      description: "Show process tree"
+    - flag: "--watch / -w"
+      description: "Live-updating mode"
+    - flag: "--watch-interval <secs>"
+      description: "Update interval in seconds"
+    - flag: "--sortd <column>"
+      description: "Sort descending by column (cpu, mem, pid)"
+    - flag: "--sorta <column>"
+      description: "Sort ascending by column"
+    - flag: "--no-header"
+      description: "Suppress header row"
+    - flag: "--insert <columns>"
+      description: "Add extra columns (e.g. --insert cpu,vm_rss)"
+  preferred_invocations:
+    - invocation: "procs"
+      use_when: "List all processes with colour"
+    - invocation: "procs java"
+      use_when: "Find all Java processes"
+    - invocation: "procs --tree"
+      use_when: "Show process hierarchy"
+    - invocation: "procs --watch --sortd cpu"
+      use_when: "Live view sorted by CPU usage"
+
+output_schema:
+  enable_filter: true
+  max_lines: 50
+  truncation_message: "... {remaining} more processes. Use a search term to narrow."

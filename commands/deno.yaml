@@ -1,0 +1,45 @@
+command: deno
+platform: all
+description: "Deno JavaScript/TypeScript runtime"
+
+syntax:
+  usage: "deno <command> [options] [file]"
+  key_flags:
+    - flag: "run <file>"
+      description: "Run a script"
+    - flag: "run --allow-net <file>"
+      description: "Run with network access"
+      use_when: "Script needs HTTP/fetch"
+    - flag: "run --allow-read --allow-write <file>"
+      description: "Run with filesystem access"
+    - flag: "task <name>"
+      description: "Run a task from deno.json"
+      use_when: "Like npm run"
+    - flag: "compile <file>"
+      description: "Compile to standalone executable"
+    - flag: "fmt"
+      description: "Format source files"
+    - flag: "lint"
+      description: "Lint source files"
+    - flag: "test"
+      description: "Run tests"
+    - flag: "repl"
+      description: "Interactive REPL"
+    - flag: "install -g <url>"
+      description: "Install script as global CLI tool"
+    - flag: "--allow-all / -A"
+      description: "Allow all permissions (use sparingly)"
+    - flag: "--unstable"
+      description: "Enable unstable APIs"
+    - flag: "--watch"
+      description: "Watch for file changes and restart"
+  preferred_invocations:
+    - invocation: "deno run --allow-net --allow-read main.ts"
+      use_when: "Run TypeScript with specific permissions"
+    - invocation: "deno task dev"
+      use_when: "Run dev task from deno.json"
+    - invocation: "deno fmt && deno lint"
+      use_when: "Format and lint before committing"
+
+output_schema:
+  enable_filter: false

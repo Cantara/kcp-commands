@@ -1,0 +1,34 @@
+command: markdownlint
+platform: all
+description: "Markdown linter (markdownlint-cli / markdownlint-cli2)"
+
+syntax:
+  usage: "markdownlint [options] <file|glob>"
+  key_flags:
+    - flag: "'**/*.md'"
+      description: "Lint all Markdown files recursively"
+    - flag: "--fix"
+      description: "Auto-fix fixable violations"
+    - flag: "--config .markdownlint.json"
+      description: "Use specific config file"
+    - flag: "--ignore node_modules"
+      description: "Ignore directory"
+    - flag: "--dot"
+      description: "Include files in dotfiles directories"
+    - flag: "--disable MD013"
+      description: "Disable a specific rule (line length)"
+      use_when: "Rule too noisy for the project"
+    - flag: "--enable MD041"
+      description: "Enable a specific rule"
+    - flag: "-o <file>"
+      description: "Write results to file"
+  preferred_invocations:
+    - invocation: "markdownlint '**/*.md' --ignore node_modules"
+      use_when: "Lint all Markdown, skip node_modules"
+    - invocation: "markdownlint --fix '**/*.md'"
+      use_when: "Auto-fix Markdown issues"
+    - invocation: "markdownlint README.md CHANGELOG.md"
+      use_when: "Lint specific files"
+
+output_schema:
+  enable_filter: false

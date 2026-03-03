@@ -1,0 +1,46 @@
+command: swift
+platform: macos
+description: "Swift compiler and package manager"
+
+syntax:
+  usage: "swift <command> [options]"
+  key_flags:
+    - flag: "build"
+      description: "Build the package"
+    - flag: "build -c release"
+      description: "Build in release configuration"
+    - flag: "run [target]"
+      description: "Build and run the executable target"
+    - flag: "test"
+      description: "Build and run tests"
+    - flag: "package init --type executable"
+      description: "Create a new Swift package"
+    - flag: "package init --type library"
+      description: "Create a new library package"
+    - flag: "package resolve"
+      description: "Resolve and fetch dependencies"
+    - flag: "package update"
+      description: "Update dependencies"
+    - flag: "package show-dependencies"
+      description: "Show dependency graph"
+    - flag: "-v"
+      description: "Verbose output"
+  preferred_invocations:
+    - invocation: "swift build"
+      use_when: "Compile the package"
+    - invocation: "swift run"
+      use_when: "Build and run the default target"
+    - invocation: "swift test"
+      use_when: "Run the test suite"
+    - invocation: "swift package init --type executable"
+      use_when: "Start a new Swift project"
+
+output_schema:
+  enable_filter: true
+  noise_patterns:
+    - pattern: "^Build complete!"
+      reason: "Success summary"
+    - pattern: "^Compiling "
+      reason: "Per-file compile progress"
+  max_lines: 50
+  truncation_message: "... {remaining} more swift output lines."

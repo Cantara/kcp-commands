@@ -1,0 +1,45 @@
+command: eslint
+platform: all
+description: "JavaScript/TypeScript linter"
+
+syntax:
+  usage: "eslint [options] [file|dir|glob]"
+  key_flags:
+    - flag: "."
+      description: "Lint all files in current directory"
+    - flag: "--fix"
+      description: "Auto-fix fixable problems"
+    - flag: "--ext .ts,.tsx,.js,.jsx"
+      description: "Specify file extensions to lint"
+    - flag: "-f <formatter>"
+      description: "Output format (stylish, compact, json, github)"
+      use_when: "CI: use 'github' for annotations"
+    - flag: "--max-warnings <n>"
+      description: "Fail if more than n warnings"
+      use_when: "CI: --max-warnings 0 to fail on any warning"
+    - flag: "--quiet"
+      description: "Report errors only, suppress warnings"
+    - flag: "--ignore-path .eslintignore"
+      description: "Use custom ignore file"
+    - flag: "--rule '<rule>: error'"
+      description: "Override a rule severity"
+    - flag: "-c <config>"
+      description: "Use specific config file"
+    - flag: "--print-config <file>"
+      description: "Print computed config for a file"
+      use_when: "Debugging config resolution"
+  preferred_invocations:
+    - invocation: "eslint . --ext .ts,.tsx --fix"
+      use_when: "Lint and auto-fix TypeScript files"
+    - invocation: "eslint . --max-warnings 0"
+      use_when: "CI — fail on warnings"
+    - invocation: "eslint src/ --format compact"
+      use_when: "Quick scan of src directory"
+
+output_schema:
+  enable_filter: true
+  noise_patterns:
+    - pattern: "^\\s*$"
+      reason: "Blank lines between file sections"
+  max_lines: 80
+  truncation_message: "... {remaining} more eslint violations."

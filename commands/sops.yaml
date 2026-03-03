@@ -1,0 +1,44 @@
+command: sops
+platform: all
+description: "Secrets OPerationS — encrypt/decrypt config files (Mozilla)"
+
+syntax:
+  usage: "sops [options] <file>"
+  key_flags:
+    - flag: "-e / --encrypt <file>"
+      description: "Encrypt a file"
+    - flag: "-d / --decrypt <file>"
+      description: "Decrypt a file to stdout"
+    - flag: "-e -i <file>"
+      description: "Encrypt file in-place"
+    - flag: "-d -i <file>"
+      description: "Decrypt file in-place"
+    - flag: "sops <file>"
+      description: "Open file in editor (decrypt, edit, re-encrypt)"
+      use_when: "Interactive editing of encrypted file"
+    - flag: "-r / --rotate <file>"
+      description: "Rotate encryption keys"
+    - flag: "--age <recipient>"
+      description: "Encrypt with age public key"
+      use_when: "Age key backend"
+    - flag: "--kms <arn>"
+      description: "Encrypt with AWS KMS key"
+    - flag: "--pgp <fingerprint>"
+      description: "Encrypt with GPG key"
+    - flag: "--config <path>"
+      description: "Use specific .sops.yaml config"
+    - flag: "exec-env <file> <cmd>"
+      description: "Run command with decrypted values as env vars"
+      use_when: "Inject secrets into a process"
+  preferred_invocations:
+    - invocation: "sops -d secrets.yaml"
+      use_when: "Decrypt and print to stdout"
+    - invocation: "sops secrets.yaml"
+      use_when: "Interactively edit an encrypted file"
+    - invocation: "sops -e -i secrets.yaml"
+      use_when: "Encrypt a plaintext file in-place"
+    - invocation: "sops exec-env secrets.yaml 'env | grep DB'"
+      use_when: "Run command with secrets as environment variables"
+
+output_schema:
+  enable_filter: false

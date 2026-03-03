@@ -1,0 +1,36 @@
+command: zoxide
+platform: all
+description: "Smarter cd — learns your frecent directories"
+
+syntax:
+  usage: "z <query>   (shell alias for zoxide query --cd)"
+  key_flags:
+    - flag: "z <partial>"
+      description: "Jump to best matching directory"
+      use_when: "Default — jump by partial name"
+    - flag: "zi"
+      description: "Interactive selection with fzf"
+      use_when: "Multiple matches or unsure of name"
+    - flag: "z -"
+      description: "Jump to previous directory"
+    - flag: "zoxide add <path>"
+      description: "Manually add a directory to the database"
+    - flag: "zoxide query <pattern>"
+      description: "Print best match without jumping"
+    - flag: "zoxide query -l"
+      description: "List all directories in the database"
+    - flag: "zoxide remove <path>"
+      description: "Remove a directory from the database"
+    - flag: "zoxide init bash"
+      description: "Print shell init script (bash/zsh/fish/...)"
+      use_when: "Initial setup in shell rc file"
+  preferred_invocations:
+    - invocation: "z myproject"
+      use_when: "Jump to a frequently-visited directory by partial name"
+    - invocation: "zi"
+      use_when: "Interactively pick from recent directories"
+    - invocation: "zoxide query -l | head"
+      use_when: "See what's in the zoxide database"
+
+output_schema:
+  enable_filter: false

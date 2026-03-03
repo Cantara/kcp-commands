@@ -1,0 +1,30 @@
+command: go
+subcommand: run
+platform: all
+description: "Compile and run Go program"
+
+syntax:
+  usage: "go run [flags] <file|package> [args]"
+  key_flags:
+    - flag: "go run ."
+      description: "Run package in current directory"
+      use_when: "Default — run main package"
+    - flag: "go run main.go"
+      description: "Run specific file"
+    - flag: "go run ./cmd/<name>"
+      description: "Run a specific command in a multi-command repo"
+    - flag: "-race"
+      description: "Enable race condition detector"
+      use_when: "Debugging concurrency issues"
+    - flag: "-v"
+      description: "Verbose output"
+  preferred_invocations:
+    - invocation: "go run ."
+      use_when: "Run the main package in current directory"
+    - invocation: "go run ./cmd/<app>"
+      use_when: "Run a specific command from cmd/ directory"
+    - invocation: "go run -race ."
+      use_when: "Run with race detector enabled"
+
+output_schema:
+  enable_filter: false

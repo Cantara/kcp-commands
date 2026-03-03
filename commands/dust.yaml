@@ -1,0 +1,39 @@
+command: dust
+platform: all
+description: "du alternative — intuitive disk usage visualizer (Rust)"
+
+syntax:
+  usage: "dust [options] [path]"
+  key_flags:
+    - flag: "dust"
+      description: "Show disk usage of current directory"
+    - flag: "-d <n>"
+      description: "Depth limit (number of directory levels)"
+      use_when: "Limit output depth"
+    - flag: "-n <n>"
+      description: "Show only top n entries"
+    - flag: "-r"
+      description: "Reverse order (smallest first)"
+    - flag: "-x"
+      description: "Stay on same filesystem (don't cross mount points)"
+    - flag: "-b"
+      description: "No percent bars — just sizes and paths"
+    - flag: "-f"
+      description: "Show file count instead of sizes"
+    - flag: "--ignore-directory <dir>"
+      description: "Exclude directory from results"
+      use_when: "Skip node_modules, .git, target/"
+    - flag: "-z <threshold>"
+      description: "Minimum size to show (e.g. 1M, 500K)"
+  preferred_invocations:
+    - invocation: "dust"
+      use_when: "Show disk usage of current directory"
+    - invocation: "dust -d 2 /var"
+      use_when: "Show top 2 levels of /var"
+    - invocation: "dust --ignore-directory node_modules"
+      use_when: "Skip node_modules in JS project"
+
+output_schema:
+  enable_filter: true
+  max_lines: 50
+  truncation_message: "... {remaining} more dust entries. Use -n to limit."

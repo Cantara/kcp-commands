@@ -1,0 +1,51 @@
+command: podman
+platform: linux
+description: "Rootless/daemonless container engine (Docker-compatible)"
+
+syntax:
+  usage: "podman <command> [options]"
+  key_flags:
+    - flag: "run -it --rm <image>"
+      description: "Run container interactively, remove on exit"
+    - flag: "run -d -p <host>:<container> <image>"
+      description: "Run detached with port mapping"
+    - flag: "ps"
+      description: "List running containers"
+    - flag: "ps -a"
+      description: "List all containers including stopped"
+    - flag: "images"
+      description: "List images"
+    - flag: "build -t <name> ."
+      description: "Build image from Dockerfile"
+    - flag: "pull <image>"
+      description: "Pull image from registry"
+    - flag: "logs -f <container>"
+      description: "Follow container logs"
+    - flag: "exec -it <container> bash"
+      description: "Open shell in running container"
+    - flag: "stop / rm <container>"
+      description: "Stop and remove a container"
+    - flag: "rmi <image>"
+      description: "Remove an image"
+    - flag: "pod create / pod start"
+      description: "Manage pods (Kubernetes-like groups)"
+      use_when: "Running multi-container workloads"
+    - flag: "generate kube <container>"
+      description: "Generate Kubernetes YAML from running container"
+  preferred_invocations:
+    - invocation: "podman run -it --rm <image> bash"
+      use_when: "Interactive shell in container"
+    - invocation: "podman build -t myapp . && podman run -p 8080:8080 myapp"
+      use_when: "Build and run locally"
+    - invocation: "podman ps -a"
+      use_when: "See all containers"
+
+output_schema:
+  enable_filter: true
+  noise_patterns:
+    - pattern: "^CONTAINER ID"
+      reason: "Table header"
+    - pattern: "^IMAGE"
+      reason: "Image table header"
+  max_lines: 50
+  truncation_message: "... {remaining} more podman output lines."

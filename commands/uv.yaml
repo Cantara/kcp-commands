@@ -1,0 +1,53 @@
+command: uv
+platform: all
+description: "Ultra-fast Python package manager (Astral)"
+
+syntax:
+  usage: "uv <command> [options]"
+  key_flags:
+    - flag: "pip install <pkg>"
+      description: "Install package into active environment"
+      use_when: "Adding a dependency"
+    - flag: "add <pkg>"
+      description: "Add dependency to project and sync"
+      use_when: "Managing project dependencies (uv project)"
+    - flag: "sync"
+      description: "Sync environment to lockfile"
+      use_when: "Reproducible install from uv.lock"
+    - flag: "run <cmd>"
+      description: "Run command in project environment"
+      use_when: "Running scripts without activating venv"
+    - flag: "venv"
+      description: "Create virtual environment"
+      use_when: "Setting up isolated environment"
+    - flag: "tool install <pkg>"
+      description: "Install CLI tool globally (like pipx)"
+      use_when: "Installing tools like ruff, black, mypy"
+    - flag: "pip compile requirements.in"
+      description: "Compile requirements with pinned hashes"
+      use_when: "Generating lockfile from loose requirements"
+    - flag: "--python <version>"
+      description: "Use specific Python version"
+    - flag: "--dev"
+      description: "Include dev dependencies"
+    - flag: "-q"
+      description: "Quiet output"
+  preferred_invocations:
+    - invocation: "uv sync"
+      use_when: "Install all dependencies from lockfile"
+    - invocation: "uv add <pkg>"
+      use_when: "Add a dependency to the project"
+    - invocation: "uv run pytest"
+      use_when: "Run tests without activating venv"
+    - invocation: "uv pip install -r requirements.txt"
+      use_when: "Install from requirements file"
+
+output_schema:
+  enable_filter: true
+  noise_patterns:
+    - pattern: "^Resolved \\d+ packages"
+      reason: "Dependency resolution summary line"
+    - pattern: "^Audited \\d+ packages"
+      reason: "Audit summary line"
+  max_lines: 40
+  truncation_message: "... {remaining} more uv output lines."

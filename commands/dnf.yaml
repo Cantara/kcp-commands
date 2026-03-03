@@ -1,0 +1,51 @@
+command: dnf
+platform: linux
+description: "DNF package manager (Red Hat, Fedora, CentOS Stream)"
+
+syntax:
+  usage: "dnf <command> [options] [package]"
+  key_flags:
+    - flag: "install <pkg>"
+      description: "Install package"
+    - flag: "remove <pkg>"
+      description: "Remove package"
+    - flag: "update"
+      description: "Update all packages"
+    - flag: "update <pkg>"
+      description: "Update specific package"
+    - flag: "search <term>"
+      description: "Search for packages"
+    - flag: "info <pkg>"
+      description: "Show package details"
+    - flag: "list installed"
+      description: "List installed packages"
+    - flag: "group install '<group>'"
+      description: "Install a package group"
+    - flag: "-y"
+      description: "Auto-confirm prompts"
+      use_when: "Non-interactive scripts"
+    - flag: "--nogpgcheck"
+      description: "Skip GPG signature check"
+    - flag: "--enablerepo=<repo>"
+      description: "Enable specific repository"
+    - flag: "clean all"
+      description: "Clean cached metadata and packages"
+  preferred_invocations:
+    - invocation: "dnf install -y <pkg>"
+      use_when: "Non-interactive install"
+    - invocation: "dnf update -y"
+      use_when: "Update all packages non-interactively"
+    - invocation: "dnf search <term>"
+      use_when: "Find available packages"
+
+output_schema:
+  enable_filter: true
+  noise_patterns:
+    - pattern: "^Last metadata expiration check"
+      reason: "Cache freshness line"
+    - pattern: "^Dependencies resolved\\."
+      reason: "Boilerplate dependency header"
+    - pattern: "^={10,}"
+      reason: "Separator lines"
+  max_lines: 60
+  truncation_message: "... {remaining} more dnf output lines."

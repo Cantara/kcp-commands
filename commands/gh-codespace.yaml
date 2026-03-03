@@ -1,0 +1,46 @@
+command: gh
+subcommand: codespace
+platform: all
+description: "Manage GitHub Codespaces"
+
+syntax:
+  usage: "gh codespace <command> [options]"
+  key_flags:
+    - flag: "create"
+      description: "Create a new codespace"
+    - flag: "create --repo <owner/repo>"
+      description: "Create codespace for a specific repo"
+    - flag: "create --branch <branch>"
+      description: "Create on a specific branch"
+    - flag: "create --machine <type>"
+      description: "Specify machine type (e.g. standardLinux32gb)"
+    - flag: "list"
+      description: "List your codespaces"
+    - flag: "ssh"
+      description: "SSH into a codespace"
+    - flag: "ssh -c <name>"
+      description: "SSH into a named codespace"
+    - flag: "code"
+      description: "Open codespace in VS Code"
+    - flag: "ports"
+      description: "List forwarded ports"
+    - flag: "ports forward <port>:<local>"
+      description: "Forward a port from codespace to localhost"
+    - flag: "stop"
+      description: "Stop a running codespace"
+    - flag: "delete"
+      description: "Delete a codespace"
+    - flag: "--status"
+      description: "Show codespace status"
+  preferred_invocations:
+    - invocation: "gh codespace create --repo owner/repo --branch main"
+      use_when: "Create a new codespace for a repo"
+    - invocation: "gh codespace list"
+      use_when: "See your codespaces"
+    - invocation: "gh codespace ssh"
+      use_when: "Shell into your codespace"
+    - invocation: "gh codespace code"
+      use_when: "Open codespace in VS Code"
+
+output_schema:
+  enable_filter: false

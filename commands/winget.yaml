@@ -1,0 +1,46 @@
+command: winget
+platform: windows
+description: "Windows Package Manager (WinGet)"
+
+syntax:
+  usage: "winget <command> [options]"
+  key_flags:
+    - flag: "install <pkg>"
+      description: "Install a package"
+    - flag: "install --id <id> -e"
+      description: "Install by exact package ID"
+      use_when: "Avoid ambiguous matches"
+    - flag: "upgrade <pkg>"
+      description: "Upgrade a package"
+    - flag: "upgrade --all"
+      description: "Upgrade all packages"
+    - flag: "uninstall <pkg>"
+      description: "Remove a package"
+    - flag: "search <term>"
+      description: "Search available packages"
+    - flag: "list"
+      description: "List installed packages"
+    - flag: "show <pkg>"
+      description: "Show package details"
+    - flag: "--silent"
+      description: "Silent install (no UI)"
+      use_when: "Scripted installs"
+    - flag: "--accept-package-agreements"
+      description: "Auto-accept license agreements"
+    - flag: "-s <source>"
+      description: "Use specific source (winget, msstore)"
+  preferred_invocations:
+    - invocation: "winget install --id <id> -e --silent --accept-package-agreements"
+      use_when: "Scripted/automated install"
+    - invocation: "winget upgrade --all --silent"
+      use_when: "Update all packages silently"
+    - invocation: "winget search <term>"
+      use_when: "Find a package"
+
+output_schema:
+  enable_filter: true
+  noise_patterns:
+    - pattern: "^-{5,}"
+      reason: "Separator lines"
+  max_lines: 40
+  truncation_message: "... {remaining} more winget output lines."
