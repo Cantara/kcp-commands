@@ -66,8 +66,13 @@ public class HookHandler implements HttpHandler {
             return;
         }
 
+        // Extract session context for event logging (available in Claude Code hook JSON)
+        String sessionId  = input.path("session_id").asText("");
+        String projectDir = input.path("cwd").asText("");
+
         ParsedCommand parsed = CommandParser.parse(command);
         if (parsed == null) {
+            EventLogger.log(sessionId, projectDir, command, null);
             sendEmpty(exchange);
             return;
         }
@@ -80,6 +85,18 @@ public class HookHandler implements HttpHandler {
         if (manifest == null) {
             manifest = generator.generate(parsed.cmd(), parsed.subcommand());
         }
+
+        // Derive the canonical manifest key (matches /filter/{key} naming convention)
+        String manifestKey = null;
+        if (manifest != null) {
+            manifestKey = manifest.subcommand() != null
+                    ? manifest.command() + "-" + manifest.subcommand()
+                    : manifest.command();
+        }
+
+        // Log event asynchronously — always, regardless of manifest resolution outcome
+        EventLogger.log(sessionId, projectDir, command, manifestKey);
+
         if (manifest == null) {
             sendEmpty(exchange);
             return;
