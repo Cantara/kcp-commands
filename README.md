@@ -1,5 +1,7 @@
 # kcp-commands
 
+<img src="https://totto.goatcounter.com/count?p=/kcp-commands-readme" alt="" style="display:none">
+
 **Save 33% of Claude Code's context window by giving it instant command knowledge and noise-filtered output.**
 
 kcp-commands is a [Claude Code hook](https://docs.anthropic.com/en/docs/claude-code/hooks) that intercepts Bash tool calls at two critical points: *before* execution (injecting concise flag/syntax guidance so the agent never wastes tokens on `--help`) and *after* execution (stripping noise from large outputs before they reach the model's context window).
