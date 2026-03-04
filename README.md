@@ -339,6 +339,7 @@ Good candidates for custom manifests:
 - [KCP MCP Bridge](https://github.com/Cantara/knowledge-context-protocol/tree/main/bridge/typescript) -- MCP bridge for project manifests
 - [Synthesis](https://github.com/exoreaction/Synthesis) -- codebase intelligence and indexing
 - [kcp-memory](https://github.com/Cantara/kcp-memory) -- episodic memory daemon; indexes session transcripts + tool-call events written by kcp-commands v0.9.0 Phase C
+- [kcp-memory release post](https://wiki.totto.org/blog/2026/03/03/kcp-memory/) -- three-layer memory model and MCP integration
 
 ## Knowledge manifest
 
