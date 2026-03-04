@@ -19,6 +19,20 @@ Read the [release post](https://wiki.totto.org/blog/2026/03/02/kcp-commands/) fo
 
 ---
 
+## Why this works
+
+Claude Code is designed to prefer shell commands (`grep`, `find`, `ls`) over reading full files — it reaches for the terminal first to narrow scope before loading content. This is the right instinct for token efficiency.
+
+The gap is that Claude arrives at each Bash call with no pre-loaded knowledge of the command it is about to run:
+
+- **Phase A** injects syntax context at the moment Claude is already planning the command — it lands in exactly the right place in the reasoning chain, before the call is issued.
+- **Phase B** removes the noise that Claude cannot filter itself — raw command output arrives in the context window as-is, and there is no built-in mechanism to strip it before it consumes space.
+- **Phase C** fills the cross-session gap — Claude Code starts each session with an empty context window. The event log gives kcp-memory the raw material to reconstruct what happened across sessions.
+
+kcp-commands does not change how Claude reasons. It gives Claude better inputs at the Bash tool boundary and cleaner outputs on the way back.
+
+---
+
 ## How it works
 
 ### Phase A -- Command syntax context (before execution)
