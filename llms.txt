@@ -1,0 +1,35 @@
+# kcp-commands
+
+> A Claude Code hook that saves 33% of a 200K context window by injecting compact CLI syntax
+> before Bash tool calls (Phase A) and filtering noisy output after them (Phase B).
+> Phase C writes every tool call to ~/.kcp/events.jsonl for kcp-memory to index.
+
+283 bundled manifests. Java daemon (12ms/call) + Node.js fallback. Apache 2.0.
+
+Part of the [Knowledge Context Protocol](https://github.com/Cantara/knowledge-context-protocol) ecosystem.
+
+## Key files
+
+- [README.md](README.md): Overview, install, how the three phases work, manifest format, releases
+- [docs/benchmark-results.md](docs/benchmark-results.md): Full benchmark methodology and measured numbers
+- [commands/ps.yaml](commands/ps.yaml): Example manifest showing Phase A + Phase B fields
+
+## Machine-readable manifest
+
+[knowledge.yaml](knowledge.yaml)
+
+## Install
+
+```bash
+# Java daemon (recommended — 12ms/call):
+curl -fsSL https://raw.githubusercontent.com/Cantara/kcp-commands/main/bin/install.sh | bash -s -- --java
+
+# Node.js only (no JVM required):
+curl -fsSL https://raw.githubusercontent.com/Cantara/kcp-commands/main/bin/install.sh | bash -s -- --node
+```
+
+## Related
+
+- [kcp-memory](https://github.com/Cantara/kcp-memory) — consumes ~/.kcp/events.jsonl for episodic memory
+- [Knowledge Context Protocol](https://github.com/Cantara/knowledge-context-protocol) — the KCP spec
+- [Release post](https://wiki.totto.org/blog/2026/03/02/kcp-commands/) — benchmark detail

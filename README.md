@@ -340,6 +340,10 @@ Good candidates for custom manifests:
 - [Synthesis](https://github.com/exoreaction/Synthesis) -- codebase intelligence and indexing
 - [kcp-memory](https://github.com/Cantara/kcp-memory) -- episodic memory daemon; indexes session transcripts + tool-call events written by kcp-commands v0.9.0 Phase C
 
+## Knowledge manifest
+
+This repository ships a [`knowledge.yaml`](knowledge.yaml) and [`llms.txt`](llms.txt) for AI agent navigation.
+
 ---
 
 ## License
