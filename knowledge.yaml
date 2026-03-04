@@ -14,7 +14,7 @@ units:
     scope: global
     audience: [human, agent, developer]
     validated: "2026-03-04"
-    triggers: [install, overview, how it works, phase a, phase b, phase c, context window, token savings, hooks, claude code]
+    triggers: [install, overview, how it works, phase a, phase b, phase c, context window, token savings, hooks, claude code, events.jsonl, event logging, manifest format]
 
   - id: benchmark-results
     path: docs/benchmark-results.md
@@ -23,7 +23,7 @@ units:
     audience: [developer, agent]
     validated: "2026-03-04"
     depends_on: [readme]
-    triggers: [benchmark, token savings, latency, methodology, numbers, 67352, 33 percent]
+    triggers: [benchmark, token savings, latency, methodology, numbers, 67352, 33 percent, phase c overhead, event logging overhead]
 
   - id: manifest-example
     path: commands/ps.yaml

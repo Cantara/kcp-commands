@@ -4,7 +4,13 @@
 
 **Save 33% of Claude Code's context window by giving it instant command knowledge and noise-filtered output.**
 
-kcp-commands is a [Claude Code hook](https://docs.anthropic.com/en/docs/claude-code/hooks) that intercepts Bash tool calls at two critical points: *before* execution (injecting concise flag/syntax guidance so the agent never wastes tokens on `--help`) and *after* execution (stripping noise from large outputs before they reach the model's context window).
+kcp-commands is a [Claude Code hook](https://docs.anthropic.com/en/docs/claude-code/hooks) that intercepts every Bash tool call and applies three phases:
+
+| Phase | When | What it does |
+|-------|------|--------------|
+| **A -- Syntax injection** | Before execution | Injects compact flag/syntax guidance so the agent picks the right flags immediately, never wastes a round trip on `--help` |
+| **B -- Output filtering** | After execution | Strips noise (boilerplate, permission errors, hundreds of irrelevant lines) before the output reaches the context window |
+| **C -- Event logging** | After execution | Writes every Bash call to `~/.kcp/events.jsonl` for [kcp-memory](https://github.com/Cantara/kcp-memory) to index as episodic memory |
 
 Measured across a typical agentic coding session: **67,352 tokens saved -- 33.7% of a 200K context window recovered**, equivalent to 33 additional tool call results fitting in the same context.
 
@@ -44,6 +50,18 @@ Large command outputs are piped through the manifest's noise filter before reach
 | `git log -6` | 78 tokens | 78 tokens | 0% (already small) |
 
 The filter adds zero overhead on commands whose output is already concise. It only activates when there is noise to remove.
+
+### Phase C -- Event logging (after execution)
+
+Every Bash hook call is appended to `~/.kcp/events.jsonl` as a single JSONL line:
+
+```json
+{"ts":"2026-03-03T16:04:24Z","session_id":"ad732c58-...","project_dir":"/src/myproject","tool":"Bash","command":"cat /tmp/daemon.log","manifest_key":"cat"}
+```
+
+Fields: `ts` (ISO-8601), `session_id` (Claude Code session UUID), `project_dir` (working directory), `tool` (always `"Bash"`), `command` (raw command, truncated to 500 chars), `manifest_key` (resolved manifest or `null`).
+
+The write is asynchronous (virtual thread) and never blocks the hook response or raises an error. [kcp-memory](https://github.com/Cantara/kcp-memory) v0.2.0+ indexes these events to provide tool-level episodic memory across sessions.
 
 ---
 
@@ -86,6 +104,20 @@ cd kcp-commands
 ```
 
 When running from a clone, the installer falls back to a local Maven build if the release download fails.
+
+### Verify it's working
+
+After restarting Claude Code, run any Bash command. You should see a `[kcp]` context block injected before it executes (visible in the hook output). To confirm all three phases:
+
+```bash
+# Phase A: daemon responds to health check
+curl -sf http://localhost:7734/health && echo "daemon running"
+
+# Phase C: events are being logged
+tail -1 ~/.kcp/events.jsonl
+```
+
+Phase B is transparent -- you'll notice it when a normally noisy command like `ps aux` returns a concise, filtered result.
 
 ---
 
@@ -183,20 +215,20 @@ When the hook encounters an unknown command, it runs `<cmd> --help`, parses the 
 
 ## Manifest format
 
-Manifests are YAML files, one per command or subcommand. Three sections:
+Manifests are YAML files, one per command or subcommand:
 
 ```yaml
 # .kcp/commands/mvn.yaml
-command: mvn
-platform: all
-description: "Apache Maven build tool"
+command: mvn                          # command name (must match what the agent runs)
+platform: all                         # "all", "linux", "macos", or "windows"
+description: "Apache Maven build tool"  # one-line summary shown in [kcp] context block
 
-syntax:
+syntax:                               # ── Phase A: injected before execution ──
   usage: "mvn [options] [<goal(s)>]"
   key_flags:
     - flag: "test"
       description: "Run tests"
-      use_when: "Verify the build"
+      use_when: "Verify the build"    # optional: helps the agent choose the right flag
     - flag: "-pl <module>"
       description: "Build specific module"
     - flag: "-DskipTests"
@@ -206,7 +238,7 @@ syntax:
     - invocation: "mvn test -pl <module>"
       use_when: "Run tests for one module"
 
-output_schema:
+output_schema:                        # ── Phase B: applied after execution ──
   enable_filter: true
   noise_patterns:
     - pattern: "^\\[INFO\\] Scanning for projects"
@@ -217,9 +249,11 @@ output_schema:
   truncation_message: "... {remaining} more Maven lines. Check for BUILD SUCCESS/FAILURE."
 ```
 
-**`syntax`** drives Phase A. The hook formats `key_flags` and `preferred_invocations` into a compact context block injected before execution.
+**Top-level fields:** `command` is the executable name. For subcommands, use a separate file named `<command>-<subcommand>.yaml` (e.g., `git-log.yaml`) and add a `subcommand: log` field. `platform` controls which OS the manifest applies on; `"all"` matches everywhere. `description` is shown in the `[kcp]` context block the agent sees.
 
-**`output_schema`** drives Phase B. When `enable_filter: true`, the command's stdout is piped through a filter that removes lines matching `noise_patterns` and truncates beyond `max_lines`.
+**`syntax`** drives Phase A. The hook formats `key_flags` (up to 5) and `preferred_invocations` (up to 3) into a compact context block injected before execution.
+
+**`output_schema`** drives Phase B. When `enable_filter: true`, the command's stdout is piped through a filter that removes lines matching `noise_patterns` (regexes) and truncates beyond `max_lines`. The `{remaining}` placeholder in `truncation_message` is replaced with the count of omitted lines.
 
 ---
 
@@ -242,20 +276,24 @@ hook.sh (thin client)
   |
   +--> Java daemon (localhost:7734) -- 12ms, warm
   |      |
-  |      +--> /hook endpoint: resolve manifest, build additionalContext
+  |      +--> /hook endpoint: resolve manifest, build additionalContext (Phase A)
+  |      +--> /filter/{key} endpoint: noise filtering + truncation (Phase B)
+  |      +--> EventLogger: async write to ~/.kcp/events.jsonl (Phase C)
   |      +--> /health endpoint: liveness check
   |
   +--> Node.js fallback (dist/cli.js) -- 250ms, cold
          |
-         +--> hook.ts: parse command, resolve manifest, build context
-         +--> filter.ts: pipe stdout through noise patterns + truncation
+         +--> hook.ts: parse command, resolve manifest, build context (Phase A)
+         +--> filter.ts: pipe stdout through noise patterns + truncation (Phase B)
 ```
 
 **`hook.sh`** is the registered hook script. It tries the Java daemon first (HTTP POST to `localhost:7734`). If the daemon is not running, it starts it from the JAR. If no JAR exists, it falls back to Node.js.
 
 **Manifest resolution** follows the three-tier lookup chain described above. Unknown commands trigger auto-generation via `--help` parsing.
 
-**Phase B filtering** wraps the original command with a pipe: `ps aux` becomes `ps aux | node cli.js filter ps`. The filter reads stdin, strips noise patterns, truncates to `max_lines`, and appends a truncation message with the count of omitted lines.
+**Phase B filtering** wraps the original command with a pipe: `ps aux` becomes `ps aux | curl -s -X POST http://localhost:7734/filter/ps --data-binary @-` (Java daemon) or `ps aux | node cli.js filter ps` (Node.js fallback). The filter reads stdin, strips noise patterns, truncates to `max_lines`, and appends a truncation message with the count of omitted lines.
+
+**Phase C event logging** runs on every hook call, regardless of whether a manifest was found. The Java daemon writes asynchronously on a virtual thread; it never blocks the hook response. Phase C is currently Java-daemon only.
 
 ---
 
@@ -280,24 +318,26 @@ kcp-commands/
   java/                  # Fast daemon (12ms/call warm)
     pom.xml
     src/
+      .../HookHandler.java   # Phase A + B: manifest resolution, context injection, filter piping
+      .../EventLogger.java   # Phase C: async JSONL event writer
+      .../ManifestResolver.java
+      .../ManifestGenerator.java
     target/
-  commands/              # bundled primed manifests
+  commands/              # bundled primed manifests (283)
     ls.yaml
     ps.yaml
     find.yaml
     git-log.yaml
     git-diff.yaml
-    git-status.yaml
-    git-add.yaml
-    git-branch.yaml
-    git-checkout.yaml
+    ...
+  tools/
+    benchmark.py         # latency benchmark script
+    benchmark_agent.py   # token savings benchmark script
   docs/
     benchmark-results.md # full benchmark methodology and data
   .github/
     workflows/
       release.yml        # builds JAR + Node.js, publishes GitHub release on tag
-  benchmark.py           # latency benchmark script
-  benchmark_agent.py     # token savings benchmark script
 ```
 
 ---

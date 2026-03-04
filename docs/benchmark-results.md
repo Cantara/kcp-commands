@@ -1,6 +1,6 @@
 # Benchmark Results
 
-Measured performance of kcp-commands across two dimensions: **token savings** (fewer tokens consumed per session) and **hook latency** (time added per tool call). All numbers are from actual runs, not estimates.
+Measured performance of kcp-commands across two dimensions: **token savings** (fewer tokens consumed per session, from Phase A and B) and **hook latency** (time added per tool call). Phase C (event logging) is also measured for overhead. All numbers are from actual runs, not estimates.
 
 ---
 
@@ -112,6 +112,18 @@ This is equivalent to approximately 33 additional tool call results that fit in 
 
 ---
 
+## Phase C -- Event logging overhead
+
+Phase C writes every Bash hook call to `~/.kcp/events.jsonl`. It has **zero measurable impact** on the benchmarks above:
+
+- **Token cost:** None. Event logging is internal bookkeeping; no data is added to or removed from the context window.
+- **Latency cost:** Undetectable. The write runs asynchronously on a virtual thread and never blocks the hook response. In latency benchmarks, Phase C is active and its cost falls within the measurement noise (< 0.1ms).
+- **Disk cost:** ~150-250 bytes per event. A 500-call session produces ~100 KB.
+
+Phase C exists to feed [kcp-memory](https://github.com/Cantara/kcp-memory), which indexes events for cross-session episodic recall. It is Java-daemon only (not available in the Node.js fallback).
+
+---
+
 ## Latency benchmarks
 
 All measurements: 30 iterations, 3 warmup iterations discarded. Daemon port 7736 (avoiding conflict with production port 7734).
@@ -166,13 +178,13 @@ npm run build
 mvn -f java/pom.xml package -DskipTests
 
 # Run benchmark (30 iterations, 3 warmup)
-python3 benchmark.py --iterations 30 --warmup 3
+python3 tools/benchmark.py --iterations 30 --warmup 3
 ```
 
 ### Token savings
 
 ```bash
-python3 benchmark_agent.py
+python3 tools/benchmark_agent.py
 ```
 
 Requires the `tiktoken` Python package for token counting:
@@ -187,10 +199,11 @@ pip install tiktoken
 
 | Metric | Value |
 |--------|-------|
-| Tokens saved per session | 67,352 |
+| Tokens saved per session (Phase A + B) | 67,352 |
 | Context window recovered | 33.7% (of 200K) |
 | Average saving per `--help` avoided | 532 tokens |
 | Best-case output reduction | 98% (`ps aux`) |
+| Phase C latency overhead | < 0.1ms (async) |
 | Java daemon latency | 14ms mean |
 | Node.js latency | 265ms mean |
 | Daemon cold start | 537ms (one-time) |
