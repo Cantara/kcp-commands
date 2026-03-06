@@ -1,6 +1,6 @@
 {
   "name": "kcp-commands",
-  "version": "0.2.0",
+  "version": "0.9.0",
   "description": "Semantic command manifests for the Knowledge Context Protocol — syntax context and noise filtering for CLI commands in AI agent sessions",
   "license": "Apache-2.0",
   "type": "module",
@@ -19,7 +19,9 @@
     "dev": "tsc --watch",
     "test": "vitest run",
     "test:watch": "vitest",
-    "prepublishOnly": "npm run build"
+    "prepublishOnly": "npm run build",
+    "prepack": "cp -r ../commands ./commands",
+    "postpack": "rm -rf ./commands"
   },
   "dependencies": {
     "js-yaml": "^4.1.0"
