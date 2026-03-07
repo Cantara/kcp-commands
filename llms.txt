@@ -14,9 +14,15 @@ Part of the [Knowledge Context Protocol](https://github.com/Cantara/knowledge-co
 - [docs/benchmark-results.md](docs/benchmark-results.md): Full benchmark methodology and measured numbers
 - [commands/ps.yaml](commands/ps.yaml): Example manifest showing Phase A + Phase B fields
 
-## Machine-readable manifest
+## Structured Navigation (for AI agents)
 
-[knowledge.yaml](knowledge.yaml)
+This repository ships a KCP manifest at:
+https://raw.githubusercontent.com/Cantara/kcp-commands/main/knowledge.yaml
+
+To use it: fetch the manifest → parse YAML → match query against each unit's `triggers`
+(keyword list) and `intent` (natural language) → fetch the `path` of the best match.
+
+Example: "How does Phase B output filtering work?" → trigger `phase b, output filtering` → unit `readme` → fetch README.md
 
 ## Install
 
