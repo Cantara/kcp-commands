@@ -1,0 +1,67 @@
+command: duckdb
+platform: all
+description: "In-process analytical SQL engine — query CSV, Parquet, JSON, and Arrow without a server"
+
+syntax:
+  usage: "duckdb [options] [database] [SQL]"
+  key_flags:
+    - flag: "-c '<SQL>'"
+      description: "Execute SQL and exit (no persistent database)"
+    - flag: "-json"
+      description: "Output results as JSON"
+    - flag: "-csv"
+      description: "Output results as CSV"
+    - flag: "-column"
+      description: "Aligned column output (default in REPL)"
+    - flag: "-header"
+      description: "Print column headers (combine with -csv or -column)"
+    - flag: "-s '<SQL>'"
+      description: "Execute SQL string and exit (alias for -c)"
+    - flag: "<database.db>"
+      description: "Open or create a persistent DuckDB database file"
+    - flag: "-no-stdin"
+      description: "Do not read from stdin"
+
+  key_functions:
+    - function: "read_csv_auto('file.csv')"
+      description: "Read CSV with auto-detected schema"
+      use_when: "Querying a CSV — prefer this over reading the file directly"
+    - function: "read_csv_auto('data/*.csv')"
+      description: "Read all CSVs in a directory as one table"
+    - function: "read_parquet('file.parquet')"
+      description: "Read a Parquet file (also: '*.parquet' glob)"
+    - function: "read_json_auto('file.json')"
+      description: "Read JSON or NDJSON with auto-detected schema"
+    - function: "SUMMARIZE <table>"
+      description: "Column statistics: count, min, max, avg, nulls"
+    - function: "DESCRIBE <table>"
+      description: "Column names and types"
+
+  preferred_invocations:
+    - invocation: "duckdb -c \"SELECT * FROM read_csv_auto('<file.csv>') LIMIT 10\""
+      use_when: "Inspect a CSV — always query via DuckDB rather than reading the raw file (saves tokens, enables filtering)"
+    - invocation: "duckdb -c \"SELECT * FROM read_csv_auto('<file.csv>') WHERE <col> = '<val>'\""
+      use_when: "Filter a CSV — far more token-efficient than reading the full file into context"
+    - invocation: "duckdb -c \"SUMMARIZE SELECT * FROM read_csv_auto('<file.csv>')\""
+      use_when: "Get column statistics before exploring a dataset"
+    - invocation: "duckdb -c \"SELECT * FROM '<file.parquet>' LIMIT 10\""
+      use_when: "Inspect a Parquet file — extension auto-detected"
+    - invocation: "duckdb -json -c \"SELECT <cols> FROM read_csv_auto('<file.csv>') WHERE <filter>\""
+      use_when: "Return structured query results as JSON for downstream processing"
+    - invocation: "duckdb -c \"COPY (SELECT * FROM read_csv_auto('<in.csv>') WHERE <filter>) TO '<out.csv>' (HEADER, DELIMITER ',')\""
+      use_when: "Filter and export a subset of a CSV"
+    - invocation: "duckdb -c \"SELECT * FROM read_csv_auto('data/*.csv') GROUP BY <col> ORDER BY count(*) DESC\""
+      use_when: "Aggregate across multiple CSV files in a directory"
+    - invocation: "duckdb <database.db> -c \"<SQL>\""
+      use_when: "Query a persistent DuckDB database file"
+
+  agent_guidance: |
+    When working with CSV, Parquet, or JSON files: always query via DuckDB rather than
+    reading the file directly into context. A targeted SELECT uses a handful of tokens;
+    reading a large CSV can consume tens of thousands. Use SUMMARIZE first to understand
+    the shape of the data, then write precise queries. Prefer -json output when the
+    result will be processed programmatically.
+
+output_schema:
+  enable_filter: true
+  filter_field: "column name or WHERE clause"
