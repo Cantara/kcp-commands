@@ -1,0 +1,33 @@
+command: gws
+platform: all
+description: "Google Workspace CLI — direct API access for Gmail, Drive, Calendar, Sheets, Docs, and more"
+
+syntax:
+  usage: "gws <service> <resource> [sub-resource] <method> [flags]"
+  key_flags:
+    - flag: "--params '<JSON>'"
+      description: "URL/query parameters as JSON"
+      use_when: "Filtering results (userId, pageSize, q, etc.)"
+    - flag: "--json '<JSON>'"
+      description: "Request body as JSON (POST/PATCH/PUT)"
+      use_when: "Creating or updating resources"
+    - flag: "--format <fmt>"
+      description: "Output format: json (default), table, yaml, csv"
+      use_when: "Human-readable output (table) or piping"
+    - flag: "--page-all"
+      description: "Auto-paginate all results (NDJSON, one line per page)"
+      use_when: "Fetching complete lists beyond one page"
+    - flag: "--upload <path>"
+      description: "Local file to upload as media content"
+      use_when: "Uploading files to Drive or Docs"
+  preferred_invocations:
+    - invocation: "gws gmail users messages list --params '{\"userId\":\"me\",\"maxResults\":10}'"
+      use_when: "List recent Gmail messages"
+    - invocation: "gws calendar events list --params '{\"calendarId\":\"primary\"}'"
+      use_when: "List calendar events"
+    - invocation: "gws drive files list --params '{\"pageSize\":20}'"
+      use_when: "List files in Drive"
+    - invocation: "gws schema <service.resource.method>"
+      use_when: "Discover all parameters for any API method"
+    - invocation: "gws auth login -s gmail,calendar"
+      use_when: "Authenticate with specific service scopes"

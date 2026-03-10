@@ -14,7 +14,7 @@ kcp-commands is a [Claude Code hook](https://docs.anthropic.com/en/docs/claude-c
 
 Measured across a typical agentic coding session: **67,352 tokens saved -- 33.7% of a 200K context window recovered**, equivalent to 33 additional tool call results fitting in the same context.
 
-284 bundled manifests. Part of the [Knowledge Context Protocol](https://cantara.github.io/knowledge-context-protocol/) ecosystem.
+289 bundled manifests. Part of the [Knowledge Context Protocol](https://cantara.github.io/knowledge-context-protocol/) ecosystem.
 Read the [release post](https://wiki.totto.org/blog/2026/03/02/kcp-commands/) for the full benchmark methodology and design rationale.
 
 ---
@@ -151,7 +151,7 @@ Full methodology and raw numbers: [docs/benchmark-results.md](docs/benchmark-res
 
 ## Supported commands
 
-### Bundled manifests (284 primed)
+### Bundled manifests (289 primed)
 
 **Git** — `git log` · `git diff` · `git status` · `git add` · `git commit` · `git push` · `git pull` · `git fetch` · `git branch` · `git checkout` · `git stash` · `git merge` · `git rebase` · `git clone` · `git reset` · `git tag` · `git remote` · `git show` · `git cherry-pick` · `git bisect` · `git worktree` · `git submodule`
 
@@ -337,7 +337,7 @@ kcp-commands/
       .../ManifestResolver.java
       .../ManifestGenerator.java
     target/
-  commands/              # bundled primed manifests (284)
+  commands/              # bundled primed manifests (289)
     ls.yaml
     ps.yaml
     find.yaml
@@ -384,6 +384,7 @@ Good candidates for custom manifests:
 | v0.8.0 | 283 | uv, apk, dnf, pipx, winget, deno, go-run, php, swift, ruff, eslint, prettier, mypy, golangci-lint, yamllint, markdownlint, podman, trivy, cosign, nx, turbo, just, bazel, task, sops, op, direnv, jest, vitest, playwright, cypress, k6, grpcurl, zoxide, btm, dust, procs, pre-commit, gh-codespace |
 | v0.9.0 | 283 | **Phase C: EventLogger** — writes every Bash hook call to `~/.kcp/events.jsonl` (async, virtual thread, ReentrantLock); consumed by kcp-memory v0.2.0+ for tool-level episodic memory |
 | v0.12.0 | 284 | **KCP 0.9 Federation Release.** `knowledge.yaml` bumped to `kcp_version: "0.9"`, added `manifests` block (federation link to KCP spec). New manifest: `duckdb` (in-process analytical SQL engine). Aligned with kcp-mcp@0.12.0. |
+| v0.13.0 | 289 | +5 manifests: `gws`, `gws-auth`, `gws-gmail`, `gws-calendar`, `gws-drive` — Google Workspace CLI (gmail.modify, calendar, drive scopes) |
 
 ---
 

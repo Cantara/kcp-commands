@@ -1,0 +1,32 @@
+command: gws
+subcommand: calendar
+platform: all
+description: "Manage Google Calendar events and calendars"
+
+syntax:
+  usage: "gws calendar <resource> <method> [flags]"
+  key_flags:
+    - flag: "--params '{\"calendarId\":\"primary\"}'"
+      description: "Calendar ID — 'primary' for main calendar"
+    - flag: "--params '{\"timeMin\":\"<ISO>\",\"timeMax\":\"<ISO>\"}'"
+      description: "ISO 8601 datetime range filter (e.g. 2026-03-10T00:00:00+01:00)"
+      use_when: "Fetching events within a specific time window"
+    - flag: "--params '{\"singleEvents\":true,\"orderBy\":\"startTime\"}'"
+      description: "Expand recurring events and sort chronologically"
+      use_when: "Getting a clean timeline view"
+    - flag: "--params '{\"maxResults\":N}'"
+      description: "Limit number of events returned"
+  preferred_invocations:
+    - invocation: "gws calendar events list --params '{\"calendarId\":\"primary\",\"timeMin\":\"<ISO>\",\"timeMax\":\"<ISO>\",\"singleEvents\":true,\"orderBy\":\"startTime\"}'"
+      use_when: "List events for a date range"
+    - invocation: "gws calendar calendarList list"
+      use_when: "List all available calendars"
+    - invocation: "gws calendar events insert --params '{\"calendarId\":\"primary\"}' --json '{\"summary\":\"...\",\"start\":{\"dateTime\":\"<ISO>\"},\"end\":{\"dateTime\":\"<ISO>\"}}'"
+      use_when: "Create a new calendar event"
+    - invocation: "gws schema calendar.events.list"
+      use_when: "Discover all available query parameters"
+
+output_schema:
+  enable_filter: true
+  max_lines: 60
+  truncation_message: "... truncated. Use timeMin/timeMax to narrow the date range."

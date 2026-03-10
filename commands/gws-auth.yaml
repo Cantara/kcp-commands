@@ -1,0 +1,26 @@
+command: gws
+subcommand: auth
+platform: all
+description: "Authenticate with Google Workspace via OAuth2"
+
+syntax:
+  usage: "gws auth <login|setup|status|export|logout> [options]"
+  key_flags:
+    - flag: "login"
+      description: "Authenticate via OAuth2 (opens browser)"
+    - flag: "login -s <services>"
+      description: "Limit scopes to specific services (e.g. gmail,calendar,drive)"
+      use_when: "Minimal permission grant — only request what you need"
+    - flag: "login --readonly"
+      description: "Request read-only scopes (safer)"
+    - flag: "status"
+      description: "Show current auth state and active scopes"
+    - flag: "logout"
+      description: "Clear saved credentials and token cache"
+  preferred_invocations:
+    - invocation: "gws auth status"
+      use_when: "Check if currently authenticated"
+    - invocation: "gws auth login -s gmail,calendar"
+      use_when: "Authenticate with minimal scopes"
+    - invocation: "gws auth login --readonly -s drive"
+      use_when: "Read-only Drive access"

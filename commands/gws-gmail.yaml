@@ -1,0 +1,33 @@
+command: gws
+subcommand: gmail
+platform: all
+description: "Send, read, and manage Gmail via Google Workspace API"
+
+syntax:
+  usage: "gws gmail users <resource> <method> [flags]"
+  key_flags:
+    - flag: "--params '{\"userId\":\"me\"}'"
+      description: "Required for all Gmail calls — 'me' = authenticated user"
+    - flag: "--params '{\"q\":\"...\"}'"
+      description: "Gmail search query (same syntax as Gmail search box)"
+      use_when: "Filtering by sender, subject, label, date"
+    - flag: "--params '{\"maxResults\":N}'"
+      description: "Limit number of results returned"
+    - flag: "--format table"
+      description: "Human-readable output instead of raw JSON"
+  preferred_invocations:
+    - invocation: "gws gmail users messages list --params '{\"userId\":\"me\",\"maxResults\":10,\"q\":\"is:unread\"}'"
+      use_when: "List unread messages"
+    - invocation: "gws gmail users messages list --params '{\"userId\":\"me\",\"q\":\"from:person@domain.com\"}'"
+      use_when: "Messages from a specific sender"
+    - invocation: "gws gmail users messages get --params '{\"userId\":\"me\",\"id\":\"<msgId>\",\"format\":\"full\"}'"
+      use_when: "Read a specific message"
+    - invocation: "gws gmail users labels list --params '{\"userId\":\"me\"}'"
+      use_when: "List all Gmail labels"
+    - invocation: "gws gmail users threads list --params '{\"userId\":\"me\",\"q\":\"subject:...\"}'"
+      use_when: "List conversation threads"
+
+output_schema:
+  enable_filter: true
+  max_lines: 80
+  truncation_message: "... truncated. Use --params '{\"maxResults\":N}' to limit or refine with q= filter."

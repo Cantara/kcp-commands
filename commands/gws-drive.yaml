@@ -1,0 +1,35 @@
+command: gws
+subcommand: drive
+platform: all
+description: "Manage files and folders in Google Drive"
+
+syntax:
+  usage: "gws drive files <method> [flags]"
+  key_flags:
+    - flag: "--params '{\"pageSize\":N}'"
+      description: "Number of files per page (max 1000)"
+    - flag: "--params '{\"q\":\"...\"}'"
+      description: "Drive query string"
+      use_when: "Filtering by name, type, or parent folder"
+    - flag: "--params '{\"fields\":\"...\"}'"
+      description: "Partial response — specify only needed fields"
+      use_when: "Reducing response size"
+    - flag: "--page-all"
+      description: "Fetch all pages automatically"
+      use_when: "Listing complete folder contents"
+    - flag: "--upload <path>"
+      description: "Upload a local file"
+  preferred_invocations:
+    - invocation: "gws drive files list --params '{\"pageSize\":20}'"
+      use_when: "List recent files in Drive"
+    - invocation: "gws drive files list --params '{\"q\":\"name contains \\\"report\\\"\",\"pageSize\":20}'"
+      use_when: "Search for files by name"
+    - invocation: "gws drive files list --params '{\"q\":\"\\\"<folderId>\\\" in parents\"}'"
+      use_when: "List files in a specific folder"
+    - invocation: "gws drive files get --params '{\"fileId\":\"<id>\",\"fields\":\"id,name,mimeType,modifiedTime,size\"}'"
+      use_when: "Get metadata for a specific file"
+
+output_schema:
+  enable_filter: true
+  max_lines: 60
+  truncation_message: "... truncated. Use q= to filter or --params '{\"pageSize\":N}' to limit."

@@ -64,6 +64,7 @@ doctl
 dotnet
 dstat
 du
+duckdb
 dust
 eksctl
 env
@@ -121,6 +122,11 @@ gpg
 gradle
 grep
 grpcurl
+gws
+gws-auth
+gws-calendar
+gws-drive
+gws-gmail
 gzip
 hadolint
 head
