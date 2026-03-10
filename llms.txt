@@ -4,7 +4,7 @@
 > before Bash tool calls (Phase A) and filtering noisy output after them (Phase B).
 > Phase C writes every tool call to ~/.kcp/events.jsonl for kcp-memory to index.
 
-283 bundled manifests. Java daemon (12ms/call) + Node.js fallback. Apache 2.0.
+284 bundled manifests. Java daemon (12ms/call) + Node.js fallback. Apache 2.0.
 
 Part of the [Knowledge Context Protocol](https://github.com/Cantara/knowledge-context-protocol) ecosystem.
 

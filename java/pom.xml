@@ -6,7 +6,7 @@
 
     <groupId>com.cantara.kcp</groupId>
     <artifactId>kcp-commands-daemon</artifactId>
-    <version>0.9.0</version>
+    <version>0.12.0</version>
     <packaging>jar</packaging>
 
     <name>kcp-commands-daemon</name>

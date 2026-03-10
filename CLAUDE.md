@@ -1,7 +1,7 @@
 # kcp-commands
 
 ## Purpose
-A Claude Code hook that intercepts every Bash tool call and applies three phases: syntax injection (before execution), output filtering (after execution), and event logging. Saves approximately 33% of Claude Code's context window by giving it instant command knowledge and noise-filtered output. Ships with 283 bundled command manifests.
+A Claude Code hook that intercepts every Bash tool call and applies three phases: syntax injection (before execution), output filtering (after execution), and event logging. Saves approximately 33% of Claude Code's context window by giving it instant command knowledge and noise-filtered output. Ships with 284 bundled command manifests.
 
 ## Tech Stack
 - Language: Shell (hooks), YAML (manifests), TypeScript + Java (bridges)
@@ -18,7 +18,7 @@ Three-phase hook system:
 Command knowledge is stored as YAML manifests in `commands/` directory. TypeScript and Java bridges provide MCP integration.
 
 ## Key Entry Points
-- `commands/` - 283 YAML command manifests
+- `commands/` - 284 YAML command manifests
 - `bin/` - Hook installation scripts
 - `typescript/` - TypeScript MCP bridge
 - `java/` - Java MCP bridge

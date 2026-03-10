@@ -1,7 +1,7 @@
-kcp_version: "0.7"
+kcp_version: "0.9"
 project: kcp-commands
-version: 0.9.0
-updated: "2026-03-04"
+version: 0.12.0
+updated: "2026-03-10"
 language: en
 license: "Apache-2.0"
 indexing: open
@@ -13,7 +13,7 @@ units:
     intent: "What is kcp-commands, how do I install it, and how do the three phases (syntax injection, output filtering, event logging) work?"
     scope: global
     audience: [human, agent, developer]
-    validated: "2026-03-04"
+    validated: "2026-03-10"
     triggers: [install, overview, how it works, phase a, phase b, phase c, context window, token savings, hooks, claude code, events.jsonl, event logging, manifest format]
 
   - id: benchmark-results
@@ -21,7 +21,7 @@ units:
     intent: "What is the full benchmark methodology and measured token savings for kcp-commands?"
     scope: module
     audience: [developer, agent]
-    validated: "2026-03-04"
+    validated: "2026-03-10"
     depends_on: [readme]
     triggers: [benchmark, token savings, latency, methodology, numbers, 67352, 33 percent, phase c overhead, event logging overhead]
 
@@ -31,9 +31,13 @@ units:
     kind: schema
     scope: module
     audience: [developer, agent]
-    validated: "2026-03-04"
+    validated: "2026-03-10"
     depends_on: [readme]
     triggers: [manifest format, yaml format, write manifest, custom manifest, output_schema, key_flags, noise_patterns]
+
+manifests:
+  - url: https://cantara.github.io/knowledge-context-protocol/knowledge.yaml
+    relationship: foundation
 
 relationships:
   - from: readme

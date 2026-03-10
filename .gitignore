@@ -1,3 +1,4 @@
 typescript/node_modules/
 typescript/dist/
 java/target/
+typescript/.npmrc
