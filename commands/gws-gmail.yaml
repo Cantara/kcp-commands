@@ -7,7 +7,7 @@ syntax:
   usage: "gws gmail users <resource> <method> [flags]"
   key_flags:
     - flag: "--params '{\"userId\":\"me\"}'"
-      description: "Required for all Gmail calls — 'me' = authenticated user"
+      description: "Required for all Gmail API calls — 'me' = authenticated user. NEVER use --userId flag directly."
     - flag: "--params '{\"q\":\"...\"}'"
       description: "Gmail search query (same syntax as Gmail search box)"
       use_when: "Filtering by sender, subject, label, date"
@@ -16,6 +16,10 @@ syntax:
     - flag: "--format table"
       description: "Human-readable output instead of raw JSON"
   preferred_invocations:
+    - invocation: "gws gmail +send --to user@example.com --subject 'Subject' --body 'Body text'"
+      use_when: "Send a plain-text email (no attachments)"
+    - invocation: "gws gmail users messages send --params '{\"userId\":\"me\"}' --json '{\"raw\":\"<base64url>\"}'"
+      use_when: "Send email with attachments or HTML — build MIME message, base64url-encode it, pass as raw"
     - invocation: "gws gmail users messages list --params '{\"userId\":\"me\",\"maxResults\":10,\"q\":\"is:unread\"}'"
       use_when: "List unread messages"
     - invocation: "gws gmail users messages list --params '{\"userId\":\"me\",\"q\":\"from:person@domain.com\"}'"
@@ -26,6 +30,14 @@ syntax:
       use_when: "List all Gmail labels"
     - invocation: "gws gmail users threads list --params '{\"userId\":\"me\",\"q\":\"subject:...\"}'"
       use_when: "List conversation threads"
+    - invocation: "gws gmail users messages send --params '{\"userId\":\"me\"}' --json '{\"raw\":\"<base64url>\"}'"
+      use_when: "Reply to a thread — include 'threadId' in the JSON body alongside 'raw'"
+
+notes:
+  - "--userId flag does NOT work — always pass userId via --params JSON"
+  - "For attachments: build MIMEMultipart in Python, base64.urlsafe_b64encode(msg.as_bytes()), pass as {\"raw\": \"...\"}"
+  - "+send helper handles plain text only — use raw API for attachments, HTML, CC/BCC"
+  - "send-as address: totto@exoreaction.com (set From: header in MIME message)"
 
 output_schema:
   enable_filter: true
