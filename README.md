@@ -2,9 +2,9 @@
 
 <img src="https://totto.goatcounter.com/count?p=/kcp-commands-readme" alt="" style="display:none">
 
-**Save 33% of Claude Code's context window by giving it instant command knowledge and noise-filtered output.**
+**Not a CLI — typed knowledge infrastructure for 289 CLIs.** Saves 33% of Claude Code's context window by injecting syntax context before execution and filtering noise after.
 
-kcp-commands is a [Claude Code hook](https://docs.anthropic.com/en/docs/claude-code/hooks) that intercepts every Bash tool call and applies three phases:
+kcp-commands is a [Claude Code hook](https://docs.anthropic.com/en/docs/claude-code/hooks) — it runs invisibly *around* CLI tools, not as one. It intercepts every Bash tool call and applies three phases:
 
 | Phase | When | What it does |
 |-------|------|--------------|
