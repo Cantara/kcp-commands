@@ -385,6 +385,7 @@ Good candidates for custom manifests:
 | v0.9.0 | 283 | **Phase C: EventLogger** — writes every Bash hook call to `~/.kcp/events.jsonl` (async, virtual thread, ReentrantLock); consumed by kcp-memory v0.2.0+ for tool-level episodic memory |
 | v0.12.0 | 284 | **KCP 0.9 Federation Release.** `knowledge.yaml` bumped to `kcp_version: "0.9"`, added `manifests` block (federation link to KCP spec). New manifest: `duckdb` (in-process analytical SQL engine). Aligned with kcp-mcp@0.12.0. |
 | v0.13.0 | 289 | +5 manifests: `gws`, `gws-auth`, `gws-gmail`, `gws-calendar`, `gws-drive` — Google Workspace CLI (gmail.modify, calendar, drive scopes) |
+| v0.14.0 | 289 | **KCP 0.10 Discovery & Versioning Release.** `knowledge.yaml` bumped to `kcp_version: "0.10"`. KCP 0.10 adds RFC-0007 Query Vocabulary (normative pre-invocation discovery), federation version pinning (`version_pin` + `version_policy`), instruction file bridge guide, and `kcp init` spec. |
 
 ---
 

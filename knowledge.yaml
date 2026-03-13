@@ -1,7 +1,7 @@
-kcp_version: "0.9"
+kcp_version: "0.10"
 project: kcp-commands
-version: 0.12.0
-updated: "2026-03-10"
+version: 0.14.0
+updated: "2026-03-13"
 language: en
 license: "Apache-2.0"
 indexing: open
