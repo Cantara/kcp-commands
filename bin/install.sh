@@ -150,9 +150,10 @@ try {
 settings.hooks            ??= {};
 settings.hooks.PreToolUse ??= [];
 
-// Remove any existing kcp-commands entry (upgrade support).
+// Remove any existing kcp hook entry (idempotency + upgrade support).
+// Match on kcpDir so both legacy catch-all and Bash-matcher entries are removed.
 settings.hooks.PreToolUse = settings.hooks.PreToolUse.filter(
-  group => !group.hooks?.some(h => h.command?.includes('kcp-commands'))
+  group => !group.hooks?.some(h => h.command?.includes(kcpDir))
 );
 
 settings.hooks.PreToolUse.push({
