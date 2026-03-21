@@ -60,12 +60,17 @@ echo "========================================"
 mkdir -p "$KCP_DIR/commands"
 echo "✓ Install directory: $KCP_DIR"
 
-# ── Download hook.sh ──────────────────────────────────────────────────────────
+# ── Download hook.sh and post-hook.sh ─────────────────────────────────────────
 
 echo "→ Installing hook.sh..."
 curl -fsSL "$RAW_URL/bin/hook.sh" -o "$KCP_DIR/hook.sh"
 chmod +x "$KCP_DIR/hook.sh"
 echo "✓ hook.sh installed"
+
+echo "→ Installing post-hook.sh (output capture)..."
+curl -fsSL "$RAW_URL/bin/post-hook.sh" -o "$KCP_DIR/post-hook.sh"
+chmod +x "$KCP_DIR/post-hook.sh"
+echo "✓ post-hook.sh installed"
 
 # ── Java daemon ───────────────────────────────────────────────────────────────
 
@@ -127,18 +132,21 @@ if [ ! -f "$SETTINGS_FILE" ]; then
 fi
 
 HOOK_COMMAND="bash \"$KCP_DIR/hook.sh\""
+POST_HOOK_COMMAND="bash \"$KCP_DIR/post-hook.sh\""
 
 KCP_DIR="$KCP_DIR" \
 SETTINGS_FILE="$SETTINGS_FILE" \
 HOOK_COMMAND="$HOOK_COMMAND" \
+POST_HOOK_COMMAND="$POST_HOOK_COMMAND" \
 MODE="$MODE" \
 node --input-type=module << 'JSEOF'
 import { readFileSync, writeFileSync } from 'fs';
 
-const kcpDir      = process.env.KCP_DIR;
-const settingsPath = process.env.SETTINGS_FILE;
-const hookCommand  = process.env.HOOK_COMMAND;
-const mode         = process.env.MODE;
+const kcpDir          = process.env.KCP_DIR;
+const settingsPath    = process.env.SETTINGS_FILE;
+const hookCommand     = process.env.HOOK_COMMAND;
+const postHookCommand = process.env.POST_HOOK_COMMAND;
+const mode            = process.env.MODE;
 
 let settings;
 try {
@@ -147,12 +155,16 @@ try {
   settings = {};
 }
 
-settings.hooks            ??= {};
-settings.hooks.PreToolUse ??= [];
+settings.hooks             ??= {};
+settings.hooks.PreToolUse  ??= [];
+settings.hooks.PostToolUse ??= [];
 
-// Remove any existing kcp hook entry (idempotency + upgrade support).
+// Remove any existing kcp hook entries (idempotency + upgrade support).
 // Match on kcpDir so both legacy catch-all and Bash-matcher entries are removed.
 settings.hooks.PreToolUse = settings.hooks.PreToolUse.filter(
+  group => !group.hooks?.some(h => h.command?.includes(kcpDir))
+);
+settings.hooks.PostToolUse = settings.hooks.PostToolUse.filter(
   group => !group.hooks?.some(h => h.command?.includes(kcpDir))
 );
 
@@ -166,8 +178,18 @@ settings.hooks.PreToolUse.push({
   }]
 });
 
+settings.hooks.PostToolUse.push({
+  matcher: 'Bash',
+  hooks: [{
+    type:    'command',
+    command: postHookCommand,
+    timeout: 10
+  }]
+});
+
 writeFileSync(settingsPath, JSON.stringify(settings, null, 2) + '\n');
-console.log(`✓ PreToolUse hook registered → ${kcpDir}/hook.sh (${mode})`);
+console.log(`✓ PreToolUse  hook registered → ${kcpDir}/hook.sh (${mode})`);
+console.log(`✓ PostToolUse hook registered → ${kcpDir}/post-hook.sh (output capture)`);
 JSEOF
 
 echo ""

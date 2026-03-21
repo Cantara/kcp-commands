@@ -12,7 +12,8 @@ export interface HookGroup {
 
 export interface ClaudeSettings {
   hooks?: {
-    PreToolUse?: HookGroup[];
+    PreToolUse?:  HookGroup[];
+    PostToolUse?: HookGroup[];
     [key: string]: HookGroup[] | undefined;
   };
   [key: string]: unknown;
@@ -27,7 +28,7 @@ export function registerHook(
   settings: ClaudeSettings,
   kcpDir: string,
   hookCommand: string,
-  mode: string
+  _mode: string
 ): ClaudeSettings {
   settings.hooks ??= {};
   settings.hooks.PreToolUse ??= [];
@@ -45,6 +46,34 @@ export function registerHook(
       command:       hookCommand,
       timeout:       10,
       statusMessage: 'kcp-commands: looking up manifest...'
+    }]
+  });
+
+  return settings;
+}
+
+/**
+ * Registers the kcp-memory PostToolUse hook (output capture) in Claude settings.
+ * Idempotent: removes any existing PostToolUse entry referencing kcpDir.
+ */
+export function registerPostHook(
+  settings: ClaudeSettings,
+  kcpDir: string,
+  postHookCommand: string
+): ClaudeSettings {
+  settings.hooks ??= {};
+  settings.hooks.PostToolUse ??= [];
+
+  settings.hooks.PostToolUse = settings.hooks.PostToolUse.filter(
+    group => !group.hooks?.some(h => h.command?.includes(kcpDir))
+  );
+
+  settings.hooks.PostToolUse.push({
+    matcher: 'Bash',
+    hooks: [{
+      type:    'command',
+      command: postHookCommand,
+      timeout: 10
     }]
   });
 
