@@ -12,6 +12,7 @@ import com.sun.net.httpserver.HttpHandler;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Path;
 
 /**
  * HTTP handler for POST /hook
@@ -27,12 +28,21 @@ public class HookHandler implements HttpHandler {
 
     private final ManifestResolver resolver;
     private final ManifestGenerator generator;
+    private final SuppressionList suppressionList;
     private final ObjectMapper mapper;
     private final int port;
 
+    /** Backwards-compatible constructor — uses default suppression list. */
     public HookHandler(ManifestResolver resolver, ManifestGenerator generator, int port) {
+        this(resolver, generator, port, new SuppressionList(
+                Path.of(System.getProperty("user.home"), ".kcp")));
+    }
+
+    public HookHandler(ManifestResolver resolver, ManifestGenerator generator, int port,
+                        SuppressionList suppressionList) {
         this.resolver = resolver;
         this.generator = generator;
+        this.suppressionList = suppressionList;
         this.mapper = new ObjectMapper();
         this.port = port;
     }
@@ -72,6 +82,13 @@ public class HookHandler implements HttpHandler {
 
         ParsedCommand parsed = CommandParser.parse(command);
         if (parsed == null) {
+            EventLogger.log(sessionId, projectDir, command, null);
+            sendEmpty(exchange);
+            return;
+        }
+
+        // Suppression: well-known commands skip manifest lookup entirely (saves 5-8K tokens/session)
+        if (suppressionList.isSuppressed(parsed.cmd(), parsed.subcommand())) {
             EventLogger.log(sessionId, projectDir, command, null);
             sendEmpty(exchange);
             return;
