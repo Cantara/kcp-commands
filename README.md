@@ -77,6 +77,39 @@ Fields: `ts` (ISO-8601), `session_id` (Claude Code session UUID), `project_dir` 
 
 The write is asynchronous (virtual thread) and never blocks the hook response or raises an error. [kcp-memory](https://github.com/Cantara/kcp-memory) v0.2.0+ indexes these events to provide tool-level episodic memory across sessions.
 
+### Suppression list -- Skip manifests for well-known commands (v0.14.0)
+
+Well-known commands skip manifest lookup entirely. The daemon returns 204 immediately — no manifest injected, no tokens spent. This eliminates 5-8K tokens/session of context overhead for commands capable agents already know.
+
+Default suppressed commands:
+
+| Category | Commands |
+|----------|----------|
+| Version control | `git`, `gh` |
+| Text processing | `ls`, `cat`, `head`, `tail`, `grep`, `sed`, `awk`, `find`, `echo`, `printf`, `wc`, `sort`, `uniq`, `cut`, `tr`, `xargs` |
+| Filesystem | `cd`, `pwd`, `mkdir`, `rm`, `rmdir`, `mv`, `cp`, `touch`, `chmod`, `chown`, `ln` |
+| Network | `curl`, `wget`, `ssh`, `scp`, `rsync` |
+| System | `ps`, `kill`, `top`, `df`, `du`, `uname` |
+| Runtimes | `python3`, `node`, `java` |
+| Shell builtins | `which`, `type`, `command`, `env`, `export`, `source`, `eval` |
+
+Suppression is **unconditional** — even if a manifest yaml exists for the command, suppression wins. Shipped manifests for these commands exist as reference only.
+
+**Benchmark (typical session):** 63% of hook calls suppressed. Cloud/DevOps tools (aws, kubectl, docker, mvn) still receive manifests.
+
+**Customize:** create `~/.kcp/suppress.txt` (one command per line, `#` comments). This replaces the default list entirely. To unsuppress a command, omit it from your custom list.
+
+```bash
+# ~/.kcp/suppress.txt — custom example
+# Keep git/ls/grep suppressed but add docker
+docker
+git
+ls
+grep
+```
+
+**Measure your setup:** `bash ~/.kcp/benchmark.sh` — shows suppression rate, hook latency, and estimated tokens saved, with JSON output for sharing.
+
 ---
 
 ## Install
@@ -309,6 +342,8 @@ hook.sh (thin client)
 
 **Phase C event logging** runs on every hook call, regardless of whether a manifest was found. The Java daemon writes asynchronously on a virtual thread; it never blocks the hook response. Phase C is currently Java-daemon only.
 
+**Suppression list** is checked before manifest lookup. Commands in the list (git, ls, grep, curl, etc.) return 204 immediately. This is the lowest-cost path — no file I/O, no manifest parsing.
+
 ---
 
 ## Repository structure
@@ -317,7 +352,9 @@ hook.sh (thin client)
 kcp-commands/
   bin/
     hook.sh              # thin client: daemon -> Node.js fallback
-    install.sh           # registers hook in ~/.claude/settings.json
+    post-hook.sh         # PostToolUse: captures output preview -> events.jsonl
+    install.sh           # registers PreToolUse + PostToolUse hooks
+    benchmark.sh         # measures suppression rate + token savings
   typescript/            # Node.js hook + filter implementation
     src/
       hook.ts            # Phase A: parse command, inject context
@@ -332,8 +369,9 @@ kcp-commands/
   java/                  # Fast daemon (12ms/call warm)
     pom.xml
     src/
-      .../HookHandler.java   # Phase A + B: manifest resolution, context injection, filter piping
-      .../EventLogger.java   # Phase C: async JSONL event writer
+      .../HookHandler.java      # Phase A + B: manifest resolution, context injection, filter piping
+      .../SuppressionList.java  # suppression list — fast path before manifest lookup
+      .../EventLogger.java      # Phase C: async JSONL event writer
       .../ManifestResolver.java
       .../ManifestGenerator.java
     target/
