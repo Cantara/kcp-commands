@@ -7,7 +7,6 @@ import org.junit.jupiter.api.io.TempDir;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -207,47 +206,25 @@ class SuppressionListTest {
         assertFalse(list.isSuppressed("ls", null));
     }
 
-    // ── Manifest override: user yaml wins over suppression ────────────────────
+    // ── Suppression is unconditional ─────────────────────────────────────────
 
     @Test
-    void manifest_override_unsuppresses_command() throws IOException {
-        // "ls" is suppressed by default, but if user has ls.yaml, it should NOT be suppressed
+    void suppression_wins_even_with_manifest_file() throws IOException {
+        // Shipped manifests (ls.yaml, git-log.yaml, grep.yaml) exist in commands dir
+        // but suppression is unconditional — manifests are reference, not for injection
         Files.writeString(commandsDir.resolve("ls.yaml"),
                 "command: ls\ndescription: my custom ls manifest\n");
-        var list = new SuppressionList(kcpDir);
-
-        assertFalse(list.isSuppressed("ls", null));
-    }
-
-    @Test
-    void manifest_override_for_compound_command() throws IOException {
-        // "git" is suppressed by default, but git-log.yaml means git-log should NOT be suppressed
         Files.writeString(commandsDir.resolve("git-log.yaml"),
                 "command: git\nsubcommand: log\ndescription: custom git log\n");
+        Files.writeString(commandsDir.resolve("grep.yaml"),
+                "command: grep\ndescription: grep manifest\n");
         var list = new SuppressionList(kcpDir);
 
-        // git-log has a manifest → not suppressed
-        assertFalse(list.isSuppressed("git", "log"));
-        // git (base) still suppressed — no git.yaml
-        assertTrue(list.isSuppressed("git", null));
-        // git-status still suppressed — no git-status.yaml
-        assertTrue(list.isSuppressed("git", "status"));
-    }
-
-    @Test
-    void manifest_override_checks_project_local_too() throws IOException {
-        // Create a project-local .kcp/commands/ with a manifest
-        Path projectKcp = tempDir.resolve("project").resolve(".kcp").resolve("commands");
-        Files.createDirectories(projectKcp);
-        Files.writeString(projectKcp.resolve("grep.yaml"),
-                "command: grep\ndescription: project grep\n");
-
-        var list = new SuppressionList(kcpDir, projectKcp.getParent().getParent());
-
-        // grep has a project-local manifest → not suppressed
-        assertFalse(list.isSuppressed("grep", null));
-        // ls still suppressed
+        // All suppressed regardless of manifest files
         assertTrue(list.isSuppressed("ls", null));
+        assertTrue(list.isSuppressed("git", "log"));
+        assertTrue(list.isSuppressed("git", null));
+        assertTrue(list.isSuppressed("grep", null));
     }
 
     // ── Edge cases ────────────────────────────────────────────────────────────
