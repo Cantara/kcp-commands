@@ -43,7 +43,9 @@ public class SuppressionList {
             // System
             "ps", "kill", "top", "df", "du", "uname",
             // Runtimes (bare invocations)
-            "python3", "node", "java",
+            "python3", "python", "node", "java",
+            // Shells
+            "bash", "sh", "zsh", "fish", "dash",
             // Shell builtins
             "which", "type", "command", "env", "export", "source", "eval"
     );

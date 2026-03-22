@@ -117,8 +117,19 @@ class SuppressionListTest {
     void defaultList_suppresses_runtimes() {
         var list = new SuppressionList(kcpDir);
         assertTrue(list.isSuppressed("python3", null));
+        assertTrue(list.isSuppressed("python", null));
         assertTrue(list.isSuppressed("node", null));
         assertTrue(list.isSuppressed("java", null));
+    }
+
+    @Test
+    void defaultList_suppresses_shells() {
+        var list = new SuppressionList(kcpDir);
+        assertTrue(list.isSuppressed("bash", null));
+        assertTrue(list.isSuppressed("sh", null));
+        assertTrue(list.isSuppressed("zsh", null));
+        assertTrue(list.isSuppressed("fish", null));
+        assertTrue(list.isSuppressed("dash", null));
     }
 
     @Test
