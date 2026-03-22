@@ -62,6 +62,7 @@ docker-tag
 docker-volume
 doctl
 dotnet
+drift
 dstat
 du
 duckdb

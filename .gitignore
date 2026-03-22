@@ -2,3 +2,9 @@ typescript/node_modules/
 typescript/dist/
 java/target/
 typescript/.npmrc
+
+# Synthesis workspace metadata
+.synthesis.md
+**/.synthesis.md
+# Auto-generated manifests for bin scripts (not commands)
+bin/*.yaml
