@@ -70,10 +70,12 @@ The filter adds zero overhead on commands whose output is already concise. It on
 Every Bash hook call is appended to `~/.kcp/events.jsonl` as a single JSONL line:
 
 ```json
-{"ts":"2026-03-03T16:04:24Z","session_id":"ad732c58-...","project_dir":"/src/myproject","tool":"Bash","command":"cat /tmp/daemon.log","manifest_key":"cat"}
+{"ts":"2026-03-03T16:04:24Z","session_id":"ad732c58-...","project_dir":"/src/myproject","tool":"Bash","command":"cat /tmp/daemon.log","manifest_key":"cat","exit_code_hint":0}
 ```
 
-Fields: `ts` (ISO-8601), `session_id` (Claude Code session UUID), `project_dir` (working directory), `tool` (always `"Bash"`), `command` (raw command, truncated to 500 chars), `manifest_key` (resolved manifest or `null`).
+Fields: `ts` (ISO-8601), `session_id` (Claude Code session UUID), `project_dir` (working directory), `tool` (always `"Bash"`), `command` (raw command, truncated to 500 chars), `manifest_key` (resolved manifest or `null`), `exit_code_hint` (`0` clean / `1` error detected, v0.15.0).
+
+The `post-hook.sh` PostToolUse hook enriches each event with an `exit_code_hint` field (v0.15.0): `0` if the output looks clean, `1` if error signals were detected (exception, traceback, "command not found", non-zero exit patterns). This powers `kcp-memory analyze` — the manifest quality feedback loop that surfaces which manifests correlate with failures and retries.
 
 The write is asynchronous (virtual thread) and never blocks the hook response or raises an error. [kcp-memory](https://github.com/Cantara/kcp-memory) v0.2.0+ indexes these events to provide tool-level episodic memory across sessions.
 
@@ -513,6 +515,7 @@ Good candidates for custom manifests:
 | v0.12.0 | 284 | **KCP 0.9 Federation Release.** `knowledge.yaml` bumped to `kcp_version: "0.9"`, added `manifests` block (federation link to KCP spec). New manifest: `duckdb` (in-process analytical SQL engine). Aligned with kcp-mcp@0.12.0. |
 | v0.13.0 | 289 | +5 manifests: `gws`, `gws-auth`, `gws-gmail`, `gws-calendar`, `gws-drive` — Google Workspace CLI (gmail.modify, calendar, drive scopes) |
 | v0.14.0 | 289 | **KCP 0.10 Discovery & Versioning Release.** `knowledge.yaml` bumped to `kcp_version: "0.10"`. KCP 0.10 adds RFC-0007 Query Vocabulary (normative pre-invocation discovery), federation version pinning (`version_pin` + `version_policy`), instruction file bridge guide, and `kcp init` spec. |
+| v0.15.0 | 289 | **Manifest quality feedback loop.** `post-hook.sh` adds `exit_code_hint` (0/1) to PostToolUse events — error signals detected from output preview. Powers `kcp-memory analyze` for self-improving manifest quality. |
 
 ---
 
