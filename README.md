@@ -2,7 +2,7 @@
 
 <img src="https://totto.goatcounter.com/count?p=/kcp-commands-readme" alt="" style="display:none">
 
-**Not a CLI — typed knowledge infrastructure for 289 CLIs.** Saves 33% of Claude Code's context window by injecting syntax context before execution and filtering noise after.
+**Not a CLI — typed knowledge infrastructure for 291 CLIs.** Saves 33% of Claude Code's context window by injecting syntax context before execution and filtering noise after.
 
 kcp-commands is a [Claude Code hook](https://docs.anthropic.com/en/docs/claude-code/hooks) — it runs invisibly *around* CLI tools, not as one. It intercepts every Bash tool call and applies three phases:
 
@@ -14,7 +14,7 @@ kcp-commands is a [Claude Code hook](https://docs.anthropic.com/en/docs/claude-c
 
 Measured across a typical agentic coding session: **67,352 tokens saved -- 33.7% of a 200K context window recovered**, equivalent to 33 additional tool call results fitting in the same context.
 
-289 bundled manifests. Part of the [Knowledge Context Protocol](https://cantara.github.io/knowledge-context-protocol/) ecosystem.
+291 bundled manifests. Part of the [Knowledge Context Protocol](https://cantara.github.io/knowledge-context-protocol/) ecosystem.
 Read the [release post](https://wiki.totto.org/blog/2026/03/02/kcp-commands/) for the full benchmark methodology and design rationale.
 
 ---
@@ -141,7 +141,11 @@ The installer places `hook.sh`, the daemon JAR, and `cli.js` in `~/.kcp/`, then 
 ### Upgrade
 
 ```bash
-# Re-run the installer to pull the latest release:
+# Built-in updater (v0.18.0+):
+java -jar ~/.kcp/kcp-commands-daemon.jar --check-update   # check only (exit 1 if update available)
+java -jar ~/.kcp/kcp-commands-daemon.jar --update          # interactive download + install
+
+# Or re-run the installer to pull the latest release:
 curl -fsSL https://raw.githubusercontent.com/Cantara/kcp-commands/main/bin/install.sh | bash -s -- --java
 pkill -f kcp-commands-daemon; nohup java -jar ~/.kcp/kcp-commands-daemon.jar > /tmp/kcp-commands-daemon.log 2>&1 &
 ```
@@ -275,7 +279,7 @@ Full methodology and raw numbers: [docs/benchmark-results.md](docs/benchmark-res
 
 ## Supported commands
 
-### Bundled manifests (289 primed)
+### Bundled manifests (291 primed)
 
 **Git** — `git log` · `git diff` · `git status` · `git add` · `git commit` · `git push` · `git pull` · `git fetch` · `git branch` · `git checkout` · `git stash` · `git merge` · `git rebase` · `git clone` · `git reset` · `git tag` · `git remote` · `git show` · `git cherry-pick` · `git bisect` · `git worktree` · `git submodule`
 
@@ -283,7 +287,7 @@ Full methodology and raw numbers: [docs/benchmark-results.md](docs/benchmark-res
 
 **Text processing** — `jq` · `sed` · `awk` · `sort` · `uniq` · `wc` · `cut` · `xargs` · `tee` · `tr` · `diff` · `make` · `yq` · `base64` · `sha256sum` · `envsubst` · `nl` · `xxd` · `strings` · `xmllint` · `column`
 
-**Build tools** — `mvn` · `gradle` · `cargo` · `go build` · `go test` · `go mod` · `ant` · `sbt` · `dotnet`
+**Build tools** — `mvn` · `gradle` · `gradlew` · `cargo` · `go build` · `go test` · `go mod` · `ant` · `sbt` · `dotnet`
 
 **Package managers** — `npm` · `yarn` · `pnpm` · `bun` · `pip` · `brew` · `apt` · `yum` · `gem` · `conda` · `snap` · `pacman` · `composer` · `poetry` · `bundle`
 
@@ -466,7 +470,7 @@ kcp-commands/
       .../ManifestResolver.java
       .../ManifestGenerator.java
     target/
-  commands/              # bundled primed manifests (289)
+  commands/              # bundled primed manifests (291)
     ls.yaml
     ps.yaml
     find.yaml
@@ -519,6 +523,8 @@ Good candidates for custom manifests:
 | v0.16.0 | 289 | **Manifest version tracking.** Stamps every Phase A event with `manifest_version` — the SHA-256 first 8 hex chars of the YAML file active at invocation time. Enables `kcp-memory analyze --by-version` to compare quality metrics before and after a manifest is improved. |
 | v0.16.1 | 289 | **Manifest quality improvements.** First round of data-driven manifest improvements based on `kcp-memory analyze` quality signals (60-day dataset): `ssh` (69% retry), `gh-api` (71% retry), `curl` (46% retry + 26% help), `find` (62% retry, 949 calls), `head` (79% retry), `sed` (66% retry). Added `common_errors` sections, EC2/macOS patterns, `-exec`, `--fail-with-body`, `BatchMode`, and more. |
 | v0.17.0 | 289 | **Documentation and release alignment.** Aligned version with kcp-memory v0.17.0. |
+| v0.17.1 | 291 | **Patch.** Fix: `ssh -i` variable assignments no longer parsed as command `-i` (`SuppressionList` guards `cmd.startsWith("-")`). Fix: `./gradlew` now resolves the primed `gradlew` manifest (normalize `./` prefix in `ManifestResolver`). New manifest: `gradlew` (Gradle wrapper — build, test, bootRun). Data-driven improvements to `az`, `pgrep`, `nohup-mvn`, `javap` based on quality feedback loop. |
+| v0.18.0 | 291 | **Auto-update.** `--update` / `--check-update` pre-daemon flags for interactive and scriptable update checks. `UpdateChecker`: 24h-rate-limited GitHub API check, `.tmp`+`.bak` download with JAR validation, shared `~/.kcp/last-update-check` cache (shared with kcp-memory). New `/version` endpoint: `GET http://localhost:7734/version` → current + latest + updateAvailable. Startup update notification on first run each day. |
 
 ---
 
