@@ -33,12 +33,14 @@ public class EventLogger {
      * Log a Bash tool-call event asynchronously.
      * Returns immediately; the write happens on a virtual thread.
      *
-     * @param sessionId   Claude Code session UUID (may be empty if not present in hook input)
-     * @param projectDir  Working directory at time of the tool call (cwd)
-     * @param command     Raw Bash command (truncated to 500 chars)
-     * @param manifestKey kcp-commands manifest key that was resolved, or null if none
+     * @param sessionId       Claude Code session UUID (may be empty if not present in hook input)
+     * @param projectDir      Working directory at time of the tool call (cwd)
+     * @param command         Raw Bash command (truncated to 500 chars)
+     * @param manifestKey     kcp-commands manifest key that was resolved, or null if none
+     * @param manifestVersion SHA-256 first 8 hex chars of the active manifest YAML, or null
      */
-    public static void log(String sessionId, String projectDir, String command, String manifestKey) {
+    public static void log(String sessionId, String projectDir, String command,
+                           String manifestKey, String manifestVersion) {
         Thread.ofVirtual().start(() -> {
             try {
                 Files.createDirectories(EVENTS_FILE.getParent());
@@ -55,6 +57,9 @@ public class EventLogger {
 
                 if (manifestKey != null) event.put("manifest_key", manifestKey);
                 else                     event.putNull("manifest_key");
+
+                if (manifestVersion != null) event.put("manifest_version", manifestVersion);
+                else                         event.putNull("manifest_version");
 
                 byte[] line = (MAPPER.writeValueAsString(event) + "\n").getBytes(StandardCharsets.UTF_8);
 

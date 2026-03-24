@@ -2,10 +2,14 @@ package com.cantara.kcp.commands;
 
 import com.cantara.kcp.commands.model.CommandManifest;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+import java.util.HexFormat;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -21,7 +25,8 @@ import java.util.concurrent.ConcurrentHashMap;
 public class ManifestResolver {
 
     private final Path userDir;
-    private final Map<String, CommandManifest> primedCache = new ConcurrentHashMap<>();
+    private final Map<String, CommandManifest> primedCache  = new ConcurrentHashMap<>();
+    private final Map<String, String>          primedHashes = new ConcurrentHashMap<>();
 
     public ManifestResolver() {
         this.userDir = Path.of(System.getProperty("user.home"), ".kcp", "commands");
@@ -47,6 +52,39 @@ public class ManifestResolver {
 
         // 3. Primed (classpath, pre-loaded at startup)
         return primedCache.get(key);
+    }
+
+    /**
+     * Resolve the 8-char SHA-256 content hash for the manifest file active at the given key.
+     * Checks project-local → user-level → primed (classpath).
+     * Returns null if no manifest file is found.
+     */
+    public String resolveHash(String key) {
+        String filename = key + ".yaml";
+
+        // 1. Project-local
+        Path projectPath = Path.of(System.getProperty("user.dir"), ".kcp", "commands", filename);
+        if (Files.exists(projectPath)) {
+            try { return hashBytes(Files.readAllBytes(projectPath)); } catch (IOException ignored) {}
+        }
+
+        // 2. User-level
+        Path userPath = userDir.resolve(filename);
+        if (Files.exists(userPath)) {
+            try { return hashBytes(Files.readAllBytes(userPath)); } catch (IOException ignored) {}
+        }
+
+        // 3. Primed (pre-hashed at startup)
+        return primedHashes.get(key);
+    }
+
+    private static String hashBytes(byte[] bytes) {
+        try {
+            byte[] digest = MessageDigest.getInstance("SHA-256").digest(bytes);
+            return HexFormat.of().formatHex(digest).substring(0, 8);
+        } catch (NoSuchAlgorithmException e) {
+            return null; // SHA-256 is always available
+        }
     }
 
     private CommandManifest tryFile(Path path) {
@@ -82,7 +120,10 @@ public class ManifestResolver {
                 String resource = "commands/" + key + ".yaml";
                 try (InputStream is = getClass().getClassLoader().getResourceAsStream(resource)) {
                     if (is != null) {
-                        primedCache.put(key, ManifestParser.parse(is));
+                        byte[] bytes = is.readAllBytes();
+                        String hash = hashBytes(bytes);
+                        primedCache.put(key, ManifestParser.parse(new ByteArrayInputStream(bytes)));
+                        if (hash != null) primedHashes.put(key, hash);
                         loaded++;
                     } else {
                         System.err.println("[kcp-commands] Warning: manifest not found for key '" + key + "'");

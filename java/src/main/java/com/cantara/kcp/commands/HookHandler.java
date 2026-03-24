@@ -82,14 +82,14 @@ public class HookHandler implements HttpHandler {
 
         ParsedCommand parsed = CommandParser.parse(command);
         if (parsed == null) {
-            EventLogger.log(sessionId, projectDir, command, null);
+            EventLogger.log(sessionId, projectDir, command, null, null);
             sendEmpty(exchange);
             return;
         }
 
         // Suppression: well-known commands skip manifest lookup entirely (saves 5-8K tokens/session)
         if (suppressionList.isSuppressed(parsed.cmd(), parsed.subcommand())) {
-            EventLogger.log(sessionId, projectDir, command, null);
+            EventLogger.log(sessionId, projectDir, command, null, null);
             sendEmpty(exchange);
             return;
         }
@@ -111,8 +111,15 @@ public class HookHandler implements HttpHandler {
                     : manifest.command();
         }
 
+        // Resolve manifest version hash — same compound/simple key fallback as manifest resolution.
+        // Generated manifests (no file on disk) yield null.
+        String manifestVersion = resolver.resolveHash(parsed.key());
+        if (manifestVersion == null && parsed.subcommand() != null) {
+            manifestVersion = resolver.resolveHash(parsed.cmd());
+        }
+
         // Log event asynchronously — always, regardless of manifest resolution outcome
-        EventLogger.log(sessionId, projectDir, command, manifestKey);
+        EventLogger.log(sessionId, projectDir, command, manifestKey, manifestVersion);
 
         if (manifest == null) {
             sendEmpty(exchange);
