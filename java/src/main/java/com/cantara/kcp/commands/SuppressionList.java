@@ -73,6 +73,11 @@ public class SuppressionList {
         if (cmd == null || cmd.isEmpty()) {
             return false;
         }
+        // Parser edge case: commands starting with '-' are flag fragments, not real commands.
+        // e.g. multiline variable assignments like MIMIR="ssh -i ..." get parsed as cmd="-i".
+        if (cmd.startsWith("-")) {
+            return true;
+        }
         return suppressed.contains(cmd);
     }
 

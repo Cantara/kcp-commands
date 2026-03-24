@@ -51,7 +51,9 @@ public class ManifestResolver {
         if (m != null) return m;
 
         // 3. Primed (classpath, pre-loaded at startup)
-        return primedCache.get(key);
+        // Normalize ./ prefix — "./gradlew" should find primed "gradlew"
+        String primedKey = key.startsWith("./") ? key.substring(2) : key;
+        return primedCache.get(primedKey);
     }
 
     /**
@@ -75,7 +77,9 @@ public class ManifestResolver {
         }
 
         // 3. Primed (pre-hashed at startup)
-        return primedHashes.get(key);
+        // Normalize ./ prefix — "./gradlew" should find primed "gradlew"
+        String primedKey = key.startsWith("./") ? key.substring(2) : key;
+        return primedHashes.get(primedKey);
     }
 
     private static String hashBytes(byte[] bytes) {

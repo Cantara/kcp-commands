@@ -121,6 +121,7 @@ go-test
 golangci-lint
 gpg
 gradle
+gradlew
 grep
 grpcurl
 gws
