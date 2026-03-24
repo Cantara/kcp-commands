@@ -4,6 +4,11 @@ description: "Stream editor — find-and-replace, delete, or transform text line
 
 syntax:
   usage: "sed [options] 'script' [file...]"
+  notes:
+    - "On macOS, -i requires '' argument: sed -i '' 's/old/new/g' file"
+    - "On Linux, -i works without argument: sed -i 's/old/new/g' file"
+    - "Use | as delimiter when pattern contains /: sed 's|/old/path|/new/path|g'"
+    - "Multiple expressions: sed -e 's/a/b/' -e 's/c/d/' file"
   key_flags:
     - flag: "'s/pattern/replacement/'"
       description: "Substitute first match per line"
@@ -11,7 +16,7 @@ syntax:
     - flag: "'s/pattern/replacement/g'"
       description: "Substitute all matches per line (global)"
     - flag: "-i 's/old/new/g' file"
-      description: "Edit file in-place"
+      description: "Edit file in-place (Linux). macOS: -i '' 's/old/new/g' file"
       use_when: "Modify a file directly"
     - flag: "-i.bak 's/old/new/g' file"
       description: "In-place edit with .bak backup"
@@ -21,21 +26,40 @@ syntax:
     - flag: "'/pattern/d'"
       description: "Delete lines matching pattern"
       use_when: "Strip noise from output"
+    - flag: "-e 'expr1' -e 'expr2'"
+      description: "Multiple expressions in one pass"
+      use_when: "Apply several substitutions at once"
     - flag: "-E"
       description: "Use extended regex (ERE) — enables + ? | ( )"
       use_when: "Complex patterns"
     - flag: "'NUMq'"
       description: "Quit after N lines"
+    - flag: "'Na'"
+      description: "Append text after line N"
+      use_when: "Insert a line after a specific line number"
+    - flag: "'/pattern/a\\text'"
+      description: "Append text after lines matching pattern"
+      use_when: "Insert content after matching lines"
 
   preferred_invocations:
     - invocation: "sed 's/old/new/g' file"
-      use_when: "Replace text globally in a file"
+      use_when: "Replace text globally in a file (stdout)"
     - invocation: "sed -i 's/old/new/g' file"
-      use_when: "Modify file in-place"
-    - invocation: "cat file | sed '/^#/d' | sed '/^$/d'"
-      use_when: "Strip comments and blank lines"
+      use_when: "Modify file in-place (Linux)"
+    - invocation: "sed -i '' 's/old/new/g' file"
+      use_when: "Modify file in-place (macOS)"
+    - invocation: "sed -i -e 's/foo/bar/g' -e '/^#/d' file"
+      use_when: "Multiple edits in one pass — replace + delete comments"
     - invocation: "sed -n '10,20p' file"
       use_when: "Print lines 10-20"
+    - invocation: "sed -i '/pattern/d' file"
+      use_when: "Delete all lines matching pattern in-place"
+
+  common_errors:
+    - error: "sed: -e expression #1, char N: unterminated `s' command"
+      fix: "Unescaped / in pattern — use alternate delimiter: sed 's|old|new|g'"
+    - error: "sed: can't read : No such file or directory"
+      fix: "On macOS, -i needs explicit empty string: sed -i '' not sed -i"
 
 output_schema:
   enable_filter: false

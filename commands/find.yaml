@@ -4,6 +4,10 @@ description: "Search for files in a directory hierarchy"
 
 syntax:
   usage: "find [path...] [expression]"
+  notes:
+    - "Expressions are evaluated left to right — put -prune BEFORE other tests"
+    - "Use -print0 | xargs -0 for filenames with spaces"
+    - "Combine exclusions: -not \\( -path '*/node_modules/*' -o -path '*/.git/*' \\)"
   key_flags:
     - flag: "-name '<pattern>'"
       description: "Match filename (case-sensitive, supports * glob)"
@@ -20,10 +24,22 @@ syntax:
     - flag: "-mtime -<N>"
       description: "Files modified in the last N days"
       use_when: "Finding recently changed files"
+    - flag: "-newer <reffile>"
+      description: "Files modified more recently than reffile"
+      use_when: "Find files changed since a known timestamp"
     - flag: "-size +<N>M"
       description: "Files larger than N megabytes"
     - flag: "-not -path '*/node_modules/*'"
       description: "Exclude node_modules (combine with other expressions)"
+    - flag: "-path '*/target/*' -prune -o"
+      description: "Prune target dirs from search (Java/Maven repos)"
+      use_when: "Skip build output in Java projects"
+    - flag: "-exec <cmd> {} \\;"
+      description: "Run command on each match ({} = matched path)"
+      use_when: "Process each file — e.g. -exec grep -l 'pattern' {} \\;"
+    - flag: "-exec <cmd> {} +"
+      description: "Run command with all matches as args (batch, faster)"
+      use_when: "Bulk operations — e.g. -exec chmod 644 {} +"
 
   preferred_invocations:
     - invocation: "find . -name '*.yaml' -not -path '*/node_modules/*'"
@@ -32,6 +48,10 @@ syntax:
       use_when: "Files changed in the last week"
     - invocation: "find . -maxdepth 2 -type d"
       use_when: "Quick directory structure overview"
+    - invocation: "find . -path '*/target' -prune -o -path '*/.git' -prune -o -name '*.java' -print"
+      use_when: "Find Java files excluding build and git dirs"
+    - invocation: "find . -type f -name '*.log' -exec rm {} +"
+      use_when: "Delete all log files (batch exec)"
 
 output_schema:
   enable_filter: true

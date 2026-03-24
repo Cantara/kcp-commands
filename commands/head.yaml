@@ -4,23 +4,35 @@ description: "Output the first part of a file"
 
 syntax:
   usage: "head [OPTION]... [FILE]..."
+  notes:
+    - "head shows ONLY the top — if you need context about file size, run wc -l first"
+    - "For config/YAML/JSON files, head -n 50 usually captures the structure"
+    - "Default is 10 lines — ALWAYS specify -n to get what you actually need"
+    - "For multiple files, head adds ==> filename <== headers between outputs"
   key_flags:
     - flag: "-n <N>"
       description: "Print the first N lines (default: 10)"
-      use_when: "Always specify to control output size"
+      use_when: "Always specify — 10 lines is rarely enough"
     - flag: "-c <N>"
       description: "Print the first N bytes"
       use_when: "Binary or fixed-width files"
     - flag: "-n -<N>"
       description: "Print all but the last N lines"
+    - flag: "-q"
+      description: "Quiet — suppress filename headers when reading multiple files"
+      use_when: "Clean output from multiple files"
 
   preferred_invocations:
-    - invocation: "head -n 20 <file>"
-      use_when: "Preview the top of a file"
+    - invocation: "wc -l <file> && head -n 30 <file>"
+      use_when: "Preview file — know total size THEN see the top"
+    - invocation: "head -n 50 <file>"
+      use_when: "Preview config/YAML/JSON — 50 lines captures most structure"
     - invocation: "head -n 1 <file>"
       use_when: "Read just the first line (e.g. shebang, CSV header)"
-    - invocation: "<command> | head -20"
+    - invocation: "<command> | head -n 20"
       use_when: "Limit piped output to first 20 lines"
+    - invocation: "head -n 20 file1.txt file2.txt"
+      use_when: "Preview top of multiple files at once"
 
 output_schema:
   enable_filter: false
