@@ -517,6 +517,8 @@ Good candidates for custom manifests:
 | v0.14.0 | 289 | **KCP 0.10 Discovery & Versioning Release.** `knowledge.yaml` bumped to `kcp_version: "0.10"`. KCP 0.10 adds RFC-0007 Query Vocabulary (normative pre-invocation discovery), federation version pinning (`version_pin` + `version_policy`), instruction file bridge guide, and `kcp init` spec. |
 | v0.15.0 | 289 | **Manifest quality feedback loop.** `post-hook.sh` adds `exit_code_hint` (0/1) to PostToolUse events — error signals detected from output preview. Powers `kcp-memory analyze` for self-improving manifest quality. |
 | v0.16.0 | 289 | **Manifest version tracking.** Stamps every Phase A event with `manifest_version` — the SHA-256 first 8 hex chars of the YAML file active at invocation time. Enables `kcp-memory analyze --by-version` to compare quality metrics before and after a manifest is improved. |
+| v0.16.1 | 289 | **Manifest quality improvements.** First round of data-driven manifest improvements based on `kcp-memory analyze` quality signals (60-day dataset): `ssh` (69% retry), `gh-api` (71% retry), `curl` (46% retry + 26% help), `find` (62% retry, 949 calls), `head` (79% retry), `sed` (66% retry). Added `common_errors` sections, EC2/macOS patterns, `-exec`, `--fail-with-body`, `BatchMode`, and more. |
+| v0.17.0 | 289 | **Documentation and release alignment.** Aligned version with kcp-memory v0.17.0. |
 
 ---
 
