@@ -10,7 +10,7 @@ EVENTS_FILE="$HOME/.kcp/events.jsonl"
 
 # Parse hook JSON from stdin and append output preview line
 cat | python3 -c "
-import json, sys, os, datetime
+import json, sys, os, datetime, re
 
 try:
     data = json.load(sys.stdin)
@@ -30,6 +30,14 @@ if not command or not output:
 
 preview = output[:200] + ('…' if len(output) > 200 else '')
 
+# Detect error signals in the first 500 chars of output
+_check = output[:500].lower()
+exit_code_hint = 1 if (
+    _check.startswith('error') or _check.startswith('error:')
+    or any(s in _check for s in ['exception', 'traceback', 'failed', 'command not found', 'no such file'])
+    or re.search(r'exit code [1-9]', _check) or 'exited with' in _check
+) else 0
+
 event = {
     'type':           'output',
     'ts':             datetime.datetime.now(datetime.timezone.utc).strftime('%Y-%m-%dT%H:%M:%SZ'),
@@ -37,6 +45,7 @@ event = {
     'tool':           tool_name,
     'command':        command[:500],
     'output_preview': preview,
+    'exit_code_hint': exit_code_hint,
 }
 
 events_file = os.path.expanduser('~/.kcp/events.jsonl')
