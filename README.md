@@ -122,7 +122,9 @@ Both options download pre-built artifacts from GitHub Releases and install to `~
 curl -fsSL https://raw.githubusercontent.com/Cantara/kcp-commands/main/bin/install.sh | bash -s -- --java
 ```
 
-Requires Java 21. Hook latency: ~12ms per call.
+Requires Java 21+. Hook latency: ~12ms per call.
+
+> **macOS:** Install Java 21 with `brew install --cask temurin@21`. The installer and `hook.sh` detect Temurin 21 automatically via `/usr/libexec/java_home -v 21` — even if your system default is an older Java version.
 
 ### Node.js only
 
@@ -165,6 +167,93 @@ tail -1 ~/.kcp/events.jsonl
 ```
 
 Phase B is transparent -- you'll notice it when a normally noisy command like `ps aux` returns a concise, filtered result.
+
+---
+
+## Full KCP setup (kcp-commands + kcp-memory)
+
+kcp-commands handles the Bash tool boundary. [kcp-memory](https://github.com/Cantara/kcp-memory) adds persistent episodic memory across sessions by indexing the event log (Phase C) and session transcripts. Install both for the complete stack:
+
+**Step 1 — Install kcp-commands** (Java daemon backend):
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/Cantara/kcp-commands/main/bin/install.sh | bash -s -- --java
+```
+
+**Step 2 — Install kcp-memory** (MCP server for episodic memory):
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/Cantara/kcp-memory/main/bin/install.sh | bash
+```
+
+The kcp-memory installer scans your existing `~/.kcp/events.jsonl` (written by kcp-commands Phase C) and registers `kcp-memory` as an MCP server in `~/.claude.json`.
+
+**Step 3 — Restart Claude Code** to activate both hooks and the MCP server.
+
+After restart:
+- Every Bash call gets syntax context injected (Phase A) and noise filtered (Phase B)
+- Every Bash call is logged to `~/.kcp/events.jsonl` (Phase C)
+- kcp-memory indexes events and session transcripts; Claude can query past sessions and tool-call history via the MCP tools
+
+---
+
+## Troubleshooting
+
+### `[kcp]` context not appearing in Claude
+
+1. Check the hook is registered:
+   ```bash
+   cat ~/.claude/settings.json | grep kcp
+   ```
+   You should see `bash "$HOME/.kcp/hook.sh"` in the `PreToolUse` hooks array.
+2. If missing, re-run the installer.
+3. Restart Claude Code after any settings change — hooks only activate on startup.
+4. Confirm the daemon responds: `curl -sf http://localhost:7734/health && echo "ok"`
+
+### Java daemon fails to start — `UnsupportedClassVersionError`
+
+```
+Error: LinkageError ... UnsupportedClassVersionError:
+  (class file version 65.0, this Java supports 52.0)
+```
+
+The daemon is compiled for Java 21 (class file version 65.0). Your system `java` is older — Java 8 = version 52.0, Java 11 = version 55.0.
+
+**Fix on macOS:**
+```bash
+brew install --cask temurin@21
+# Verify:
+/usr/libexec/java_home -v 21
+# Restart the daemon:
+pkill -f kcp-commands-daemon || true
+curl -fsSL https://raw.githubusercontent.com/Cantara/kcp-commands/main/bin/install.sh | bash -s -- --java
+```
+
+The installer and `hook.sh` pick up Temurin 21 automatically via `/usr/libexec/java_home -v 21` — no changes to `JAVA_HOME` needed.
+
+**Fix on Linux:** Install OpenJDK 21 and ensure it is the active version:
+```bash
+# Debian/Ubuntu
+sudo apt install openjdk-21-jdk
+sudo update-alternatives --config java   # select Java 21
+
+# Fedora/RHEL
+sudo dnf install java-21-openjdk
+sudo alternatives --config java
+```
+
+**Fallback:** If you cannot upgrade Java right now, use the Node.js backend instead:
+```bash
+curl -fsSL https://raw.githubusercontent.com/Cantara/kcp-commands/main/bin/install.sh | bash -s -- --node
+```
+
+### Node.js install fails with HTTP 404
+
+This was a bug in releases before v0.14.0 where the release asset was named `kcp-commands-cli.js` instead of `cli.js`. Fixed in v0.14.0+. Re-run the installer to pull the correct artifact.
+
+### Some commands get `[kcp]` blocks, others don't
+
+Expected behaviour. Commands on the suppression list (`git`, `ls`, `grep`, `curl`, `ssh`, and ~30 others) return 204 immediately — no manifest is injected. This is intentional: capable agents already know these commands, so skipping saves 5–8K tokens per session. See the [Suppression list](#suppression-list----skip-manifests-for-well-known-commands-v0140) section. Customise the list with `~/.kcp/suppress.txt`.
 
 ---
 

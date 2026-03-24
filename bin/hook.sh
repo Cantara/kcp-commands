@@ -26,7 +26,15 @@ fi
 
 # ── Daemon not running: try to start it ──────────────────────────────────────
 if [ -f "$DAEMON_JAR" ]; then
-    nohup java -jar "$DAEMON_JAR" > "$DAEMON_LOG" 2>&1 &
+    # Resolve Java 21+ binary — use java_home on macOS if available
+    JAVA_BIN="java"
+    if [ "$(uname)" = "Darwin" ] && command -v /usr/libexec/java_home > /dev/null 2>&1; then
+        JAVA21="$(/usr/libexec/java_home -v 21 2>/dev/null || true)"
+        if [ -n "$JAVA21" ]; then
+            JAVA_BIN="$JAVA21/bin/java"
+        fi
+    fi
+    nohup "$JAVA_BIN" -jar "$DAEMON_JAR" > "$DAEMON_LOG" 2>&1 &
 
     # Wait up to 3s for startup (JVM cold start is ~200-500ms)
     for _ in 1 2 3 4 5 6; do

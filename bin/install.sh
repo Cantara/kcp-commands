@@ -75,6 +75,25 @@ echo "✓ post-hook.sh installed"
 # ── Java daemon ───────────────────────────────────────────────────────────────
 
 if [ "$MODE" = "java" ]; then
+  # Verify Java 21+ is available
+  JAVA_BIN="java"
+  if [ "$(uname)" = "Darwin" ] && command -v /usr/libexec/java_home > /dev/null 2>&1; then
+    JAVA21="$(/usr/libexec/java_home -v 21 2>/dev/null || true)"
+    if [ -n "$JAVA21" ]; then
+      JAVA_BIN="$JAVA21/bin/java"
+    fi
+  fi
+  JAVA_VERSION=$("$JAVA_BIN" -version 2>&1 | awk -F '"' '/version/ {print $2}' | cut -d. -f1)
+  if [ -z "$JAVA_VERSION" ] || [ "$JAVA_VERSION" -lt 21 ] 2>/dev/null; then
+    echo "✗ Java 21+ required (found: ${JAVA_VERSION:-none})."
+    echo "  On macOS: brew install --cask temurin@21"
+    echo "  Or set JAVA_HOME to a Java 21 installation and re-run."
+    echo "  Falling back to Node.js backend."
+    MODE="node"
+  fi
+fi
+
+if [ "$MODE" = "java" ]; then
   echo "→ Downloading Java daemon..."
   if curl -fsSL "$RELEASES_URL/kcp-commands-daemon.jar" -o "$KCP_DIR/kcp-commands-daemon.jar"; then
     echo "✓ Java daemon downloaded"
@@ -105,7 +124,7 @@ fi
 
 if [ "$MODE" = "node" ]; then
   echo "→ Downloading Node.js CLI..."
-  if curl -fsSL "$RELEASES_URL/kcp-commands-cli.js" -o "$KCP_DIR/cli.js"; then
+  if curl -fsSL "$RELEASES_URL/cli.js" -o "$KCP_DIR/cli.js"; then
     echo "✓ Node.js CLI downloaded"
   else
     echo "✗ Download failed. Checking for local build..."
