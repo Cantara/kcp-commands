@@ -154,6 +154,15 @@ fi
 
 # Create ~/.local/bin/kcp wrapper so `kcp stats` works from any terminal
 if [ -f "$KCP_DIR/kcp-user-cli.js" ]; then
+  # Install better-sqlite3 (used by kcp stats) — pre-built binary, no compilation
+  if command -v npm > /dev/null 2>&1; then
+    echo "→ Installing kcp stats dependency (better-sqlite3)..."
+    cd "$KCP_DIR" && npm install better-sqlite3 --save --silent 2>/dev/null \
+      && echo "✓ better-sqlite3 installed" \
+      || echo "  (better-sqlite3 install failed — kcp stats will not work)"
+    cd - > /dev/null
+  fi
+
   mkdir -p "$HOME/.local/bin"
   cat > "$HOME/.local/bin/kcp" << WRAPPER
 #!/usr/bin/env bash

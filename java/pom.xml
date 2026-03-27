@@ -6,7 +6,7 @@
 
     <groupId>com.cantara.kcp</groupId>
     <artifactId>kcp-commands-daemon</artifactId>
-    <version>0.18.0</version>
+    <version>0.19.0</version>
     <packaging>jar</packaging>
 
     <name>kcp-commands-daemon</name>
@@ -33,6 +33,13 @@
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-databind</artifactId>
             <version>2.21.2</version>
+        </dependency>
+
+        <!-- SQLite for RFC-0017 usage event logging to ~/.kcp/usage.db -->
+        <dependency>
+            <groupId>org.xerial</groupId>
+            <artifactId>sqlite-jdbc</artifactId>
+            <version>3.49.1.0</version>
         </dependency>
 
         <!-- Testing -->

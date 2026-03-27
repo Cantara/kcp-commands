@@ -126,6 +126,8 @@ public class HookHandler implements HttpHandler {
             return;
         }
 
+        UsageLogger.logInject(sessionId, projectDir, manifestKey,
+                buildAdditionalContext(manifest).length());
         sendResponse(exchange, buildResponse(manifest, command, parsed));
     }
 
