@@ -143,6 +143,26 @@ if [ "$MODE" = "node" ]; then
   fi
 fi
 
+# ── KCP user CLI (kcp stats / validate / init) — always installed ─────────────
+
+echo "→ Installing KCP user CLI (kcp stats, kcp validate, kcp init)..."
+if curl -fsSL "$RELEASES_URL/kcp-user-cli.js" -o "$KCP_DIR/kcp-user-cli.js" 2>/dev/null; then
+  echo "✓ KCP user CLI downloaded"
+else
+  echo "  (KCP user CLI not available in this release — skipping)"
+fi
+
+# Create ~/.local/bin/kcp wrapper so `kcp stats` works from any terminal
+if [ -f "$KCP_DIR/kcp-user-cli.js" ]; then
+  mkdir -p "$HOME/.local/bin"
+  cat > "$HOME/.local/bin/kcp" << WRAPPER
+#!/usr/bin/env bash
+node "$KCP_DIR/kcp-user-cli.js" "\$@"
+WRAPPER
+  chmod +x "$HOME/.local/bin/kcp"
+  echo "✓ kcp wrapper installed → ~/.local/bin/kcp"
+fi
+
 # ── Register hook in ~/.claude/settings.json ─────────────────────────────────
 
 if [ ! -f "$SETTINGS_FILE" ]; then
@@ -222,3 +242,8 @@ echo "  CLI      : $KCP_DIR/cli.js"
 fi
 echo ""
 echo "  ➜ Restart Claude Code to activate the hook."
+if [ -f "$HOME/.local/bin/kcp" ]; then
+echo ""
+echo "  Run 'kcp stats' to see token savings and usage data."
+echo "  (Make sure ~/.local/bin is in your PATH)"
+fi
