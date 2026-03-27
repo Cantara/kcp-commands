@@ -2,6 +2,7 @@ package com.cantara.kcp.commands;
 
 import com.cantara.kcp.commands.model.ParsedCommand;
 
+import java.nio.file.Path;
 import java.util.regex.Pattern;
 
 /**
@@ -34,15 +35,18 @@ public class CommandParser {
         // Take only the first pipeline segment
         String firstSegment = shellCommand.split("[|;&]+")[0].trim();
 
-        // Strip leading env var assignments (FOO=bar cmd) and sudo
+        // Strip leading env var assignments (FOO=bar cmd), sudo, nohup, time, env
         String stripped = firstSegment
-                .replaceAll("^(?:\\w+=\\S+\\s+)*(?:sudo\\s+)?", "")
+                .replaceAll("^(?:\\w+=\\S+\\s+)*(?:(?:sudo|nohup|time|env)\\s+)*", "")
                 .trim();
 
         String[] parts = stripped.split("\\s+");
         if (parts.length == 0 || parts[0].isBlank()) return null;
 
-        String cmd = parts[0];
+        // Normalize absolute paths to their basename (/usr/bin/git → git)
+        String cmd = parts[0].startsWith("/")
+                ? Path.of(parts[0]).getFileName().toString()
+                : parts[0];
 
         // Compound commands: any command whose first arg looks like a subcommand word.
         // Examples: git log, docker ps, kubectl get, npm install
