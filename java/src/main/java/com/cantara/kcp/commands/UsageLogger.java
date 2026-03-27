@@ -48,7 +48,9 @@ public final class UsageLogger {
                         : "unknown";
                 int tokenEstimate = Math.max(1, contextLength / 4);
                 insert("inject", project, null, manifestKey, null, tokenEstimate, null, sessionId);
-            } catch (Exception ignored) {}
+            } catch (Exception e) {
+                System.err.println("[UsageLogger] inject failed: " + e);
+            }
         });
     }
 
@@ -77,6 +79,10 @@ public final class UsageLogger {
                     "CREATE INDEX IF NOT EXISTS idx_usage_timestamp ON usage_events(timestamp)");
                 conn.createStatement().executeUpdate(
                     "CREATE INDEX IF NOT EXISTS idx_usage_type ON usage_events(event_type)");
+                // Migration: add session_id if table was created by an older schema (kcp-mcp pre-0017)
+                try { conn.createStatement().executeUpdate(
+                    "ALTER TABLE usage_events ADD COLUMN session_id TEXT"); }
+                catch (Exception ignored) { /* column already exists */ }
             }
             initialized = true;
         } finally {

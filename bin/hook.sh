@@ -34,7 +34,7 @@ if [ -f "$DAEMON_JAR" ]; then
             JAVA_BIN="$JAVA21/bin/java"
         fi
     fi
-    nohup "$JAVA_BIN" -jar "$DAEMON_JAR" > "$DAEMON_LOG" 2>&1 &
+    nohup "$JAVA_BIN" --enable-native-access=ALL-UNNAMED -jar "$DAEMON_JAR" > "$DAEMON_LOG" 2>&1 &
 
     # Wait up to 3s for startup (JVM cold start is ~200-500ms)
     for _ in 1 2 3 4 5 6; do
