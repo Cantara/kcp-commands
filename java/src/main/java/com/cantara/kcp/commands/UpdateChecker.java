@@ -40,9 +40,24 @@ public class UpdateChecker {
         String currentCommands, String latestCommands,
         String currentMemory,   String latestMemory
     ) {
-        boolean commandsOutdated() { return latestCommands != null && !latestCommands.equals(currentCommands); }
-        boolean memoryOutdated()   { return latestMemory   != null && !latestMemory.equals(currentMemory); }
+        boolean commandsOutdated() { return latestCommands != null && isNewer(latestCommands, currentCommands); }
+        boolean memoryOutdated()   { return latestMemory   != null && isNewer(latestMemory,   currentMemory); }
         boolean anyOutdated()      { return commandsOutdated() || memoryOutdated(); }
+
+        private static boolean isNewer(String latest, String current) {
+            try {
+                String[] l = latest.split("\\.");
+                String[] c = current.split("\\.");
+                for (int i = 0; i < Math.max(l.length, c.length); i++) {
+                    int lv = i < l.length ? Integer.parseInt(l[i]) : 0;
+                    int cv = i < c.length ? Integer.parseInt(c[i]) : 0;
+                    if (lv != cv) return lv > cv;
+                }
+                return false;
+            } catch (NumberFormatException e) {
+                return !latest.equals(current);
+            }
+        }
     }
 
     /** Check with 24h rate limit. Uses cached values if within window. */

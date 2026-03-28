@@ -54,6 +54,30 @@ public final class UsageLogger {
         });
     }
 
+    /**
+     * Log a filter event asynchronously — returns immediately.
+     * Used when a suppressed command has its output piped through Phase B
+     * without any Phase A context injection.
+     *
+     * @param sessionId    Claude Code session UUID (may be empty)
+     * @param projectDir   Working directory (cwd from hook JSON)
+     * @param manifestKey  Resolved manifest key, e.g. "git-log", "grep"
+     */
+    public static void logFilter(String sessionId, String projectDir, String manifestKey) {
+        Thread.ofVirtual().start(() -> {
+            try {
+                ensureSchema();
+                String project = projectDir != null && !projectDir.isBlank()
+                        ? Path.of(projectDir).getFileName().toString()
+                        : "unknown";
+                // token_estimate is null — no context was injected
+                insert("filter", project, null, manifestKey, null, null, null, sessionId);
+            } catch (Exception e) {
+                System.err.println("[UsageLogger] filter failed: " + e);
+            }
+        });
+    }
+
     private static void ensureSchema() throws Exception {
         if (initialized) return;
         WRITE_LOCK.lock();

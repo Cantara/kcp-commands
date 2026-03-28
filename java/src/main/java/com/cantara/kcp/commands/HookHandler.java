@@ -87,9 +87,33 @@ public class HookHandler implements HttpHandler {
             return;
         }
 
-        // Suppression: well-known commands skip manifest lookup entirely (saves 5-8K tokens/session)
+        // Suppression: well-known commands skip Phase A (no context injection).
+        // But check for Phase B filter-only path if the manifest has enableFilter=true.
         if (suppressionList.isSuppressed(parsed.cmd(), parsed.subcommand())) {
-            EventLogger.log(sessionId, projectDir, command, null, null);
+            if (CommandParser.isFilterable(command)) {
+                CommandManifest filterManifest = resolver.resolve(parsed.key());
+                if (filterManifest == null && parsed.subcommand() != null) {
+                    filterManifest = resolver.resolve(parsed.cmd());
+                }
+                // Note: never call generator.generate() for suppressed commands
+                if (filterManifest != null) {
+                    var schema = filterManifest.outputSchema();
+                    if (schema != null && schema.enableFilter()) {
+                        String resolvedKey = filterManifest.subcommand() != null
+                                ? filterManifest.command() + "-" + filterManifest.subcommand()
+                                : filterManifest.command();
+                        String manifestVersion = resolver.resolveHash(parsed.key());
+                        if (manifestVersion == null && parsed.subcommand() != null) {
+                            manifestVersion = resolver.resolveHash(parsed.cmd());
+                        }
+                        EventLogger.log(sessionId, projectDir, command, "FILTER:" + resolvedKey, manifestVersion);
+                        UsageLogger.logFilter(sessionId, projectDir, resolvedKey);
+                        sendResponse(exchange, buildFilterOnlyResponse(resolvedKey, command));
+                        return;
+                    }
+                }
+            }
+            EventLogger.log(sessionId, projectDir, command, "SUPPRESSED", null);
             sendEmpty(exchange);
             return;
         }
@@ -196,6 +220,28 @@ public class HookHandler implements HttpHandler {
         }
 
         return sb.toString().trim();
+    }
+
+    /**
+     * Build a Phase B filter-only response — no additionalContext, just updatedInput
+     * that pipes the command output through the filter endpoint.
+     * Used for suppressed commands where Claude needs no guidance but output can be trimmed.
+     */
+    private ObjectNode buildFilterOnlyResponse(String resolvedKey, String command) {
+        String filterUrl = "http://localhost:" + port + "/filter/" + resolvedKey;
+        String wrapped = command + " | curl -s -X POST \"" + filterUrl + "\" --data-binary @-";
+
+        ObjectNode hookOutput = mapper.createObjectNode();
+        hookOutput.put("hookEventName", "PreToolUse");
+        hookOutput.put("permissionDecision", "allow");
+
+        ObjectNode updatedInput = mapper.createObjectNode();
+        updatedInput.put("command", wrapped);
+        hookOutput.set("updatedInput", updatedInput);
+
+        ObjectNode response = mapper.createObjectNode();
+        response.set("hookSpecificOutput", hookOutput);
+        return response;
     }
 
     /** Send a 204 No Content — tells the hook client to let the tool run unchanged. */

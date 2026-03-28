@@ -59,21 +59,33 @@ class HookHandlerSuppressionTest {
     }
 
     @Test
-    void suppressed_command_returns_204() throws Exception {
-        int status = postHook("git log --oneline -5");
-        assertEquals(204, status, "git should be suppressed → 204 No Content");
+    void suppressed_ps_returns_200_filter_only() throws Exception {
+        // ps has enableFilter: true → filter-only path, no context injected
+        HttpResponse<String> resp = postHookFull("ps aux");
+        assertEquals(200, resp.statusCode(), "ps aux should get filter-only wrapping → 200");
+        var body = new com.fasterxml.jackson.databind.ObjectMapper().readTree(resp.body());
+        var hookOut = body.path("hookSpecificOutput");
+        assertTrue(hookOut.path("updatedInput").path("command").asText().contains("/filter/ps"),
+                "command should be piped through /filter/ps");
+        assertTrue(hookOut.path("additionalContext").isMissingNode() || hookOut.path("additionalContext").isNull(),
+                "filter-only response must not inject context");
     }
 
     @Test
     void suppressed_ls_returns_204() throws Exception {
+        // ls has enableFilter: false → pure suppression, unchanged
         int status = postHook("ls -la");
-        assertEquals(204, status, "ls should be suppressed → 204 No Content");
+        assertEquals(204, status, "ls should be fully suppressed → 204 No Content");
     }
 
     @Test
-    void suppressed_grep_returns_204() throws Exception {
-        int status = postHook("grep -rn pattern .");
-        assertEquals(204, status, "grep should be suppressed → 204 No Content");
+    void suppressed_grep_returns_200_filter_only() throws Exception {
+        // grep has enableFilter: true → filter-only path
+        HttpResponse<String> resp = postHookFull("grep -rn pattern .");
+        assertEquals(200, resp.statusCode(), "grep should get filter-only wrapping → 200");
+        var body = new com.fasterxml.jackson.databind.ObjectMapper().readTree(resp.body());
+        assertTrue(body.path("hookSpecificOutput").path("updatedInput").path("command").asText().contains("/filter/grep"),
+                "command should be piped through /filter/grep");
     }
 
     @Test
