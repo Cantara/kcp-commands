@@ -2,20 +2,24 @@
 
 <img src="https://totto.goatcounter.com/count?p=/kcp-commands-readme" alt="" style="display:none">
 
-**Not a CLI — typed knowledge infrastructure for 291 CLIs.** Saves 33% of Claude Code's context window by injecting syntax context before execution and filtering noise after.
+**Not a CLI -- typed knowledge infrastructure for 291 CLIs.** Proactive guidance, output noise filtering, and event logging for every Bash tool call in Claude Code.
 
-kcp-commands is a [Claude Code hook](https://docs.anthropic.com/en/docs/claude-code/hooks) — it runs invisibly *around* CLI tools, not as one. It intercepts every Bash tool call and applies three phases:
+kcp-commands is a [Claude Code hook](https://docs.anthropic.com/en/docs/claude-code/hooks) -- it runs invisibly *around* CLI tools, not as one. It intercepts every Bash tool call and applies three phases:
 
 | Phase | When | What it does |
 |-------|------|--------------|
-| **A -- Syntax injection** | Before execution | Injects compact flag/syntax guidance so the agent picks the right flags immediately, never wastes a round trip on `--help` |
-| **B -- Output filtering** | After execution | Strips noise (boilerplate, permission errors, hundreds of irrelevant lines) before the output reaches the context window |
+| **A -- Proactive guidance** | Before execution | Injects `use_when` hints, `preferred_invocations`, and `common_errors` -- context that `--help` doesn't provide. Guides flag choice BEFORE the command runs. |
+| **B -- Output noise filtering** | After execution | Strips boilerplate, permission errors, and hundreds of irrelevant lines from noisy commands (mvn, terraform, ansible, kubectl, etc.) before the output reaches the context window |
 | **C -- Event logging** | After execution | Writes every Bash call to `~/.kcp/events.jsonl` for [kcp-memory](https://github.com/Cantara/kcp-memory) to index as episodic memory |
 
-Measured across a typical agentic coding session: **67,352 tokens saved -- 33.7% of a 200K context window recovered**, equivalent to 33 additional tool call results fitting in the same context.
+**What kcp-commands actually does:**
+- ~84% of Bash calls are **suppressed** (well-known tools like git, ls, grep) -- the daemon returns 204 immediately, zero overhead
+- ~10% of Bash calls produce **inject events** (manifest hit) -- proactive guidance delivered before execution
+- Noisy commands (mvn, terraform, docker, kubectl, etc.) get **measurable output reduction** via Phase B filters
+- Every Bash call is **indexed** by kcp-memory for cross-session episodic memory
 
 291 bundled manifests. Part of the [Knowledge Context Protocol](https://cantara.github.io/knowledge-context-protocol/) ecosystem.
-Read the [release post](https://wiki.totto.org/blog/2026/03/02/kcp-commands/) for the full benchmark methodology and design rationale.
+Read the [release post](https://wiki.totto.org/blog/2026/03/02/kcp-commands/) for the design rationale.
 
 ---
 
@@ -35,7 +39,7 @@ kcp-commands does not change how Claude reasons. It gives Claude better inputs a
 
 ## How it works
 
-### Phase A -- Command syntax context (before execution)
+### Phase A -- Proactive guidance (before execution)
 
 When Claude is about to run `ps aux`, the hook injects a compact `additionalContext` block:
 
@@ -50,7 +54,7 @@ Prefer:
   ps aux | grep <name>  # Find a specific process
 ```
 
-The agent picks the right flags immediately. No `--help` lookup, no man page parsing, no wasted round trip. Average saving: **532 tokens per avoided `--help` call**.
+The real value is **proactive guidance quality** -- `use_when` hints, `preferred_invocations`, and `common_errors` that `--help` doesn't provide. This context lands at the exact moment Claude is planning its command, guiding flag choice before execution.
 
 ### Phase B -- Output noise filtering (after execution)
 
@@ -525,6 +529,9 @@ Good candidates for custom manifests:
 | v0.17.0 | 289 | **Documentation and release alignment.** Aligned version with kcp-memory v0.17.0. |
 | v0.17.1 | 291 | **Patch.** Fix: `ssh -i` variable assignments no longer parsed as command `-i` (`SuppressionList` guards `cmd.startsWith("-")`). Fix: `./gradlew` now resolves the primed `gradlew` manifest (normalize `./` prefix in `ManifestResolver`). New manifest: `gradlew` (Gradle wrapper — build, test, bootRun). Data-driven improvements to `az`, `pgrep`, `nohup-mvn`, `javap` based on quality feedback loop. |
 | v0.18.0 | 291 | **Auto-update.** `--update` / `--check-update` pre-daemon flags for interactive and scriptable update checks. `UpdateChecker`: 24h-rate-limited GitHub API check, `.tmp`+`.bak` download with JAR validation, shared `~/.kcp/last-update-check` cache (shared with kcp-memory). New `/version` endpoint: `GET http://localhost:7734/version` → current + latest + updateAvailable. Startup update notification on first run each day. |
+| v0.20.0 | 291 | **RFC-0017 UsageLogger.** Inject events logged to `~/.kcp/usage.db` on every manifest hit. Populates the usage database that kcp-dashboard reads. |
+| v0.21.0 | 291 | **PostToolUse hook fix.** `post-hook.sh` checked `tool_response.output` but Claude Code sends Bash output in `tool_response.stdout`. Zero `output_preview` data was ever written. Now probes `stdout`/`output`/`content`/`result` in order. Debug log: `~/.kcp/post-hook-debug.log`. |
+| v0.22.0 | 291 | **Documentation cleanup.** Removed fabricated token-savings claims from README. Replaced with honest framing: proactive guidance quality, output noise filtering, event logging. Coordinated release with kcp-memory v0.22.0 and kcp-dashboard v0.22.0. |
 
 ---
 
