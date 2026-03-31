@@ -535,6 +535,42 @@ Good candidates for custom manifests:
 
 ---
 
+## Troubleshooting
+
+### `kcp stats` fails / better-sqlite3 error
+
+`kcp stats` uses `better-sqlite3`, a native Node.js addon. If no pre-built binary is available for your platform/Node.js version, npm compiles it from source — which requires build tools:
+
+- **Ubuntu/Debian:** `sudo apt install build-essential python3`
+- **macOS:** `xcode-select --install`
+
+After installing build tools, re-run the installer to retry.
+
+### No `[kcp]` context injected / hook not firing
+
+1. Verify the hook is registered: `cat ~/.claude/settings.json | grep -A3 "hook.sh"` — if missing, re-run the installer.
+2. **Restart Claude Code** — hooks are loaded at startup.
+3. Check daemon: `curl -sf http://localhost:7734/health && echo up || echo down`
+
+### Daemon startup timeout (first call uses Node.js at 250ms/call)
+
+JVM cold start takes ~200–500ms. The hook waits up to 5s then falls back to Node.js and logs to stderr. Check `cat /tmp/kcp-commands-daemon.log` for the root cause.
+
+### Wrong Java version
+
+Requires Java 21+. Check with `java -version`.
+- **macOS:** `brew install --cask temurin@21`
+- **Ubuntu:** `sudo apt install openjdk-21-jdk`
+
+### Port 7734 already in use
+
+```bash
+lsof -i :7734          # find the process
+pkill -f kcp-commands  # kill existing daemon
+```
+
+---
+
 ## Related projects
 
 - [Release post](https://wiki.totto.org/blog/2026/03/02/kcp-commands/) -- benchmark methodology, design rationale, and infographic
