@@ -4,7 +4,7 @@
 > before Bash tool calls (Phase A) and filtering noisy output after them (Phase B).
 > Phase C writes every tool call to ~/.kcp/events.jsonl for kcp-memory to index.
 
-284 bundled manifests. Java daemon (12ms/call) + Node.js fallback. Apache 2.0.
+291 bundled manifests. Java daemon (12ms/call) + Node.js fallback. Apache 2.0.
 
 Part of the [Knowledge Context Protocol](https://github.com/Cantara/knowledge-context-protocol) ecosystem.
 
@@ -37,5 +37,8 @@ curl -fsSL https://raw.githubusercontent.com/Cantara/kcp-commands/main/bin/insta
 ## Related
 
 - [kcp-memory](https://github.com/Cantara/kcp-memory) — consumes ~/.kcp/events.jsonl for episodic memory
+- [kcp-dashboard](https://github.com/Cantara/kcp-dashboard) — terminal UI showing token savings, guidance quality, session history
+- [kcp-triage](https://github.com/Cantara/kcp-triage) — security triage using KCP manifest-aware routing
 - [Knowledge Context Protocol](https://github.com/Cantara/knowledge-context-protocol) — the KCP spec
 - [Release post](https://wiki.totto.org/blog/2026/03/02/kcp-commands/) — benchmark detail
+- [KCP Ecosystem overview](https://wiki.totto.org/blog/2026/03/31/kcp-ecosystem-five-tools-persistent-intelligence/) — all five tools explained

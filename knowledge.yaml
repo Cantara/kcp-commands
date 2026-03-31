@@ -1,7 +1,7 @@
-kcp_version: "0.12"
+kcp_version: "0.14"
 project: kcp-commands
-version: 0.15.0
-updated: "2026-03-19"
+version: 0.23.0
+updated: "2026-03-31"
 language: en
 license: "Apache-2.0"
 indexing: open
@@ -34,6 +34,24 @@ units:
     validated: "2026-03-10"
     depends_on: [readme]
     triggers: [manifest format, yaml format, write manifest, custom manifest, output_schema, key_flags, noise_patterns]
+
+  - id: contributing
+    path: CONTRIBUTING.md
+    intent: "How do I build kcp-commands from source, add a new manifest, run the tests, or contribute a PR?"
+    scope: module
+    audience: [developer]
+    validated: "2026-03-31"
+    depends_on: [readme]
+    triggers: [contributing, build from source, add manifest, run tests, pull request, pr guidelines, release process]
+
+  - id: ecosystem-overview
+    path: https://wiki.totto.org/blog/2026/03/31/kcp-ecosystem-five-tools-persistent-intelligence/
+    intent: "What is the full KCP ecosystem? How do kcp-commands, kcp-memory, kcp-dashboard, kcp-triage and the KCP spec fit together?"
+    kind: article
+    scope: global
+    audience: [human, agent, developer]
+    validated: "2026-03-31"
+    triggers: [ecosystem, kcp-memory, kcp-dashboard, kcp-triage, five tools, how they work together, data flow, install all tools]
 
 manifests:
   - url: https://cantara.github.io/knowledge-context-protocol/knowledge.yaml
