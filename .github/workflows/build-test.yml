@@ -1,0 +1,85 @@
+name: Build and smoke test
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  build-java:
+    name: Java daemon — build + startup + hook round-trip
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          java-version: '21'
+          distribution: 'temurin'
+
+      - name: Build Java daemon
+        run: cd java && mvn clean package -q -DskipTests
+
+      - name: Verify JAR exists
+        run: test -f java/target/kcp-commands-daemon.jar
+
+      - name: Start daemon
+        run: |
+          java --enable-native-access=ALL-UNNAMED \
+            -jar java/target/kcp-commands-daemon.jar \
+            > /tmp/kcp-daemon.log 2>&1 &
+          echo "DAEMON_PID=$!" >> $GITHUB_ENV
+
+      - name: Wait for daemon health
+        run: |
+          for i in $(seq 1 10); do
+            sleep 0.5
+            if curl -sf http://localhost:7734/health > /dev/null 2>&1; then
+              echo "✓ daemon healthy after ${i} × 0.5s"
+              exit 0
+            fi
+          done
+          echo "✗ daemon did not start within 5s"
+          cat /tmp/kcp-daemon.log
+          exit 1
+
+      - name: Hook round-trip — inject path (mvn)
+        run: |
+          echo '{"tool":"Bash","command":"mvn help:describe"}' | \
+            curl -sf -X POST http://localhost:7734/hook \
+              -H "Content-Type: application/json" \
+              --data-binary @- | grep -q "additionalContext"
+          echo "✓ inject path: additionalContext returned"
+
+      - name: Hook round-trip — suppress path (git)
+        run: |
+          CODE=$(echo '{"tool":"Bash","command":"git status"}' | \
+            curl -s -o /dev/null -w "%{http_code}" \
+              -X POST http://localhost:7734/hook \
+              -H "Content-Type: application/json" \
+              --data-binary @-)
+          [ "$CODE" = "204" ] && echo "✓ suppress path: 204" || (echo "✗ suppress path: $CODE"; exit 1)
+
+      - name: Run Java unit tests
+        run: cd java && mvn test -q
+
+  build-node:
+    name: Node.js CLI — build + smoke test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Build TypeScript CLI
+        run: cd typescript && npm install --silent && npm run build
+
+      - name: Verify CLI output
+        run: |
+          echo '{"tool":"Bash","command":"mvn help:describe"}' | \
+            node typescript/dist/cli.js | grep -q "additionalContext"
+          echo "✓ Node.js CLI: additionalContext returned"
+
+      - name: Run TypeScript tests
+        run: cd typescript && npx vitest run --reporter=verbose

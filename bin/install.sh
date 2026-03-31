@@ -154,12 +154,27 @@ fi
 
 # Create ~/.local/bin/kcp wrapper so `kcp stats` works from any terminal
 if [ -f "$KCP_DIR/kcp-user-cli.js" ]; then
-  # Install better-sqlite3 (used by kcp stats) — pre-built binary, no compilation
+  # Install better-sqlite3 (used by kcp stats)
+  # NOTE: better-sqlite3 uses a pre-built native binary for common platforms/Node versions.
+  # If no pre-built binary is available, npm will fall back to compiling from source via
+  # node-gyp, which requires: Python 3 + a C++ compiler (build-essential on Ubuntu/Debian,
+  # Xcode Command Line Tools on macOS). If this fails, install those tools and re-run the
+  # installer, or install manually: cd ~/.kcp && npm install better-sqlite3
   if command -v npm > /dev/null 2>&1; then
     echo "→ Installing kcp stats dependency (better-sqlite3)..."
-    cd "$KCP_DIR" && npm install better-sqlite3 --save --silent 2>/dev/null \
-      && echo "✓ better-sqlite3 installed" \
-      || echo "  (better-sqlite3 install failed — kcp stats will not work)"
+    if cd "$KCP_DIR" && npm install better-sqlite3 --save --prefer-offline --silent 2>/dev/null; then
+      echo "✓ better-sqlite3 installed"
+    elif npm install better-sqlite3 --save --silent 2>&1 | tee /tmp/kcp-sqlite3-install.log | grep -q "gyp ERR\|node-gyp\|EACCES\|permission denied"; then
+      echo ""
+      echo "  ✗ better-sqlite3 failed to install (native compilation required)."
+      echo "    'kcp stats' will not work until fixed."
+      echo "    → Ubuntu/Debian: sudo apt install build-essential python3"
+      echo "    → macOS:         xcode-select --install"
+      echo "    → Then re-run this installer."
+      echo "    Full error: /tmp/kcp-sqlite3-install.log"
+    else
+      echo "✓ better-sqlite3 installed"
+    fi
     cd - > /dev/null
   fi
 

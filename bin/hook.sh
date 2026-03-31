@@ -36,8 +36,8 @@ if [ -f "$DAEMON_JAR" ]; then
     fi
     nohup "$JAVA_BIN" --enable-native-access=ALL-UNNAMED -jar "$DAEMON_JAR" > "$DAEMON_LOG" 2>&1 &
 
-    # Wait up to 3s for startup (JVM cold start is ~200-500ms)
-    for _ in 1 2 3 4 5 6; do
+    # Wait up to 5s for startup (JVM cold start is ~200-500ms, but can be longer on slow machines)
+    for _ in 1 2 3 4 5 6 7 8 9 10; do
         sleep 0.5
         if curl -sf "http://localhost:$PORT/health" > /dev/null 2>&1; then
             response=$(echo "$HOOK_INPUT" | curl -sf -X POST "http://localhost:$PORT/hook" \
@@ -50,6 +50,7 @@ if [ -f "$DAEMON_JAR" ]; then
         fi
     done
     # Daemon didn't start in time — fall through to Node.js
+    echo "[kcp] daemon startup timeout — falling back to Node.js (250ms/call). Check $DAEMON_LOG for errors." >&2
 fi
 
 # ── Slow path: Node.js CLI (no daemon) ───────────────────────────────────────
