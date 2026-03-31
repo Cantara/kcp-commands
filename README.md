@@ -532,6 +532,8 @@ Good candidates for custom manifests:
 | v0.20.0 | 291 | **RFC-0017 UsageLogger.** Inject events logged to `~/.kcp/usage.db` on every manifest hit. Populates the usage database that kcp-dashboard reads. |
 | v0.21.0 | 291 | **PostToolUse hook fix.** `post-hook.sh` checked `tool_response.output` but Claude Code sends Bash output in `tool_response.stdout`. Zero `output_preview` data was ever written. Now probes `stdout`/`output`/`content`/`result` in order. Debug log: `~/.kcp/post-hook-debug.log`. |
 | v0.22.0 | 291 | **Documentation cleanup.** Removed fabricated token-savings claims from README. Replaced with honest framing: proactive guidance quality, output noise filtering, event logging. Coordinated release with kcp-memory v0.22.0 and kcp-dashboard v0.22.0. |
+| v0.23.0 | 291 | **Infrastructure hardening.** `bin/test-build.sh` smoke test (Java build + daemon startup + inject/suppress round-trips + Node.js CLI). GitHub Actions CI (`build-test.yml`, two jobs: java + node). `CONTRIBUTING.md` added. README Troubleshooting section (4 failure modes). Hook startup timeout 3s→5s with stderr fallback message. `install.sh` shows OS-specific `better-sqlite3` fix instructions. |
+| v0.26.0 | 291 | **Ecosystem alignment.** Coordinated release with kcp-memory v0.26.0 and kcp-dashboard v0.26.0. `knowledge.yaml` updated: kcp_version 0.12→0.14, added `contributing` and `ecosystem-overview` units. `llms.txt` updated: manifest count 284→291, added kcp-dashboard, kcp-triage, and ecosystem blog post links. |
 
 ---
 

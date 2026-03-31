@@ -1,6 +1,6 @@
 kcp_version: "0.14"
 project: kcp-commands
-version: 0.23.0
+version: 0.26.0
 updated: "2026-03-31"
 language: en
 license: "Apache-2.0"
