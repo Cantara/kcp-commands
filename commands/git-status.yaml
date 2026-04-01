@@ -23,7 +23,7 @@ syntax:
       use_when: "Compact view with branch info"
 
 output_schema:
-  enable_filter: false
+  enable_filter: true
   noise_patterns:
     - pattern: "^\\s*\\(use \"git"
       reason: "Hint lines about git commands — Claude already knows these"

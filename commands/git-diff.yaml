@@ -33,6 +33,6 @@ syntax:
       use_when: "Scope of a feature branch"
 
 output_schema:
-  enable_filter: false
+  enable_filter: true
   max_lines: 200
   truncation_message: "... {remaining} more diff lines. Use '-- <file>' to narrow to one file."

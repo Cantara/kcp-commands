@@ -34,4 +34,6 @@ syntax:
       use_when: "Create a patch file"
 
 output_schema:
-  enable_filter: false
+  enable_filter: true
+  max_lines: 300
+  truncation_message: "... {remaining} more diff lines. Use '-u file1 file2' to narrow scope."

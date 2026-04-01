@@ -31,7 +31,7 @@ syntax:
       use_when: "Finding the most recently modified files"
 
 output_schema:
-  enable_filter: false
+  enable_filter: true
   noise_patterns:
     - pattern: "^total \\d+"
       reason: "Aggregate block count — rarely needed"
