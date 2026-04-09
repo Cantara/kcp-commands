@@ -45,7 +45,7 @@ jobs:
 
       - name: Hook round-trip — inject path (mvn)
         run: |
-          echo '{"tool":"Bash","command":"mvn help:describe"}' | \
+          echo '{"tool_name":"Bash","tool_input":{"command":"mvn help:describe"}}' | \
             curl -sf -X POST http://localhost:7734/hook \
               -H "Content-Type: application/json" \
               --data-binary @- | grep -q "additionalContext"
@@ -53,7 +53,7 @@ jobs:
 
       - name: Hook round-trip — suppress path (git)
         run: |
-          CODE=$(echo '{"tool":"Bash","command":"git status"}' | \
+          CODE=$(echo '{"tool_name":"Bash","tool_input":{"command":"git status"}}' | \
             curl -s -o /dev/null -w "%{http_code}" \
               -X POST http://localhost:7734/hook \
               -H "Content-Type: application/json" \
@@ -77,7 +77,7 @@ jobs:
 
       - name: Verify CLI output
         run: |
-          echo '{"tool":"Bash","command":"mvn help:describe"}' | \
+          echo '{"tool_name":"Bash","tool_input":{"command":"mvn help:describe"}}' | \
             node typescript/dist/cli.js | grep -q "additionalContext"
           echo "✓ Node.js CLI: additionalContext returned"
 
