@@ -1,3 +1,30 @@
+version: "0.14"
+
+entity:
+  name: kcp-commands
+  type: claude-code-hook
+  description: >
+    Claude Code hook providing proactive CLI guidance (Phase A) and output
+    filtering (Phase B). Saves 33% of a 200K context window by injecting
+    compact syntax before Bash calls and filtering noisy output after them.
+    Phase C writes every tool call to ~/.kcp/events.jsonl for kcp-memory.
+
+authority:
+  owner: Cantara — Norwegian Software Development Foundation
+  repo: https://github.com/Cantara/kcp-commands
+  license: Apache-2.0
+
+discovery:
+  provenance: canonical
+  confidence: high
+  staleness_days: 14
+
+signing:
+  scheme: ed25519
+  scope: this-manifest
+  public_key: https://wiki.cantara.no/.well-known/kcp-signing-key.pub
+  signature: https://raw.githubusercontent.com/Cantara/kcp-commands/main/knowledge.yaml.sig
+
 kcp_version: "0.14"
 project: kcp-commands
 version: 0.26.0
