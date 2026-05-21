@@ -27,8 +27,8 @@ signing:
 
 kcp_version: "0.14"
 project: kcp-commands
-version: 0.26.0
-updated: "2026-03-31"
+version: 0.27.0
+updated: "2026-05-21"
 language: en
 license: "Apache-2.0"
 indexing: open
