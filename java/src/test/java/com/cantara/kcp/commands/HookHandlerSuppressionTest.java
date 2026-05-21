@@ -21,8 +21,10 @@ import java.util.concurrent.Executors;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
- * Integration test: verifies that the HookHandler uses SuppressionList
- * to return 204 (empty) for suppressed commands and 200 (manifest) for others.
+ * Integration test: verifies that the HookHandler uses SuppressionList correctly:
+ * - Suppressed commands with enableFilter=true → 200 (filter-only, no context injection)
+ * - Suppressed commands with enableFilter=false or no manifest → 204 (pure suppression)
+ * - Unsuppressed commands → 200 (manifest + context injection) or 204 (no manifest)
  */
 class HookHandlerSuppressionTest {
 
@@ -72,10 +74,16 @@ class HookHandlerSuppressionTest {
     }
 
     @Test
-    void suppressed_ls_returns_204() throws Exception {
-        // ls has enableFilter: false → pure suppression, unchanged
-        int status = postHook("ls -la");
-        assertEquals(204, status, "ls should be fully suppressed → 204 No Content");
+    void suppressed_ls_returns_200_filter_only() throws Exception {
+        // ls has enableFilter: true → filter-only path, no context injected
+        HttpResponse<String> resp = postHookFull("ls -la");
+        assertEquals(200, resp.statusCode(), "ls should get filter-only wrapping → 200");
+        var body = new com.fasterxml.jackson.databind.ObjectMapper().readTree(resp.body());
+        var hookOut = body.path("hookSpecificOutput");
+        assertTrue(hookOut.path("updatedInput").path("command").asText().contains("/filter/ls"),
+                "command should be piped through /filter/ls");
+        assertTrue(hookOut.path("additionalContext").isMissingNode() || hookOut.path("additionalContext").isNull(),
+                "filter-only response must not inject context");
     }
 
     @Test

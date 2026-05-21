@@ -51,14 +51,14 @@ jobs:
               --data-binary @- | grep -q "additionalContext"
           echo "✓ inject path: additionalContext returned"
 
-      - name: Hook round-trip — suppress path (git)
+      - name: Hook round-trip — filter-only path (git status)
         run: |
           CODE=$(echo '{"tool_name":"Bash","tool_input":{"command":"git status"}}' | \
             curl -s -o /dev/null -w "%{http_code}" \
               -X POST http://localhost:7734/hook \
               -H "Content-Type: application/json" \
               --data-binary @-)
-          [ "$CODE" = "204" ] && echo "✓ suppress path: 204" || (echo "✗ suppress path: $CODE"; exit 1)
+          [ "$CODE" = "200" ] && echo "✓ filter-only path: 200" || (echo "✗ filter-only path: $CODE"; exit 1)
 
       - name: Run Java unit tests
         run: cd java && mvn test -q
