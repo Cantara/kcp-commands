@@ -19,7 +19,7 @@ kcp-commands is a [Claude Code hook](https://docs.anthropic.com/en/docs/claude-c
 - Every Bash call is **indexed** by kcp-memory for cross-session episodic memory
 
 291 bundled manifests. Part of the [Knowledge Context Protocol](https://cantara.github.io/knowledge-context-protocol/) ecosystem.
-Read the [release post](https://wiki.totto.org/blog/2026/03/02/kcp-commands/) for the design rationale.
+Read the [release post](https://wiki.totto.org/blog/2026/03/02/kcp-commands-save-33-of-claude-codes-context-window/) for the design rationale.
 
 ---
 
@@ -575,12 +575,12 @@ pkill -f kcp-commands  # kill existing daemon
 
 ## Related projects
 
-- [Release post](https://wiki.totto.org/blog/2026/03/02/kcp-commands/) -- benchmark methodology, design rationale, and infographic
+- [Release post](https://wiki.totto.org/blog/2026/03/02/kcp-commands-save-33-of-claude-codes-context-window/) -- benchmark methodology, design rationale, and infographic
 - [Knowledge Context Protocol](https://github.com/Cantara/knowledge-context-protocol) -- the KCP specification
 - [KCP MCP Bridge](https://github.com/Cantara/knowledge-context-protocol/tree/main/bridge/typescript) -- MCP bridge for project manifests
 - [Synthesis](https://github.com/exoreaction/Synthesis) -- codebase intelligence and indexing
 - [kcp-memory](https://github.com/Cantara/kcp-memory) -- episodic memory daemon; indexes session transcripts + tool-call events written by kcp-commands v0.9.0 Phase C
-- [kcp-memory release post](https://wiki.totto.org/blog/2026/03/03/kcp-memory/) -- three-layer memory model and MCP integration
+- [kcp-memory release post](https://wiki.totto.org/blog/2026/03/03/kcp-memory-give-claude-code-a-memory/) -- three-layer memory model and MCP integration
 
 ## Knowledge manifest
 

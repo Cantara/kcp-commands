@@ -40,5 +40,5 @@ curl -fsSL https://raw.githubusercontent.com/Cantara/kcp-commands/main/bin/insta
 - [kcp-dashboard](https://github.com/Cantara/kcp-dashboard) — terminal UI showing token savings, guidance quality, session history
 - [kcp-triage](https://github.com/Cantara/kcp-triage) — security triage using KCP manifest-aware routing
 - [Knowledge Context Protocol](https://github.com/Cantara/knowledge-context-protocol) — the KCP spec
-- [Release post](https://wiki.totto.org/blog/2026/03/02/kcp-commands/) — benchmark detail
+- [Release post](https://wiki.totto.org/blog/2026/03/02/kcp-commands-save-33-of-claude-codes-context-window/) — benchmark detail
 - [KCP Ecosystem overview](https://wiki.totto.org/blog/2026/03/31/kcp-ecosystem-five-tools-persistent-intelligence/) — all five tools explained
