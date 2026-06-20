@@ -45,9 +45,9 @@ units:
     audience: [human, agent, developer]
     validated: "2026-03-10"
     triggers: [install, overview, how it works, phase a, phase b, phase c, context window, token savings, hooks, claude code, events.jsonl, event logging, manifest format]
-      content_hash:
-        algorithm: sha256
-        value: ""
+    content_hash:
+      algorithm: sha256
+      value: ""
 
   - id: benchmark-results
     path: docs/benchmark-results.md
@@ -57,9 +57,9 @@ units:
     validated: "2026-03-10"
     depends_on: [readme]
     triggers: [benchmark, token savings, latency, methodology, numbers, 67352, 33 percent, phase c overhead, event logging overhead]
-      content_hash:
-        algorithm: sha256
-        value: ""
+    content_hash:
+      algorithm: sha256
+      value: ""
 
   - id: manifest-example
     path: commands/ps.yaml
@@ -70,9 +70,9 @@ units:
     validated: "2026-03-10"
     depends_on: [readme]
     triggers: [manifest format, yaml format, write manifest, custom manifest, output_schema, key_flags, noise_patterns]
-      content_hash:
-        algorithm: sha256
-        value: ""
+    content_hash:
+      algorithm: sha256
+      value: ""
 
   - id: contributing
     path: CONTRIBUTING.md
@@ -82,9 +82,9 @@ units:
     validated: "2026-03-31"
     depends_on: [readme]
     triggers: [contributing, build from source, add manifest, run tests, pull request, pr guidelines, release process]
-      content_hash:
-        algorithm: sha256
-        value: ""
+    content_hash:
+      algorithm: sha256
+      value: ""
 
   - id: ecosystem-overview
     path: https://wiki.totto.org/blog/2026/03/31/kcp-ecosystem-five-tools-persistent-intelligence/
@@ -94,9 +94,6 @@ units:
     audience: [human, agent, developer]
     validated: "2026-03-31"
     triggers: [ecosystem, kcp-memory, kcp-dashboard, kcp-triage, five tools, how they work together, data flow, install all tools]
-      content_hash:
-        algorithm: sha256
-        value: ""
 
 manifests:
   - url: https://cantara.github.io/knowledge-context-protocol/knowledge.yaml
