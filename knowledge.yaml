@@ -5,9 +5,9 @@ entity:
   type: claude-code-hook
   description: >
     Claude Code hook providing proactive CLI guidance (Phase A) and output
-    filtering (Phase B). Saves 33% of a 200K context window by injecting
-    compact syntax before Bash calls and filtering noisy output after them.
-    Phase C writes every tool call to ~/.kcp/events.jsonl for kcp-memory.
+    filtering (Phase B). Saves 33% of a 200K context window by injecting compact
+    syntax before Bash calls and filtering noisy output after them. Phase C
+    writes every tool call to ~/.kcp/events.jsonl for kcp-memory.
 
 authority:
   owner: Cantara — Norwegian Software Development Foundation
@@ -23,7 +23,8 @@ signing:
   scheme: ed25519
   scope: this-manifest
   public_key: "MCowBQYDK2VwAyEAuipgusnqU9vjf3p2yPVLD/DmERT6tBbLOqEETdxAhMU="
-  signature: "https://raw.githubusercontent.com/Cantara/kcp-commands/main/knowledge.yaml.sig"
+  signature: "https://raw.githubusercontent.com/Cantara/kcp-commands/main/knowled\
+    ge.yaml.sig"
 
 kcp_version: "0.21"
 project: kcp-commands
@@ -40,60 +41,119 @@ units:
 
   - id: readme
     path: README.md
-    intent: "What is kcp-commands, how do I install it, and how do the three phases (syntax injection, output filtering, event logging) work?"
+    intent: "What is kcp-commands, how do I install it, and how do the three phases
+      (syntax injection, output filtering, event logging) work?"
     scope: global
-    audience: [human, agent, developer]
+    audience: [ human, agent, developer ]
     validated: "2026-03-10"
-    triggers: [install, overview, how it works, phase a, phase b, phase c, context window, token savings, hooks, claude code, events.jsonl, event logging, manifest format]
+    triggers:
+      [
+        install,
+        overview,
+        how it works,
+        phase a,
+        phase b,
+        phase c,
+        context window,
+        token savings,
+        hooks,
+        claude code,
+        events.jsonl,
+        event logging,
+        manifest format
+      ]
     content_hash:
       algorithm: sha256
-      value: ""
+      value: "f63d6400c6e5d48816de9eb9baa101fd06c57c85ccd4594ae801b5820ac499cb"
 
   - id: benchmark-results
     path: docs/benchmark-results.md
-    intent: "What is the full benchmark methodology and measured token savings for kcp-commands?"
+    intent: "What is the full benchmark methodology and measured token savings for
+      kcp-commands?"
     scope: module
-    audience: [developer, agent]
+    audience: [ developer, agent ]
     validated: "2026-03-10"
-    depends_on: [readme]
-    triggers: [benchmark, token savings, latency, methodology, numbers, 67352, 33 percent, phase c overhead, event logging overhead]
+    depends_on: [ readme ]
+    triggers:
+      [
+        benchmark,
+        token savings,
+        latency,
+        methodology,
+        numbers,
+        67352,
+        33 percent,
+        phase c overhead,
+        event logging overhead
+      ]
     content_hash:
       algorithm: sha256
-      value: ""
+      value: "36403a251be55a9d20bb73c6ed649f5fc60d96c2ec03ef0b41a91468ec070a91"
 
   - id: manifest-example
     path: commands/ps.yaml
-    intent: "What does a kcp-commands manifest look like? Syntax (Phase A) and output_schema (Phase B) fields."
+    intent: "What does a kcp-commands manifest look like? Syntax (Phase A) and
+      output_schema (Phase B) fields."
     kind: schema
     scope: module
-    audience: [developer, agent]
+    audience: [ developer, agent ]
     validated: "2026-03-10"
-    depends_on: [readme]
-    triggers: [manifest format, yaml format, write manifest, custom manifest, output_schema, key_flags, noise_patterns]
+    depends_on: [ readme ]
+    triggers:
+      [
+        manifest format,
+        yaml format,
+        write manifest,
+        custom manifest,
+        output_schema,
+        key_flags,
+        noise_patterns
+      ]
     content_hash:
       algorithm: sha256
-      value: ""
+      value: "029f5cf99f37be882e3280fa704b9b35dd5af49d2537e565cbd418d090ba1fe8"
 
   - id: contributing
     path: CONTRIBUTING.md
-    intent: "How do I build kcp-commands from source, add a new manifest, run the tests, or contribute a PR?"
+    intent: "How do I build kcp-commands from source, add a new manifest, run the
+      tests, or contribute a PR?"
     scope: module
-    audience: [developer]
+    audience: [ developer ]
     validated: "2026-03-31"
-    depends_on: [readme]
-    triggers: [contributing, build from source, add manifest, run tests, pull request, pr guidelines, release process]
+    depends_on: [ readme ]
+    triggers:
+      [
+        contributing,
+        build from source,
+        add manifest,
+        run tests,
+        pull request,
+        pr guidelines,
+        release process
+      ]
     content_hash:
       algorithm: sha256
-      value: ""
+      value: "9502ce0d48bd2877ed409ad2c94e89b6d014cc006ee12adb46f897fc79d978b3"
 
   - id: ecosystem-overview
     path: https://wiki.totto.org/blog/2026/03/31/kcp-ecosystem-five-tools-persistent-intelligence/
-    intent: "What is the full KCP ecosystem? How do kcp-commands, kcp-memory, kcp-dashboard, kcp-triage and the KCP spec fit together?"
+    intent: "What is the full KCP ecosystem? How do kcp-commands, kcp-memory,
+      kcp-dashboard, kcp-triage and the KCP spec fit together?"
     kind: article
     scope: global
-    audience: [human, agent, developer]
+    audience: [ human, agent, developer ]
     validated: "2026-03-31"
-    triggers: [ecosystem, kcp-memory, kcp-dashboard, kcp-triage, five tools, how they work together, data flow, install all tools]
+    triggers:
+      [
+        ecosystem,
+        kcp-memory,
+        kcp-dashboard,
+        kcp-triage,
+        five tools,
+        how they work together,
+        data flow,
+        install all tools
+      ]
 
 manifests:
   - url: https://cantara.github.io/knowledge-context-protocol/knowledge.yaml
