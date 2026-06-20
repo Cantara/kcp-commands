@@ -27,7 +27,7 @@ signing:
 
 kcp_version: "0.21"
 project: kcp-commands
-version: 0.27.0
+app_version: 0.27.0
 updated: "2026-06-20"
 temporal:
   valid_from: "2026-06-10"
