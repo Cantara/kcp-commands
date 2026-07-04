@@ -26,7 +26,7 @@ signing:
   signature: "https://raw.githubusercontent.com/Cantara/kcp-commands/main/knowled\
     ge.yaml.sig"
 
-kcp_version: "0.21"
+kcp_version: "0.25"
 project: kcp-commands
 app_version: 0.27.0
 updated: "2026-06-20"
