@@ -26,7 +26,7 @@ signing:
   signature: "https://raw.githubusercontent.com/Cantara/kcp-commands/main/knowled\
     ge.yaml.sig"
 
-kcp_version: "0.25"
+kcp_version: "0.26"
 project: kcp-commands
 app_version: 0.27.0
 updated: "2026-06-20"
@@ -168,3 +168,11 @@ relationships:
   - from: readme
     to: manifest-example
     type: enables
+
+# Serving Endpoint Binding (KCP SPEC v0.26 §3.12): authoritative manifest URL
+# and authorized MCP representative. Ignored by pre-0.26 verifiers.
+serving:
+  manifest:
+    - https://raw.githubusercontent.com/Cantara/kcp-commands/main/knowledge.yaml
+  mcp:
+    - https://mcp.cantara.no/mcp
