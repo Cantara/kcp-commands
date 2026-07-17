@@ -63,6 +63,84 @@ jobs:
       - name: Run Java unit tests
         run: cd java && mvn test -q
 
+  verify-kcp-manifest:
+    name: KCP 0.26 — content hash + serving endpoint verification
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: Verify unit content hashes (RFC-0019)
+        run: |
+          python3 - <<'EOF'
+          import yaml, hashlib, sys
+
+          with open('knowledge.yaml') as f:
+              manifest = yaml.safe_load(f)
+
+          errors = []
+          checked = 0
+          for unit in manifest.get('units', []):
+              path = unit.get('path', '')
+              ch = unit.get('content_hash', {})
+              if not ch or not isinstance(path, str) or path.startswith('http'):
+                  continue
+              expected = ch.get('value', '')
+              if not expected:
+                  continue
+              try:
+                  actual = hashlib.sha256(open(path, 'rb').read()).hexdigest()
+                  checked += 1
+                  if actual != expected:
+                      errors.append(f"MISMATCH {path}:\n  expected {expected}\n  actual   {actual}")
+                      print(f"✗ {path}")
+                  else:
+                      print(f"✓ {path}  ({actual[:16]}...)")
+              except FileNotFoundError:
+                  errors.append(f"FILE NOT FOUND: {path}")
+                  print(f"✗ {path}: not found")
+
+          print(f"\n{checked} unit(s) checked")
+          if errors:
+              print("\nContent hash verification FAILED:")
+              for e in errors:
+                  print(e)
+              sys.exit(1)
+          else:
+              print("All content hashes match ✓")
+          EOF
+
+      - name: Verify serving endpoint binding (RFC-0024)
+        run: |
+          python3 - <<'EOF'
+          import yaml, urllib.request, sys
+
+          with open('knowledge.yaml') as f:
+              manifest = yaml.safe_load(f)
+
+          serving = manifest.get('serving', {})
+          urls = serving.get('manifest', [])
+          if not urls:
+              print("No serving.manifest declared — skipping")
+              sys.exit(0)
+
+          errors = []
+          for url in urls:
+              try:
+                  req = urllib.request.urlopen(url, timeout=10)
+                  if req.status == 200:
+                      print(f"✓ {url}  (HTTP {req.status})")
+                  else:
+                      errors.append(f"✗ {url}  (HTTP {req.status})")
+              except Exception as e:
+                  errors.append(f"✗ {url}  ({e})")
+
+          if errors:
+              print("\nServing endpoint binding FAILED:")
+              for e in errors:
+                  print(e)
+              sys.exit(1)
+          EOF
+
   build-node:
     name: Node.js CLI — build + smoke test
     runs-on: ubuntu-latest
