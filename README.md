@@ -2,7 +2,7 @@
 
 <img src="https://totto.goatcounter.com/count?p=/kcp-commands-readme" alt="" style="display:none">
 
-**Not a CLI -- typed knowledge infrastructure for 291 CLIs.** Proactive guidance, output noise filtering, and event logging for every Bash tool call in Claude Code.
+**Not a CLI -- typed knowledge infrastructure for 292 CLIs.** Proactive guidance, output noise filtering, and event logging for every Bash tool call in Claude Code.
 
 kcp-commands is a [Claude Code hook](https://docs.anthropic.com/en/docs/claude-code/hooks) -- it runs invisibly *around* CLI tools, not as one. It intercepts every Bash tool call and applies three phases:
 
@@ -18,7 +18,7 @@ kcp-commands is a [Claude Code hook](https://docs.anthropic.com/en/docs/claude-c
 - Noisy commands (mvn, terraform, docker, kubectl, etc.) get **measurable output reduction** via Phase B filters
 - Every Bash call is **indexed** by kcp-memory for cross-session episodic memory
 
-291 bundled manifests. Part of the [Knowledge Context Protocol](https://cantara.github.io/knowledge-context-protocol/) ecosystem.
+292 bundled manifests. Part of the [Knowledge Context Protocol](https://cantara.github.io/knowledge-context-protocol/) ecosystem.
 Read the [release post](https://wiki.totto.org/blog/2026/03/02/kcp-commands-save-33-of-claude-codes-context-window/) for the design rationale.
 
 ---
@@ -283,7 +283,7 @@ Full methodology and raw numbers: [docs/benchmark-results.md](docs/benchmark-res
 
 ## Supported commands
 
-### Bundled manifests (291 primed)
+### Bundled manifests (292 primed)
 
 **Git** — `git log` · `git diff` · `git status` · `git add` · `git commit` · `git push` · `git pull` · `git fetch` · `git branch` · `git checkout` · `git stash` · `git merge` · `git rebase` · `git clone` · `git reset` · `git tag` · `git remote` · `git show` · `git cherry-pick` · `git bisect` · `git worktree` · `git submodule`
 
@@ -474,7 +474,7 @@ kcp-commands/
       .../ManifestResolver.java
       .../ManifestGenerator.java
     target/
-  commands/              # bundled primed manifests (291)
+  commands/              # bundled primed manifests (292)
     ls.yaml
     ps.yaml
     find.yaml
@@ -534,6 +534,7 @@ Good candidates for custom manifests:
 | v0.22.0 | 291 | **Documentation cleanup.** Removed fabricated token-savings claims from README. Replaced with honest framing: proactive guidance quality, output noise filtering, event logging. Coordinated release with kcp-memory v0.22.0 and kcp-dashboard v0.22.0. |
 | v0.23.0 | 291 | **Infrastructure hardening.** `bin/test-build.sh` smoke test (Java build + daemon startup + inject/suppress round-trips + Node.js CLI). GitHub Actions CI (`build-test.yml`, two jobs: java + node). `CONTRIBUTING.md` added. README Troubleshooting section (4 failure modes). Hook startup timeout 3s→5s with stderr fallback message. `install.sh` shows OS-specific `better-sqlite3` fix instructions. |
 | v0.26.0 | 291 | **Ecosystem alignment.** Coordinated release with kcp-memory v0.26.0 and kcp-dashboard v0.26.0. `knowledge.yaml` updated: kcp_version 0.12→0.14, added `contributing` and `ecosystem-overview` units. `llms.txt` updated: manifest count 284→291, added kcp-dashboard, kcp-triage, and ecosystem blog post links. |
+| v0.27.0 | 292 | **Phase B expansion.** Output filtering enabled for `git-status`, `git-diff`, `ls`, `diff` — commands previously suppressed (204) now route through Phase B noise filter. Removes untracked file lists, diff headers, and directory boilerplate before output reaches the context window. New manifest: one addition to reach 292. |
 
 ---
 
@@ -581,6 +582,9 @@ pkill -f kcp-commands  # kill existing daemon
 - [Synthesis](https://github.com/exoreaction/Synthesis) -- codebase intelligence and indexing
 - [kcp-memory](https://github.com/Cantara/kcp-memory) -- episodic memory daemon; indexes session transcripts + tool-call events written by kcp-commands v0.9.0 Phase C
 - [kcp-memory release post](https://wiki.totto.org/blog/2026/03/03/kcp-memory-give-claude-code-a-memory/) -- three-layer memory model and MCP integration
+- [kcp-agent](https://github.com/Cantara/kcp-agent) -- reference agent with deterministic 13-gate knowledge governance cascade
+- [kcp-harness](https://github.com/Cantara/kcp-harness) -- deterministic governance harness; emits content-free audit traces
+- [KCP ecosystem lineage](https://wiki.totto.org/blog/2026/07/16/the-knowledge-layer-a-record/) -- 140-day record of what was built and when
 
 ## Knowledge manifest
 
