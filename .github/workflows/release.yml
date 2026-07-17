@@ -39,7 +39,7 @@ jobs:
         run: |
           git clone --depth=1 https://github.com/Cantara/knowledge-context-protocol.git kcp-spec
           cd kcp-spec/cli && npm ci
-          cd .. && npm install --no-save js-yaml
+          cd .. && npm install --no-save "js-yaml@4.1.0"
           cd cli && npm run bundle
           cp dist/kcp-user-cli.js ../../kcp-user-cli.js
 
