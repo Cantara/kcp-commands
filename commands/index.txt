@@ -115,10 +115,10 @@ git-tag
 git-worktree
 glab
 go-build
+golangci-lint
 go-mod
 go-run
 go-test
-golangci-lint
 gpg
 gradle
 gradlew
