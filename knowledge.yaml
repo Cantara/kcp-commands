@@ -28,8 +28,7 @@ signing:
   scheme: ed25519
   scope: this-manifest
   public_key: "MCowBQYDK2VwAyEAuipgusnqU9vjf3p2yPVLD/DmERT6tBbLOqEETdxAhMU="
-  signature: "https://raw.githubusercontent.com/Cantara/kcp-commands/main/knowled\
-    ge.yaml.sig"
+  signature: "knowledge.yaml.sig"
 
 kcp_version: "0.29"
 project: kcp-commands
