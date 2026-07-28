@@ -30,7 +30,7 @@ signing:
   public_key: "MCowBQYDK2VwAyEAuipgusnqU9vjf3p2yPVLD/DmERT6tBbLOqEETdxAhMU="
   signature: "knowledge.yaml.sig"
 
-kcp_version: "0.29"
+kcp_version: "0.30"
 project: kcp-commands
 app_version: 0.27.0
 updated: "2026-07-17"
