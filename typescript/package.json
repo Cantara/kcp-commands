@@ -1,6 +1,6 @@
 {
   "name": "kcp-commands",
-  "version": "0.14.0",
+  "version": "0.14.1",
   "description": "Semantic command manifests for the Knowledge Context Protocol \u2014 syntax context and noise filtering for CLI commands in AI agent sessions",
   "license": "Apache-2.0",
   "type": "module",
