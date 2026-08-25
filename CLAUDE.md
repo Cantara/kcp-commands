@@ -1,43 +1,29 @@
 # kcp-commands
 
-## Purpose
-A Claude Code hook that intercepts every Bash tool call and applies three phases: syntax injection (before execution), output filtering (after execution), and event logging. Saves approximately 33% of Claude Code's context window by giving it instant command knowledge and noise-filtered output. Ships with 284 bundled command manifests.
+A Claude Code `PreToolUse`/`PostToolUse` hook — not a CLI. It intercepts every Bash tool
+call: injects compact syntax guidance before execution (Phase A, 292 bundled manifests),
+strips noise from output after execution (Phase B), and logs the call for kcp-memory's
+episodic index (Phase C). Java daemon (fast path) with a Node.js fallback.
 
-## Tech Stack
-- Language: Shell (hooks), YAML (manifests), TypeScript + Java (bridges)
-- Framework: Claude Code Hooks API
-- Build: npm (TypeScript bridge), Maven (Java bridge)
-- Key dependencies: Knowledge Context Protocol (KCP)
+**Start here:** `knowledge.yaml` is the canonical, signed, agent-navigable source of
+truth for this repo, not this file. Match your question against each unit's
+`triggers`/`intent`, then fetch that unit's `path`.
 
-## Architecture
-Three-phase hook system:
-- **Phase A (Pre-execution):** Injects compact syntax/flag guidance so the agent picks correct flags immediately
-- **Phase B (Post-execution):** Strips noise (boilerplate, permission errors, irrelevant lines) before output reaches context window
-- **Phase C (Event logging):** Writes every Bash call to `~/.kcp/events.jsonl` for kcp-memory episodic indexing
+**Skill-authoring conventions:** this repo's skills follow the governed-skill format
+defined in [kcp-skill](https://github.com/Cantara/kcp-skill) — read its `PROFILE.md`
+(one skill = one procedure, `action_scope` as a firewall rule, start from nothing) before
+writing or editing a skill here.
 
-Command knowledge is stored as YAML manifests in `commands/` directory. TypeScript and Java bridges provide MCP integration.
+**Local skills:** [`skills/`](skills/) — procedures for *developing this repo*, not for
+using the hook. Currently: adding a command manifest correctly, cutting a release.
 
-## Key Entry Points
-- `commands/` - 284 YAML command manifests
-- `bin/` - Hook installation scripts
-- `typescript/` - TypeScript MCP bridge
-- `java/` - Java MCP bridge
-- `knowledge.yaml` - KCP manifest for self-description
+## Gotchas
 
-## Development
-```bash
-# Install hooks
-./bin/install.sh
-
-# View manifests
-ls commands/
-
-# TypeScript bridge
-cd typescript && npm install && npm test
-
-# Java bridge
-cd java && mvn clean install
-```
-
-## Domain Context
-AI agent productivity infrastructure. Part of the Knowledge Context Protocol (KCP) ecosystem. Optimizes Claude Code sessions by reducing wasted context window space from help lookups and noisy command output.
+- `CONTRIBUTING.md`'s manifest YAML example is wrong — the real schema is
+  `command`/`platform`/`syntax`/`output_schema` (see `commands/ps.yaml`), not the
+  `name`/`use_when`/`suppress` shape it shows. Use `skills/add-command-manifest/` instead.
+- Manifest resolution is three-tier, first-match-wins: `.kcp/commands/` (project) →
+  `~/.kcp/commands/` (user) → bundled `commands/`. Editing `commands/` here only takes
+  effect for other sessions once released/reinstalled.
+- Release version is tag-driven, not file-driven: `release.yml` reads the git tag only;
+  `java/pom.xml` and `typescript/package.json` versions are informational and can drift.

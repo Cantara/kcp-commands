@@ -144,6 +144,57 @@ units:
       algorithm: sha256
       value: "9502ce0d48bd2877ed409ad2c94e89b6d014cc006ee12adb46f897fc79d978b3"
 
+  - id: add-command-manifest-skill
+    path: skills/add-command-manifest/SKILL.md
+    kind: skill
+    intent: "How do I add a new bundled command manifest (or fix an existing one) to
+      commands/ so Phase A guidance and Phase B filtering are correct?"
+    scope: project
+    audience: [ agent, developer ]
+    validated: "2026-08-25"
+    triggers:
+      [
+        add manifest,
+        new manifest,
+        write manifest,
+        commands/,
+        manifest schema,
+        test-build.sh
+      ]
+    load_eligible: true
+    action_scope:
+      tools: [ read, edit, bash ]
+      paths: [ "commands/**", "bin/test-build.sh" ]
+      capabilities: [ ]
+    content_hash:
+      algorithm: sha256
+      value: "2391e6a9861025edebc3a6da5b357ab8263301313e562dc9e22fda369b9c75ff"
+
+  - id: cut-a-release-skill
+    path: skills/cut-a-release/SKILL.md
+    kind: skill
+    intent: "How do I tag and publish a kcp-commands release without assuming the version
+      files drive anything they don't?"
+    scope: project
+    audience: [ agent, operator ]
+    validated: "2026-08-25"
+    triggers:
+      [
+        release,
+        tag,
+        publish,
+        version bump,
+        release.yml
+      ]
+    load_eligible: true
+    action_scope:
+      tools: [ read, edit, bash, git ]
+      paths: [ "java/pom.xml", "typescript/package.json", "README.md" ]
+      capabilities: [ release ]
+    content_hash:
+      algorithm: sha256
+      value: "b30664c667300872c5f95ddd7c70c9651d6794e7936dcd760fd6d00eece073c1"
+
   - id: ecosystem-overview
     path: https://wiki.totto.org/blog/2026/07/16/the-knowledge-layer-a-record/
     intent: "What is the full KCP ecosystem, when was it built, and how do kcp-commands,
