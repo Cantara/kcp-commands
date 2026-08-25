@@ -175,7 +175,7 @@ manifests:
     relationship: foundation
   - id: cantara-org
     url: https://wiki.cantara.no/knowledge/projects/kcp.yaml
-    relationship: org-context
+    relationship: peer
 
 relationships:
   - from: readme
