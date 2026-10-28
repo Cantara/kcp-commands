@@ -120,6 +120,18 @@ if [ "$MODE" = "java" ]; then
   fi
 fi
 
+# ── Stop a daemon still running the previous version ─────────────────────────
+# The jar was just replaced on disk, but a daemon started from the old one keeps running and
+# keeps answering, because hook.sh only starts a daemon when /health fails. Stop it; the next
+# hook call starts one on the new jar. Done in node mode too, or an old daemon would go on
+# answering hook calls. The escaped "\.jar" means the pattern cannot match a shell whose command
+# line merely contains it.
+if command -v pkill > /dev/null 2>&1; then
+  if pkill -f "java .*-jar $KCP_DIR/kcp-commands-daemon\\.jar" 2>/dev/null; then
+    echo "✓ Stopped the running daemon; the next hook call starts the new version"
+  fi
+fi
+
 # ── Node.js CLI ───────────────────────────────────────────────────────────────
 
 if [ "$MODE" = "node" ]; then
