@@ -120,6 +120,18 @@ if [ "$MODE" = "java" ]; then
   fi
 fi
 
+# ── Stop a daemon still running the previous version ─────────────────────────
+# The jar was just replaced on disk, but a daemon started from the old one keeps running and
+# keeps answering, because hook.sh only starts a daemon when /health fails. Stop it; the next
+# hook call starts one on the new jar. Done in node mode too, or an old daemon would go on
+# answering hook calls. The escaped "\.jar" means the pattern cannot match a shell whose command
+# line merely contains it.
+if command -v pkill > /dev/null 2>&1; then
+  if pkill -f "java .*-jar $KCP_DIR/kcp-commands-daemon\\.jar" 2>/dev/null; then
+    echo "✓ Stopped the running daemon; the next hook call starts the new version"
+  fi
+fi
+
 # ── Node.js CLI ───────────────────────────────────────────────────────────────
 
 if [ "$MODE" = "node" ]; then
@@ -222,14 +234,18 @@ settings.hooks             ??= {};
 settings.hooks.PreToolUse  ??= [];
 settings.hooks.PostToolUse ??= [];
 
-// Remove any existing kcp hook entries (idempotency + upgrade support).
-// Match on kcpDir so both legacy catch-all and Bash-matcher entries are removed.
-settings.hooks.PreToolUse = settings.hooks.PreToolUse.filter(
-  group => !group.hooks?.some(h => h.command?.includes(kcpDir))
-);
-settings.hooks.PostToolUse = settings.hooks.PostToolUse.filter(
-  group => !group.hooks?.some(h => h.command?.includes(kcpDir))
-);
+// Remove this installer's own hooks from earlier runs (idempotency + upgrade support), and nothing
+// else. Both legacy catch-all and Bash-matcher entries run hook.sh / post-hook.sh, so matching the
+// command removes them all. A group is dropped only when no hook is left in it: removing whole
+// groups that mention kcpDir also deleted other tools' hooks kept under ~/.kcp (kcp-memory's) and
+// any hook sharing a group with ours.
+const isOurs = h => typeof h?.command === 'string' &&
+  (h.command.includes(`${kcpDir}/hook.sh`) || h.command.includes(`${kcpDir}/post-hook.sh`));
+const withoutOurs = groups => groups
+  .map(g => Array.isArray(g?.hooks) ? { ...g, hooks: g.hooks.filter(h => !isOurs(h)) } : g)
+  .filter(g => !Array.isArray(g?.hooks) || g.hooks.length > 0);
+settings.hooks.PreToolUse  = withoutOurs(settings.hooks.PreToolUse);
+settings.hooks.PostToolUse = withoutOurs(settings.hooks.PostToolUse);
 
 settings.hooks.PreToolUse.push({
   matcher: 'Bash',

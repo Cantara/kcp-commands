@@ -20,9 +20,28 @@ export interface ClaudeSettings {
 }
 
 /**
+ * Is this one of kcp-commands' own hooks (hook.sh or post-hook.sh in kcpDir)?
+ * Legacy catch-all and Bash-matcher entries both run these scripts.
+ */
+export function isKcpCommandsHook(h: HookEntry | undefined, kcpDir: string): boolean {
+  return typeof h?.command === 'string' &&
+    (h.command.includes(`${kcpDir}/hook.sh`) || h.command.includes(`${kcpDir}/post-hook.sh`));
+}
+
+/**
+ * Removes kcp-commands' own hooks and nothing else. A group is dropped only when no hook is left
+ * in it: dropping every group that mentions kcpDir also deleted other tools' hooks kept under the
+ * same directory (kcp-memory's) and any hook that shared a group with ours.
+ */
+export function withoutKcpCommandsHooks(groups: HookGroup[], kcpDir: string): HookGroup[] {
+  return groups
+    .map(g => Array.isArray(g?.hooks) ? { ...g, hooks: g.hooks.filter(h => !isKcpCommandsHook(h, kcpDir)) } : g)
+    .filter(g => !Array.isArray(g?.hooks) || g.hooks.length > 0);
+}
+
+/**
  * Registers the kcp-commands PreToolUse hook in Claude settings.
- * Idempotent: removes any existing entry whose command references kcpDir
- * before adding the new one.
+ * Idempotent: removes kcp-commands' own earlier hooks (only those) before adding the new one.
  */
 export function registerHook(
   settings: ClaudeSettings,
@@ -33,11 +52,8 @@ export function registerHook(
   settings.hooks ??= {};
   settings.hooks.PreToolUse ??= [];
 
-  // Remove any existing kcp hook entry (idempotency + upgrade support).
-  // Match on kcpDir so both legacy catch-all and Bash-matcher entries are removed.
-  settings.hooks.PreToolUse = settings.hooks.PreToolUse.filter(
-    group => !group.hooks?.some(h => h.command?.includes(kcpDir))
-  );
+  // Remove kcp-commands' own earlier hooks (idempotency + upgrade support), and nothing else.
+  settings.hooks.PreToolUse = withoutKcpCommandsHooks(settings.hooks.PreToolUse, kcpDir);
 
   settings.hooks.PreToolUse.push({
     matcher: 'Bash',
@@ -54,7 +70,7 @@ export function registerHook(
 
 /**
  * Registers the kcp-memory PostToolUse hook (output capture) in Claude settings.
- * Idempotent: removes any existing PostToolUse entry referencing kcpDir.
+ * Idempotent: removes kcp-commands' own earlier PostToolUse hooks (only those).
  */
 export function registerPostHook(
   settings: ClaudeSettings,
@@ -64,9 +80,7 @@ export function registerPostHook(
   settings.hooks ??= {};
   settings.hooks.PostToolUse ??= [];
 
-  settings.hooks.PostToolUse = settings.hooks.PostToolUse.filter(
-    group => !group.hooks?.some(h => h.command?.includes(kcpDir))
-  );
+  settings.hooks.PostToolUse = withoutKcpCommandsHooks(settings.hooks.PostToolUse, kcpDir);
 
   settings.hooks.PostToolUse.push({
     matcher: 'Bash',
