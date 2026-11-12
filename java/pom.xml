@@ -18,6 +18,10 @@
         <maven.compiler.target>21</maven.compiler.target>
         <maven.compiler.release>21</maven.compiler.release>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <!-- The version the daemon reports (/version, startup line, update check). release.yml sets it
+             from the git tag (-Dkcp.version=…), which is the only source of truth for a release; a local
+             build reports the pom's version. -->
+        <kcp.version>${project.version}</kcp.version>
     </properties>
 
     <dependencies>
@@ -57,8 +61,19 @@
 
         <!-- Bundle shared commands/*.yaml from parent directory into JAR -->
         <resources>
+            <!-- Only the version file is filtered, so nothing else in resources can be changed by a ${…} -->
             <resource>
                 <directory>src/main/resources</directory>
+                <filtering>true</filtering>
+                <includes>
+                    <include>kcp-commands-version.properties</include>
+                </includes>
+            </resource>
+            <resource>
+                <directory>src/main/resources</directory>
+                <excludes>
+                    <exclude>kcp-commands-version.properties</exclude>
+                </excludes>
             </resource>
             <resource>
                 <directory>../commands</directory>
@@ -105,6 +120,11 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
                 <version>3.6.0</version>
+                <configuration>
+                    <systemPropertyVariables>
+                        <kcp.expected.version>${kcp.version}</kcp.expected.version>
+                    </systemPropertyVariables>
+                </configuration>
             </plugin>
 
             <!-- Fat JAR: self-contained, no classpath setup needed -->

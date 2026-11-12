@@ -193,7 +193,7 @@ units:
       capabilities: [ release ]
     content_hash:
       algorithm: sha256
-      value: "b30664c667300872c5f95ddd7c70c9651d6794e7936dcd760fd6d00eece073c1"
+      value: "2d072f9f902f29ef8ed67573c71b0911a3247a109edf39e3fe37fe5693d3b3a5"
 
   - id: ecosystem-overview
     path: https://wiki.totto.org/blog/2026/07/16/the-knowledge-layer-a-record/

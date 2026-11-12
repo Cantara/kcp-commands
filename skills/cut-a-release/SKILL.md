@@ -17,7 +17,9 @@ files drive anything they don't.
    Maven build uses a fixed `finalName` (`kcp-commands-daemon.jar`, no version in the
    filename). The two files are already out of sync with each other and with the last
    documented release — don't treat a mismatch as a blocker, and don't assume bumping
-   them is required for the release to work.
+   them is required for the release to work. The daemon reports the tag's version too
+   (`/version`, startup line, update check): `release.yml` builds it with
+   `-Dkcp.version=<tag>` and refuses to publish a jar that reports anything else.
 2. **(edit)** Update the releases table in `README.md` with the new version, manifest
    count, and a one-line summary of what changed — this table is the durable record of
    what shipped when (see existing rows for the format).
