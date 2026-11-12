@@ -12,6 +12,7 @@ import com.sun.net.httpserver.HttpHandler;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 import java.nio.file.Path;
 
 /**
@@ -23,6 +24,13 @@ import java.nio.file.Path;
  * On exit 0 (success) with JSON output, Claude Code injects additionalContext
  * into Claude's context before the tool runs, and optionally modifies the
  * command via updatedInput (Phase B filtering).
+ *
+ * The reply never carries a permissionDecision. "allow" would skip Claude Code's
+ * permission prompt for the whole command, and the parser only reads the first
+ * segment, so "jq . f; rm -rf x" would run unasked. Whether a command may run is
+ * left to the user's permission rules, which Claude Code checks against the
+ * rewritten command. The filter rewrite therefore pipes into kcp-filter, a
+ * dedicated command the installer allows by its full path, and never into curl.
  */
 public class HookHandler implements HttpHandler {
 
@@ -31,6 +39,12 @@ public class HookHandler implements HttpHandler {
     private final SuppressionList suppressionList;
     private final ObjectMapper mapper;
     private final int port;
+    private final String filterCommand;
+
+    /** The filter command the installer puts in place: ~/.kcp/kcp-filter. */
+    static String defaultFilterCommand() {
+        return Path.of(System.getProperty("user.home"), ".kcp", "kcp-filter").toString();
+    }
 
     /** Backwards-compatible constructor — uses default suppression list. */
     public HookHandler(ManifestResolver resolver, ManifestGenerator generator, int port) {
@@ -40,11 +54,31 @@ public class HookHandler implements HttpHandler {
 
     public HookHandler(ManifestResolver resolver, ManifestGenerator generator, int port,
                         SuppressionList suppressionList) {
+        this(resolver, generator, port, suppressionList, defaultFilterCommand());
+    }
+
+    public HookHandler(ManifestResolver resolver, ManifestGenerator generator, int port,
+                        SuppressionList suppressionList, String filterCommand) {
         this.resolver = resolver;
         this.generator = generator;
         this.suppressionList = suppressionList;
         this.mapper = new ObjectMapper();
         this.port = port;
+        this.filterCommand = filterCommand;
+    }
+
+    /**
+     * The command piped through the filter, or null when it cannot be written safely: a filter path
+     * containing whitespace would need quoting, and a quoted path no longer matches the allow rule;
+     * and a filter that is not installed (a jar updated without re-running the installer) would turn
+     * every filtered command into "command not found" and lose its output.
+     */
+    String filtered(String command, String key) {
+        if (filterCommand == null || filterCommand.isBlank() || filterCommand.matches(".*\\s.*")
+                || !Files.isExecutable(Path.of(filterCommand))) {
+            return null;
+        }
+        return command + " | " + filterCommand + " " + key + " " + port;
     }
 
     @Override
@@ -106,10 +140,13 @@ public class HookHandler implements HttpHandler {
                         if (manifestVersion == null && parsed.subcommand() != null) {
                             manifestVersion = resolver.resolveHash(parsed.cmd());
                         }
-                        EventLogger.log(sessionId, projectDir, command, "FILTER:" + resolvedKey, manifestVersion);
-                        UsageLogger.logFilter(sessionId, projectDir, resolvedKey);
-                        sendResponse(exchange, buildFilterOnlyResponse(resolvedKey, command));
-                        return;
+                        ObjectNode filterOnly = buildFilterOnlyResponse(resolvedKey, command);
+                        if (filterOnly != null) {
+                            EventLogger.log(sessionId, projectDir, command, "FILTER:" + resolvedKey, manifestVersion);
+                            UsageLogger.logFilter(sessionId, projectDir, resolvedKey);
+                            sendResponse(exchange, filterOnly);
+                            return;
+                        }
                     }
                 }
             }
@@ -160,10 +197,9 @@ public class HookHandler implements HttpHandler {
 
         ObjectNode hookOutput = mapper.createObjectNode();
         hookOutput.put("hookEventName", "PreToolUse");
-        hookOutput.put("permissionDecision", "allow");
         hookOutput.put("additionalContext", additionalContext);
 
-        // Phase B: pipe through daemon's /filter/{key} endpoint for large-output commands.
+        // Phase B: pipe through kcp-filter, which posts to the daemon's /filter/{key} endpoint.
         // Use the manifest's own key (derived from command + optional subcommand) rather than
         // parsed.key(), because the compound-to-simple fallback may have resolved a simpler key.
         // e.g. "ps aux" → parsed.key()="ps-aux" but manifest.command()="ps", subcommand=null → "ps"
@@ -172,11 +208,12 @@ public class HookHandler implements HttpHandler {
             String resolvedKey = manifest.subcommand() != null
                     ? manifest.command() + "-" + manifest.subcommand()
                     : manifest.command();
-            String filterUrl = "http://localhost:" + port + "/filter/" + resolvedKey;
-            String wrapped = command + " | curl -s -X POST \"" + filterUrl + "\" --data-binary @-";
-            ObjectNode updatedInput = mapper.createObjectNode();
-            updatedInput.put("command", wrapped);
-            hookOutput.set("updatedInput", updatedInput);
+            String wrapped = filtered(command, resolvedKey);
+            if (wrapped != null) {
+                ObjectNode updatedInput = mapper.createObjectNode();
+                updatedInput.put("command", wrapped);
+                hookOutput.set("updatedInput", updatedInput);
+            }
         }
 
         ObjectNode response = mapper.createObjectNode();
@@ -228,12 +265,13 @@ public class HookHandler implements HttpHandler {
      * Used for suppressed commands where Claude needs no guidance but output can be trimmed.
      */
     private ObjectNode buildFilterOnlyResponse(String resolvedKey, String command) {
-        String filterUrl = "http://localhost:" + port + "/filter/" + resolvedKey;
-        String wrapped = command + " | curl -s -X POST \"" + filterUrl + "\" --data-binary @-";
+        String wrapped = filtered(command, resolvedKey);
+        if (wrapped == null) {
+            return null;
+        }
 
         ObjectNode hookOutput = mapper.createObjectNode();
         hookOutput.put("hookEventName", "PreToolUse");
-        hookOutput.put("permissionDecision", "allow");
 
         ObjectNode updatedInput = mapper.createObjectNode();
         updatedInput.put("command", wrapped);

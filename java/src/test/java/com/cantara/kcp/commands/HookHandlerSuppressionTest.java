@@ -48,7 +48,7 @@ class HookHandlerSuppressionTest {
         var resolver = new ManifestResolver();
         var generator = new NoOpGenerator();
         var suppressionList = new SuppressionList(kcpDir);
-        var handler = new HookHandler(resolver, generator, port, suppressionList);
+        var handler = new HookHandler(resolver, generator, port, suppressionList, TestFilters.installed(kcpDir));
 
         server.createContext("/hook", handler);
         server.setExecutor(Executors.newVirtualThreadPerTaskExecutor());
@@ -67,8 +67,8 @@ class HookHandlerSuppressionTest {
         assertEquals(200, resp.statusCode(), "ps aux should get filter-only wrapping → 200");
         var body = new com.fasterxml.jackson.databind.ObjectMapper().readTree(resp.body());
         var hookOut = body.path("hookSpecificOutput");
-        assertTrue(hookOut.path("updatedInput").path("command").asText().contains("/filter/ps"),
-                "command should be piped through /filter/ps");
+        assertTrue(hookOut.path("updatedInput").path("command").asText().contains("kcp-filter ps "),
+                "command should be piped through kcp-filter ps");
         assertTrue(hookOut.path("additionalContext").isMissingNode() || hookOut.path("additionalContext").isNull(),
                 "filter-only response must not inject context");
     }
@@ -80,8 +80,8 @@ class HookHandlerSuppressionTest {
         assertEquals(200, resp.statusCode(), "ls should get filter-only wrapping → 200");
         var body = new com.fasterxml.jackson.databind.ObjectMapper().readTree(resp.body());
         var hookOut = body.path("hookSpecificOutput");
-        assertTrue(hookOut.path("updatedInput").path("command").asText().contains("/filter/ls"),
-                "command should be piped through /filter/ls");
+        assertTrue(hookOut.path("updatedInput").path("command").asText().contains("kcp-filter ls "),
+                "command should be piped through kcp-filter ls");
         assertTrue(hookOut.path("additionalContext").isMissingNode() || hookOut.path("additionalContext").isNull(),
                 "filter-only response must not inject context");
     }
@@ -92,8 +92,8 @@ class HookHandlerSuppressionTest {
         HttpResponse<String> resp = postHookFull("grep -rn pattern .");
         assertEquals(200, resp.statusCode(), "grep should get filter-only wrapping → 200");
         var body = new com.fasterxml.jackson.databind.ObjectMapper().readTree(resp.body());
-        assertTrue(body.path("hookSpecificOutput").path("updatedInput").path("command").asText().contains("/filter/grep"),
-                "command should be piped through /filter/grep");
+        assertTrue(body.path("hookSpecificOutput").path("updatedInput").path("command").asText().contains("kcp-filter grep "),
+                "command should be piped through kcp-filter grep");
     }
 
     @Test

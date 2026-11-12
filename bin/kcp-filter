@@ -1,0 +1,40 @@
+#!/usr/bin/env bash
+# kcp-filter — Phase B output filter, the command the hook pipes noisy output into:
+#
+#   <command> | ~/.kcp/kcp-filter <manifest-key> [port]
+#
+# Sends stdin to the kcp-commands daemon's /filter/<key> endpoint (default port 7734) and prints
+# what comes back. If the daemon cannot filter it, it falls back to the stateless Node CLI, and
+# if that is missing too, it prints the output unchanged, so a filtered command never loses output.
+#
+# It is a separate command, rather than a curl pipe written into the rewritten command, so that the
+# user's permission rules can allow exactly this and nothing else: the installer adds
+# Bash(~/.kcp/kcp-filter:*) to ~/.claude/settings.json (with ~ expanded). Reads stdin, writes stdout,
+# changes nothing.
+
+usage() { sed -n '2,13p' "$0" | sed 's/^# \{0,1\}//'; }
+
+case "${1:-}" in
+  -h|--help) usage; exit 0 ;;
+  "") usage >&2; exit 2 ;;
+esac
+key=$1
+port=${2:-7734}
+[ $# -le 2 ] || { usage >&2; exit 2; }
+# A manifest key is a command name, optionally with a subcommand: letters, digits, dot, dash, underscore.
+[[ $key =~ ^[A-Za-z0-9._-]+$ ]] || { echo "kcp-filter: not a manifest key: $key" >&2; usage >&2; exit 2; }
+[[ $port =~ ^[0-9]+$ ]] || { echo "kcp-filter: not a port: $port" >&2; usage >&2; exit 2; }
+
+KCP_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+tmp=$(mktemp "${TMPDIR:-/tmp}/kcp-filter.XXXXXX") || { cat; exit 0; }
+trap 'rm -f "$tmp"' EXIT
+cat > "$tmp"
+
+if out=$(curl -sf --max-time 10 -X POST "http://localhost:$port/filter/$key" --data-binary @"$tmp" 2>/dev/null); then
+  printf '%s\n' "$out"
+elif [ -f "$KCP_DIR/cli.js" ] && command -v node >/dev/null 2>&1 \
+     && out=$(node "$KCP_DIR/cli.js" filter "$key" < "$tmp" 2>/dev/null); then
+  printf '%s\n' "$out"
+else
+  cat "$tmp"
+fi

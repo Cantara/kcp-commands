@@ -72,6 +72,18 @@ curl -fsSL "$RAW_URL/bin/post-hook.sh" -o "$KCP_DIR/post-hook.sh"
 chmod +x "$KCP_DIR/post-hook.sh"
 echo "✓ post-hook.sh installed"
 
+# kcp-filter is what the hook pipes noisy output into. It is its own command so that one narrow
+# permission rule (added below) allows it, and the hook never has to approve commands itself.
+echo "→ Installing kcp-filter (output filter)..."
+FILTER_SRC_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" 2>/dev/null && pwd || echo "")"
+if [ -n "$FILTER_SRC_DIR" ] && [ -f "$FILTER_SRC_DIR/kcp-filter" ]; then
+  cp "$FILTER_SRC_DIR/kcp-filter" "$KCP_DIR/kcp-filter"   # running from a clone: use its copy
+else
+  curl -fsSL "$RAW_URL/bin/kcp-filter" -o "$KCP_DIR/kcp-filter"
+fi
+chmod +x "$KCP_DIR/kcp-filter"
+echo "✓ kcp-filter installed"
+
 # ── Java daemon ───────────────────────────────────────────────────────────────
 
 if [ "$MODE" = "java" ]; then
@@ -250,9 +262,27 @@ settings.hooks.PostToolUse.push({
   }]
 });
 
+// The hook makes no permission decision: Claude Code checks the user's rules against the rewritten
+// command, "<command> | <kcpDir>/kcp-filter <key> <port>". Allow exactly the filter, by full path, so
+// a filtered command needs no more approval than the command itself. A path with whitespace cannot
+// be matched by a rule, and the daemon then does not rewrite at all, so no rule is added for it.
+const filterRule = `Bash(${kcpDir}/kcp-filter:*)`;
+let filterRuleAdded = false;
+if (!/\s/.test(kcpDir)) {
+  settings.permissions       ??= {};
+  settings.permissions.allow ??= [];
+  if (!settings.permissions.allow.includes(filterRule)) {
+    settings.permissions.allow.push(filterRule);
+  }
+  filterRuleAdded = true;
+}
+
 writeFileSync(settingsPath, JSON.stringify(settings, null, 2) + '\n');
 console.log(`✓ PreToolUse  hook registered → ${kcpDir}/hook.sh (${mode})`);
 console.log(`✓ PostToolUse hook registered → ${kcpDir}/post-hook.sh (output capture)`);
+console.log(filterRuleAdded
+  ? `✓ Permission rule in place    → ${filterRule}`
+  : `! ${kcpDir} contains whitespace: output filtering is off, no permission rule added`);
 JSEOF
 
 echo ""

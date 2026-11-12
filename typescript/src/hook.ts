@@ -1,12 +1,9 @@
-import { readFileSync } from 'node:fs';
-import { fileURLToPath } from 'node:url';
-import { dirname, join } from 'node:path';
+import { existsSync, readFileSync } from 'node:fs';
+import { homedir } from 'node:os';
+import { join } from 'node:path';
 import { resolveManifest, buildKey } from './resolver.js';
 import { generateManifest } from './generator.js';
 import type { CommandManifest } from './model.js';
-
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = dirname(__filename);
 
 // Regex for a first argument that looks like a subcommand word (not a flag, path, or option)
 const SUBCOMMAND_PATTERN = /^[a-z][a-z0-9-]*$/;
@@ -127,26 +124,41 @@ export async function runHook(): Promise<void> {
 
   if (!manifest) process.exit(0);
 
-  const additionalContext = buildAdditionalContext(manifest);
+  process.stdout.write(JSON.stringify(buildHookOutput(command, parsed.key, manifest)));
+  process.exit(0);
+}
 
-  const hookOutput: Record<string, unknown> = {
-    hookSpecificOutput: {
-      hookEventName: 'PreToolUse',
-      permissionDecision: 'allow',
-      additionalContext,
-    },
+/** The filter command the installer puts in place: ~/.kcp/kcp-filter. */
+export function defaultFilterCommand(): string {
+  return join(homedir(), '.kcp', 'kcp-filter');
+}
+
+/**
+ * The hook's reply. It never carries a permissionDecision: "allow" would skip Claude Code's
+ * permission prompt for the whole command, and parseCommand only reads the first segment, so
+ * "jq . f; rm -rf x" would run unasked. Claude Code checks the user's permission rules against the
+ * rewritten command, so the filter is a dedicated command the installer allows by full path,
+ * never a curl or node invocation. A filter path containing whitespace would need quoting and would
+ * no longer match that rule, so the command is then left unfiltered.
+ */
+export function buildHookOutput(
+  command: string,
+  key: string,
+  manifest: CommandManifest,
+  filterCommand: string = defaultFilterCommand(),
+  port = 7734,
+): { hookSpecificOutput: Record<string, unknown> } {
+  const out: Record<string, unknown> = {
+    hookEventName: 'PreToolUse',
+    additionalContext: buildAdditionalContext(manifest),
   };
 
-  // Phase B: pipe through filter for large-output commands
+  // Phase B: pipe through kcp-filter for large-output commands
   const schema = manifest.output_schema;
-  if (schema?.enable_filter && isFilterable(command)) {
-    const filterScript = join(__dirname, 'cli.js');
-    const wrapped = `${command} | node "${filterScript}" filter "${parsed.key}"`;
-    (hookOutput['hookSpecificOutput'] as Record<string, unknown>)['updatedInput'] = {
-      command: wrapped,
-    };
+  // Only when the filter is installed: piping into a missing command would lose the output.
+  if (schema?.enable_filter && isFilterable(command) && !/\s/.test(filterCommand) && existsSync(filterCommand)) {
+    out['updatedInput'] = { command: `${command} | ${filterCommand} ${key} ${port}` };
   }
 
-  process.stdout.write(JSON.stringify(hookOutput));
-  process.exit(0);
+  return { hookSpecificOutput: out };
 }

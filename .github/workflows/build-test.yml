@@ -23,6 +23,12 @@ jobs:
       - name: Verify JAR exists
         run: test -f java/target/kcp-commands-daemon.jar
 
+      - name: Install kcp-filter (as the installer does)
+        run: |
+          mkdir -p ~/.kcp
+          cp bin/kcp-filter ~/.kcp/kcp-filter
+          chmod +x ~/.kcp/kcp-filter
+
       - name: Start daemon
         run: |
           java --enable-native-access=ALL-UNNAMED \
@@ -53,12 +59,17 @@ jobs:
 
       - name: Hook round-trip — filter-only path (git status)
         run: |
-          CODE=$(echo '{"tool_name":"Bash","tool_input":{"command":"git status"}}' | \
-            curl -s -o /dev/null -w "%{http_code}" \
+          BODY=$(echo '{"tool_name":"Bash","tool_input":{"command":"git status"}}' | \
+            curl -s -w "\n%{http_code}" \
               -X POST http://localhost:7734/hook \
               -H "Content-Type: application/json" \
               --data-binary @-)
+          CODE=$(printf '%s\n' "$BODY" | tail -1)
           [ "$CODE" = "200" ] && echo "✓ filter-only path: 200" || (echo "✗ filter-only path: $CODE"; exit 1)
+          printf '%s' "$BODY" | grep -q "kcp-filter git-status" \
+            && echo "✓ rewritten to pipe into kcp-filter" || (echo "✗ no kcp-filter rewrite: $BODY"; exit 1)
+          printf '%s' "$BODY" | grep -q "permissionDecision" \
+            && (echo "✗ the hook must not decide permission: $BODY"; exit 1) || echo "✓ no permission decision"
 
       - name: Run Java unit tests
         run: cd java && mvn test -q

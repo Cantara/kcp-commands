@@ -437,7 +437,9 @@ hook.sh (thin client)
 
 **Manifest resolution** follows the three-tier lookup chain described above. Unknown commands trigger auto-generation via `--help` parsing.
 
-**Phase B filtering** wraps the original command with a pipe: `ps aux` becomes `ps aux | curl -s -X POST http://localhost:7734/filter/ps --data-binary @-` (Java daemon) or `ps aux | node cli.js filter ps` (Node.js fallback). The filter reads stdin, strips noise patterns, truncates to `max_lines`, and appends a truncation message with the count of omitted lines.
+**Phase B filtering** wraps the original command with a pipe: `ps aux` becomes `ps aux | ~/.kcp/kcp-filter ps 7734` (with `~` written out in full). `kcp-filter` posts the output to the daemon's `/filter/ps` endpoint, falls back to the Node.js CLI, and prints the output unchanged if neither can filter it. The filter strips noise patterns, truncates to `max_lines`, and appends a truncation message with the count of omitted lines.
+
+**Permissions.** The hook never approves a command: its reply carries no `permissionDecision`, so Claude Code's own permission rules decide whether a command runs. Claude Code checks those rules against the rewritten command, including the `kcp-filter` part, so the installer adds one rule to `~/.claude/settings.json` that allows exactly the filter: `Bash(/home/<you>/.kcp/kcp-filter:*)`. A filtered command therefore needs the same approval as the command alone.
 
 **Phase C event logging** runs on every hook call, regardless of whether a manifest was found. The Java daemon writes asynchronously on a virtual thread; it never blocks the hook response. Phase C is currently Java-daemon only.
 

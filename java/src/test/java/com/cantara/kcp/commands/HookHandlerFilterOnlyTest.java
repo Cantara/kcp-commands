@@ -46,7 +46,7 @@ class HookHandlerFilterOnlyTest {
         var resolver = new ManifestResolver();
         var generator = new NoOpGenerator();
         var suppressionList = new SuppressionList(kcpDir);
-        var handler = new HookHandler(resolver, generator, port, suppressionList);
+        var handler = new HookHandler(resolver, generator, port, suppressionList, TestFilters.installed(kcpDir));
 
         server.createContext("/hook", handler);
         server.setExecutor(Executors.newVirtualThreadPerTaskExecutor());
@@ -64,8 +64,8 @@ class HookHandlerFilterOnlyTest {
         var resp = post("find . -name '*.java'");
         assertEquals(200, resp.statusCode());
         var hookOut = mapper.readTree(resp.body()).path("hookSpecificOutput");
-        assertTrue(hookOut.path("updatedInput").path("command").asText().contains("/filter/find"),
-                "find should be piped through /filter/find");
+        assertTrue(hookOut.path("updatedInput").path("command").asText().contains("kcp-filter find "),
+                "find should be piped through kcp-filter with its key");
         assertTrue(hookOut.path("additionalContext").isMissingNode() || hookOut.path("additionalContext").isNull(),
                 "no context should be injected for filter-only path");
     }
@@ -92,12 +92,34 @@ class HookHandlerFilterOnlyTest {
     }
 
     @Test
-    void filter_only_response_has_allow_permission() throws Exception {
+    void filter_only_response_leaves_permission_to_the_user() throws Exception {
         var resp = post("grep -rn TODO .");
         assertEquals(200, resp.statusCode());
         var hookOut = mapper.readTree(resp.body()).path("hookSpecificOutput");
-        assertEquals("allow", hookOut.path("permissionDecision").asText(),
-                "filter-only response must set permissionDecision=allow");
+        assertTrue(hookOut.path("permissionDecision").isMissingNode(),
+                "filter-only response must not make a permission decision");
+    }
+
+    @Test
+    void filter_path_with_whitespace_is_not_used() throws Exception {
+        // A quoted path would no longer match the allow rule, so the command runs unfiltered instead.
+        String spaced = TestFilters.installed(tempDir.resolve("a user").resolve(".kcp"));
+        assertNull(handlerWith(spaced).filtered("find .", "find"));
+        String plain = TestFilters.installed(tempDir.resolve("plain").resolve(".kcp"));
+        assertEquals("find . | " + plain + " find " + port, handlerWith(plain).filtered("find .", "find"));
+    }
+
+    @Test
+    void filter_that_is_not_installed_is_not_used() throws Exception {
+        // A daemon updated without re-running the installer must not pipe into a missing command,
+        // which would lose the output: the command then runs unfiltered.
+        String missing = tempDir.resolve("nowhere").resolve(".kcp").resolve("kcp-filter").toString();
+        assertNull(handlerWith(missing).filtered("find .", "find"));
+    }
+
+    private HookHandler handlerWith(String filterCommand) {
+        return new HookHandler(new ManifestResolver(), new NoOpGenerator(), port,
+                new SuppressionList(tempDir.resolve(".kcp")), filterCommand);
     }
 
     @Test
@@ -108,8 +130,8 @@ class HookHandlerFilterOnlyTest {
                     .path("hookSpecificOutput")
                     .path("updatedInput")
                     .path("command").asText();
-            assertTrue(cmd.contains("localhost:" + port),
-                    "filter URL should use the daemon's own port");
+            assertTrue(cmd.endsWith(" " + port),
+                    "kcp-filter should be given the daemon's own port");
         }
     }
 
