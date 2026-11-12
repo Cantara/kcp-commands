@@ -46,7 +46,7 @@ class HookHandlerFilterOnlyTest {
         var resolver = new ManifestResolver();
         var generator = new NoOpGenerator();
         var suppressionList = new SuppressionList(kcpDir);
-        var handler = new HookHandler(resolver, generator, port, suppressionList);
+        var handler = new HookHandler(resolver, generator, port, suppressionList, TestFilters.installed(kcpDir));
 
         server.createContext("/hook", handler);
         server.setExecutor(Executors.newVirtualThreadPerTaskExecutor());
@@ -103,12 +103,23 @@ class HookHandlerFilterOnlyTest {
     @Test
     void filter_path_with_whitespace_is_not_used() throws Exception {
         // A quoted path would no longer match the allow rule, so the command runs unfiltered instead.
-        var handler = new HookHandler(new ManifestResolver(), new NoOpGenerator(), port,
-                new SuppressionList(tempDir.resolve(".kcp")), "/home/a user/.kcp/kcp-filter");
-        assertNull(handler.filtered("find .", "find"));
-        assertEquals("find . | /home/u/.kcp/kcp-filter find " + port,
-                new HookHandler(new ManifestResolver(), new NoOpGenerator(), port,
-                        new SuppressionList(tempDir.resolve(".kcp")), "/home/u/.kcp/kcp-filter").filtered("find .", "find"));
+        String spaced = TestFilters.installed(tempDir.resolve("a user").resolve(".kcp"));
+        assertNull(handlerWith(spaced).filtered("find .", "find"));
+        String plain = TestFilters.installed(tempDir.resolve("plain").resolve(".kcp"));
+        assertEquals("find . | " + plain + " find " + port, handlerWith(plain).filtered("find .", "find"));
+    }
+
+    @Test
+    void filter_that_is_not_installed_is_not_used() throws Exception {
+        // A daemon updated without re-running the installer must not pipe into a missing command,
+        // which would lose the output: the command then runs unfiltered.
+        String missing = tempDir.resolve("nowhere").resolve(".kcp").resolve("kcp-filter").toString();
+        assertNull(handlerWith(missing).filtered("find .", "find"));
+    }
+
+    private HookHandler handlerWith(String filterCommand) {
+        return new HookHandler(new ManifestResolver(), new NoOpGenerator(), port,
+                new SuppressionList(tempDir.resolve(".kcp")), filterCommand);
     }
 
     @Test

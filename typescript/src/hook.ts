@@ -1,4 +1,4 @@
-import { readFileSync } from 'node:fs';
+import { existsSync, readFileSync } from 'node:fs';
 import { homedir } from 'node:os';
 import { join } from 'node:path';
 import { resolveManifest, buildKey } from './resolver.js';
@@ -155,7 +155,8 @@ export function buildHookOutput(
 
   // Phase B: pipe through kcp-filter for large-output commands
   const schema = manifest.output_schema;
-  if (schema?.enable_filter && isFilterable(command) && !/\s/.test(filterCommand)) {
+  // Only when the filter is installed: piping into a missing command would lose the output.
+  if (schema?.enable_filter && isFilterable(command) && !/\s/.test(filterCommand) && existsSync(filterCommand)) {
     out['updatedInput'] = { command: `${command} | ${filterCommand} ${key} ${port}` };
   }
 

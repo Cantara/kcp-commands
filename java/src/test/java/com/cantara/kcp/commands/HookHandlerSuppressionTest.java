@@ -48,7 +48,7 @@ class HookHandlerSuppressionTest {
         var resolver = new ManifestResolver();
         var generator = new NoOpGenerator();
         var suppressionList = new SuppressionList(kcpDir);
-        var handler = new HookHandler(resolver, generator, port, suppressionList);
+        var handler = new HookHandler(resolver, generator, port, suppressionList, TestFilters.installed(kcpDir));
 
         server.createContext("/hook", handler);
         server.setExecutor(Executors.newVirtualThreadPerTaskExecutor());

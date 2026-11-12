@@ -12,6 +12,7 @@ import com.sun.net.httpserver.HttpHandler;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 import java.nio.file.Path;
 
 /**
@@ -68,10 +69,13 @@ public class HookHandler implements HttpHandler {
 
     /**
      * The command piped through the filter, or null when it cannot be written safely: a filter path
-     * containing whitespace would need quoting, and a quoted path no longer matches the allow rule.
+     * containing whitespace would need quoting, and a quoted path no longer matches the allow rule;
+     * and a filter that is not installed (a jar updated without re-running the installer) would turn
+     * every filtered command into "command not found" and lose its output.
      */
     String filtered(String command, String key) {
-        if (filterCommand == null || filterCommand.isBlank() || filterCommand.matches(".*\\s.*")) {
+        if (filterCommand == null || filterCommand.isBlank() || filterCommand.matches(".*\\s.*")
+                || !Files.isExecutable(Path.of(filterCommand))) {
             return null;
         }
         return command + " | " + filterCommand + " " + key + " " + port;

@@ -39,16 +39,17 @@ class HookHandlerPermissionTest {
     private int port;
     private final ObjectMapper mapper = new ObjectMapper();
     private final HttpClient client = HttpClient.newHttpClient();
-    private final String defaultFilter = Path.of(System.getProperty("user.home"), ".kcp", "kcp-filter").toString();
+    private String defaultFilter;
 
     @BeforeEach
     void setUp() throws Exception {
         Path kcpDir = tempDir.resolve(".kcp");
         Files.createDirectories(kcpDir.resolve("commands"));
+        defaultFilter = TestFilters.installed(kcpDir);
         server = HttpServer.create(new InetSocketAddress("localhost", 0), 0);
         port = server.getAddress().getPort();
         server.createContext("/hook", new HookHandler(new ManifestResolver(), new NoOpGenerator(), port,
-                new SuppressionList(kcpDir)));
+                new SuppressionList(kcpDir), defaultFilter));
         server.setExecutor(Executors.newVirtualThreadPerTaskExecutor());
         server.start();
     }
