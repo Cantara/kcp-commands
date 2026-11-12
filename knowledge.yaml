@@ -73,7 +73,7 @@ units:
       ]
     content_hash:
       algorithm: sha256
-      value: "f72aee0240920304c2a8d297b0c5e2e66dbc4dc990b8d517b5932deb8a0d7a59"
+      value: "d9999e96494fb2634bcafd7a6c7c96de7c299dfb3ba60c09d26666e19c19d0f9"
 
   - id: benchmark-results
     path: docs/benchmark-results.md
