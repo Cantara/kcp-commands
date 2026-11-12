@@ -64,8 +64,8 @@ class HookHandlerFilterOnlyTest {
         var resp = post("find . -name '*.java'");
         assertEquals(200, resp.statusCode());
         var hookOut = mapper.readTree(resp.body()).path("hookSpecificOutput");
-        assertTrue(hookOut.path("updatedInput").path("command").asText().contains("/filter/find"),
-                "find should be piped through /filter/find");
+        assertTrue(hookOut.path("updatedInput").path("command").asText().contains("kcp-filter find "),
+                "find should be piped through kcp-filter with its key");
         assertTrue(hookOut.path("additionalContext").isMissingNode() || hookOut.path("additionalContext").isNull(),
                 "no context should be injected for filter-only path");
     }
@@ -92,12 +92,23 @@ class HookHandlerFilterOnlyTest {
     }
 
     @Test
-    void filter_only_response_has_allow_permission() throws Exception {
+    void filter_only_response_leaves_permission_to_the_user() throws Exception {
         var resp = post("grep -rn TODO .");
         assertEquals(200, resp.statusCode());
         var hookOut = mapper.readTree(resp.body()).path("hookSpecificOutput");
-        assertEquals("allow", hookOut.path("permissionDecision").asText(),
-                "filter-only response must set permissionDecision=allow");
+        assertTrue(hookOut.path("permissionDecision").isMissingNode(),
+                "filter-only response must not make a permission decision");
+    }
+
+    @Test
+    void filter_path_with_whitespace_is_not_used() throws Exception {
+        // A quoted path would no longer match the allow rule, so the command runs unfiltered instead.
+        var handler = new HookHandler(new ManifestResolver(), new NoOpGenerator(), port,
+                new SuppressionList(tempDir.resolve(".kcp")), "/home/a user/.kcp/kcp-filter");
+        assertNull(handler.filtered("find .", "find"));
+        assertEquals("find . | /home/u/.kcp/kcp-filter find " + port,
+                new HookHandler(new ManifestResolver(), new NoOpGenerator(), port,
+                        new SuppressionList(tempDir.resolve(".kcp")), "/home/u/.kcp/kcp-filter").filtered("find .", "find"));
     }
 
     @Test
@@ -108,8 +119,8 @@ class HookHandlerFilterOnlyTest {
                     .path("hookSpecificOutput")
                     .path("updatedInput")
                     .path("command").asText();
-            assertTrue(cmd.contains("localhost:" + port),
-                    "filter URL should use the daemon's own port");
+            assertTrue(cmd.endsWith(" " + port),
+                    "kcp-filter should be given the daemon's own port");
         }
     }
 
