@@ -33,7 +33,28 @@ import java.util.concurrent.Executors;
 public class KcpCommandsDaemon {
 
     static final int    DEFAULT_PORT = 7734;
-    public static final String VERSION = "0.23.0";
+    /**
+     * The version this jar was built as, from kcp-commands-version.properties, which Maven fills in
+     * from kcp.version (the git tag in a release build). It was a hand-written constant that no release
+     * bumped, so every jar reported 0.23.0.
+     */
+    public static final String VERSION = loadVersion();
+
+    static String loadVersion() {
+        try (var in = KcpCommandsDaemon.class.getResourceAsStream("/kcp-commands-version.properties")) {
+            if (in != null) {
+                var props = new java.util.Properties();
+                props.load(in);
+                String v = props.getProperty("version", "").trim();
+                if (!v.isEmpty() && !v.startsWith("${")) {
+                    return v;
+                }
+            }
+        } catch (IOException ignored) {
+            // fall through
+        }
+        return "unknown";
+    }
 
     public static void main(String[] args) throws IOException, InterruptedException {
         int port = DEFAULT_PORT;
